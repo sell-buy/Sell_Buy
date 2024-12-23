@@ -16,3 +16,8 @@ spring:
       host: localhost
 server:
   port: 80
+  servlet:
+    encoding:
+      charset: utf-8
+      enabled: true
+      force: true
