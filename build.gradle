@@ -41,6 +41,13 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    compileOnly group: 'jakarta.servlet.jsp', name: 'jakarta.servlet.jsp-api', version: '4.0.0'
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
+    implementation 'jakarta.el:jakarta.el-api:6.0.1'
+    implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1'
+    implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.1'
+    implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:10.1.33'
 }
 
 tasks.named('test') {
