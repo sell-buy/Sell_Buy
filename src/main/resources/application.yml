@@ -10,3 +10,5 @@ spring:
     username: gbin1
     password: Globalinorcl1
     driver-class-name: oracle.jdbc.OracleDriver
+server:
+  port: 80
