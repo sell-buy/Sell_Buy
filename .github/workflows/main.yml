@@ -27,10 +27,19 @@ jobs:
         run: chmod +x ./gradlew
       - name: Build and push image to Amazon ECR
         run: ./gradlew clean jib -x test
-      - name: Deploy to AWS ECS
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+     # - name: Deploy to AWS ECS
+    #    uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+     #   with:
+    #      task-definition: task-definition.json
+    #      cluster: Globalin
+    #      service: Globalin
+    #      wait-for-service-stability: true
+      - name: Amazon ECS "Deploy Task Definition" Action for GitHub Actions
+  # You may pin to the exact commit or the version.
+  # uses: aws-actions/amazon-ecs-deploy-task-definition@0e82244a9c6dac43d70151a94c67ebc4bab18fc5
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
+    # The path to the ECS task definition file to register.
           task-definition: task-definition.json
-          cluster: Globalin
-          service: Globalin
-          wait-for-service-stability: true
+   
+          
