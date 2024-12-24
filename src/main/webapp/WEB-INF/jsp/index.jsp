@@ -8,7 +8,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Sell&Buy</title>
+    <script async src="webjars/jquery/3.7.1/dist/jquery.js"></script>
 </head>
 <body>
 
