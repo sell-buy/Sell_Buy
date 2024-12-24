@@ -1,8 +1,10 @@
 plugins {
     id 'java'
-    id 'war'
     id 'org.springframework.boot' version '3.4.1'
     id 'io.spring.dependency-management' version '1.1.7'
+
+    // Jib
+    id 'com.google.cloud.tools.jib' version '3.4.4'
 }
 
 group = 'com.sell_buy'
@@ -39,7 +41,7 @@ dependencies {
     runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    runtimeOnly 'org.springframework.boot:spring-boot-starter-tomcat'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -55,4 +57,21 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+jib {
+    from {
+        image = 'openjdk:17-oracle'
+    }
+    to {
+        image = '985539778210.dkr.ecr.ap-northeast-1.amazonaws.com/globalin'
+        tags = ['latest']
+        credHelper = 'ecr-login'
+    }
+
+    container {
+        creationTime = 'USE_CURRENT_TIMESTAMP'
+        jvmFlags = ['-Dfile.encoding=UTF-8', '-Dserver.port=80', '-Dspring.profiles.active=prod', '-XX:+UseContainerSupport']
+        ports = ['80']
+    }
 }
