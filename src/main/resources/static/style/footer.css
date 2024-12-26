@@ -1,0 +1,25 @@
+footer {
+    position: absolute;
+    bottom: 0;
+    max-height: 20vh;
+    width: 100%;
+    background-color: #f6f6e9;
+    text-align: center;
+    padding: 10px;
+    color: #64606f;
+}
+.footer-top {
+    margin: 0;
+    padding: 0;
+}
+.footer-logo {
+    text-align: left;
+    font-size: 24px;
+    font-weight: bold;
+    height: 8vh;
+    margin: 10px 20px 0;
+}
+.footer-top ul li {
+    text-align: left;
+    list-style-type: none;
+}

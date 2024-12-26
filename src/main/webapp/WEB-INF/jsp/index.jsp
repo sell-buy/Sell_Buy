@@ -10,8 +10,12 @@
 <head>
     <title>Sell&Buy</title>
     <script async src="webjars/jquery/3.7.1/dist/jquery.js"></script>
+    <link rel="stylesheet" href="style/common.css">
 </head>
 <body>
-
+<div id="wrap">
+<%@include file="include/header.jsp"%>
+<%@include file="include/footer.jsp"%>
+</div>
 </body>
 </html>
