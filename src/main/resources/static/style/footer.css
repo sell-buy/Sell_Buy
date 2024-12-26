@@ -2,10 +2,9 @@ footer {
     bottom: 0;
     flex: 0 0 auto;
     max-height: 20vh;
-    width: 100%;
+    width: 100vw;
     background-color: #f6f6e9;
     text-align: center;
-    padding: 10px;
     color: #64606f;
     border-top: #a8a8a8 1px solid;
 }
