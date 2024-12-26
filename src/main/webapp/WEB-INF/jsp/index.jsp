@@ -15,6 +15,7 @@
 <body>
 <div id="wrap">
 <%@include file="include/header.jsp"%>
+<%@include file="include/category.jsp"%>
 <%@include file="include/footer.jsp"%>
 </div>
 </body>
