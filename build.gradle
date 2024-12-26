@@ -4,7 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7'
 
     // Jib
-    id 'com.google.cloud.tools.jib' version '3.4.4'
+//    id 'com.google.cloud.tools.jib' version '3.4.4'
 }
 
 group = 'com.sell_buy'
@@ -45,6 +45,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'org.webjars.bower:jquery:3.7.1'
+    implementation 'org.webjars:webjars-locator-core:0.59'
+    implementation 'org.webjars:bootstrap:5.3.3'
+
 
 
     compileOnly group: 'jakarta.servlet.jsp', name: 'jakarta.servlet.jsp-api', version: '4.0.0'
@@ -59,6 +63,7 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+/*
 jib {
     from {
         image = 'openjdk:17-oracle'
@@ -74,4 +79,4 @@ jib {
         jvmFlags = ['-Dfile.encoding=UTF-8', '-Dserver.port=80', '-Dspring.profiles.active=prod', '-XX:+UseContainerSupport']
         ports = ['80']
     }
-}
+}*/
