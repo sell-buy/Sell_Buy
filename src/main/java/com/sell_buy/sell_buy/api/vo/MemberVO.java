@@ -9,6 +9,6 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserVO implements Serializable {
+public class MemberVO implements Serializable {
     private Long id;
 }

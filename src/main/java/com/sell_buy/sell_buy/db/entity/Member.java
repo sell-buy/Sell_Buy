@@ -11,11 +11,10 @@ import org.hibernate.annotations.DynamicUpdate;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicUpdate
-public class User {
+public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
     @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
-    @Column(name = "user_id")
-    private Long userId;
+    private Long mem_id;
 }

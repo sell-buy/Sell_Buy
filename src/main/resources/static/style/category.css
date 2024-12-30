@@ -1,6 +1,5 @@
 .category {
-    flex: 1 0 auto;
+    flex: 0 0 10vw;
     background-color: #f6f6e9; /* Optional: Add a background color */
     border-right: 1px solid #ccc; /* Optional: Add a border to the right */
-    width: 10vw;
 }
