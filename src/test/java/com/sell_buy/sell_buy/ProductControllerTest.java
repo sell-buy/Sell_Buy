@@ -40,7 +40,7 @@ public class ProductControllerTest {
     @Test
     public void testRegisterProduct() throws Exception {
         MockHttpSession session = new MockHttpSession();
-        session.setAttribute("seller_id", 1L);
+        session.setAttribute("mem_id", 1L);
 
         Product product = Product.builder()
                 .prod_name("Example Product")
@@ -53,7 +53,7 @@ public class ProductControllerTest {
 
         when(productService.registerProduct(any(Product.class))).thenReturn(product);
 
-        mockMvc.perform(post("/prod")
+        mockMvc.perform(post("/prod/register")
                         .session(session)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"prod_name\":\"Example Product\",\"prod_disc\":\"This is an example product.\",\"price\":100,\"category\":\"Example Category\",\"is_auction\":false,\"create_date\":\"2023-10-10T10:00:00\"}"))

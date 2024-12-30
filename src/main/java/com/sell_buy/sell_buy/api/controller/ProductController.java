@@ -27,7 +27,10 @@ public class ProductController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerProduct(@RequestBody Product product, HttpSession session) {
-        Long seller_id = (Long) session.getAttribute("user_id");
+        Long seller_id = (Long) session.getAttribute("mem_id");
+        if (seller_id == null) {
+            return ResponseEntity.status(401).body("User ID is not present in the session.");
+        }
         product.setSeller_id(seller_id);
         Product registeredProduct = productService.registerProduct(product);
         return ResponseEntity.status(200).body(product.getProd_id());
