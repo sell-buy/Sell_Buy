@@ -1,4 +1,3 @@
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%--
   Created by IntelliJ IDEA.
   User: USER
@@ -6,15 +5,16 @@
   Time: 오후 1:16
   To change this template use File | Settings | File Templates.
 --%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <script async src="webjars/jquery/3.7.1/dist/jquery.js"></script>
-    <script async src="webjars/bootstrap/5.3.3/js/bootstrap.js"></script>
-    <script async src="webjars/bootstrap/5.3.3/js/bootstrap.bundle.js"></script>
-    <script async src="webjars/bootstrap/5.3.3/js/bootstrap.esm.js"></script>
-    <link rel="stylesheet" href="<c:url value='style/common.css'/>">
-    <link rel="stylesheet" href="<c:url value='style/header.css'/>">
+    <script async src="<c:url value="/webjars/jquery/3.7.1/dist/jquery.js"/>"></script>
+    <script async src="<c:url value="/webjars/bootstrap/5.3.3/js/bootstrap.js"/>"></script>
+    <script async src="<c:url value="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.js"/>"></script>
+    <script async src="<c:url value="/webjars/bootstrap/5.3.3/js/bootstrap.esm.js"/>"></script>
+    <link rel="stylesheet" href="<c:url value='/style/common.css'/>">
+    <link rel="stylesheet" href="<c:url value='/style/header.css'/>">
 </head>
 <body>
 <header class="header">
@@ -32,7 +32,7 @@
         <a href="/">Sell&Buy</a>
     </div>
     <div class="header-search">
-        <input type="text" placeholder="상품 검색" />
+        <input type="text" placeholder="상품 검색"/>
         <button type="button">🔍</button>
     </div>
 </header>
