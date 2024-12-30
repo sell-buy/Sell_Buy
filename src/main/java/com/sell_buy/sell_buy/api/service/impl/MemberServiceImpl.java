@@ -1,10 +1,10 @@
 package com.sell_buy.sell_buy.api.service.impl;
 
-import com.sell_buy.sell_buy.api.service.UserService;
+import com.sell_buy.sell_buy.api.service.MemberService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class MemberServiceImpl implements MemberService {
 
     @Override
     public void createUser() {
