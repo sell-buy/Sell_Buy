@@ -497,7 +497,7 @@ ALTER TABLE notic_img
             );
 
 -- user 테이블에 대한 시퀀스
-CREATE SEQUENCE user_seq
+CREATE SEQUENCE mem_seq
     START WITH 1
     INCREMENT BY 1
     NOCACHE
