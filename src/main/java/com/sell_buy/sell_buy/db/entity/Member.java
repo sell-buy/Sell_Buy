@@ -14,7 +14,7 @@ import org.hibernate.annotations.DynamicUpdate;
 public class Member {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
-    @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mem_seq")
+    @SequenceGenerator(name = "mem_seq", sequenceName = "mem_seq", allocationSize = 1)
     private Long mem_id;
 }

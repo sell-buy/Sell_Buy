@@ -1,6 +1,7 @@
 package com.sell_buy.sell_buy.api.service;
 
 public interface MemberService {
+
     void createUser();
 
     void updateUser();
