@@ -58,7 +58,7 @@ public class ProductController {
         if (seller_id == null) {
             return ResponseEntity.status(411).body("User ID is not present in the session.");
         }
-        if (seller_id != productService.getProductbyId(prod_id).getSeller_id()) {
+        if (seller_id != productService.getProductById(prod_id).getSeller_id()) {
             return ResponseEntity.status(412).body("User ID does not match the seller ID of the product.");
         }
         if (!productService.existsById(prod_id)) {
@@ -74,28 +74,26 @@ public class ProductController {
         if (!productService.existsById(prod_id)) {
             return ResponseEntity.status(410).body("Product with id " + prod_id + " not found.");
         }
-        return ResponseEntity.status(200).body(productService.getProductbyId(prod_id));
+        return ResponseEntity.status(200).body(productService.getProductById(prod_id));
     }
 
+
     @GetMapping("/list")
-    public ResponseEntity<?> getProductList(@RequestParam(required = false, defaultValue = "1") int page) {
+    public ResponseEntity<?> getProductList(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                            @RequestParam(name = "category", required = false) Long category,
+                                            @RequestParam(name = "searchQuery", required = false) String searchQuery,
+                                            @RequestParam(name = "searchType", required = false) String searchType) {
         if (page < 1) {
             return ResponseEntity.status(413).body("Page number must be greater than 0.");
         }
 
-        Slice<Product> productList = productService.getProductList(page);
-        return ResponseEntity.status(200).body(productList);
-    }
-
-    @GetMapping("/list")
-    public ResponseEntity<?> getProductList(@RequestParam(required = false, defaultValue = "1") int page, @RequestParam long category) {
-        if (page < 1) {
-            return ResponseEntity.status(413).body("Page number must be greater than 0.");
+        if (searchType.equals("seller")) {
+            Slice<Product> productList = productService.getProductList(page, category, searchQuery, searchType);
+            return ResponseEntity.status(200).body(productList);
         }
 
-        Slice<Product> productList = productService.getProductList(page);
+        Slice<Product> productList = productService.getProductList(page, category, searchQuery, searchType);
+
         return ResponseEntity.status(200).body(productList);
     }
-
-
 }

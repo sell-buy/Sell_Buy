@@ -2,7 +2,7 @@ package com.sell_buy.sell_buy.api.service;
 
 
 import com.sell_buy.sell_buy.db.entity.Product;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 
 public interface ProductService {
     Product registerProduct(Product product);
@@ -13,9 +13,7 @@ public interface ProductService {
 
     void deleteProduct(Long prodId);
 
-    Product getProductbyId(Long prodId);
+    Product getProductById(Long prodId);
 
-    Page<Product> getProductList(int page);
-
-    Page<Product> getProductListByCategory(int page, String category);
+    Slice<Product> getProductList(int page, Long category, String searchQuery, String searchType);
 }

@@ -104,7 +104,7 @@ public class ProductControllerTest {
                 .build();
 
         when(productService.existsById(1L)).thenReturn(true);
-        when(productService.getProductbyId(1L)).thenReturn(product);
+        when(productService.getProductById(1L)).thenReturn(product);
 
         mockMvc.perform(delete("/prod/1")
                         .session(session)
@@ -127,7 +127,7 @@ public class ProductControllerTest {
                 .build();
 
         when(productService.existsById(1L)).thenReturn(true);
-        when(productService.getProductbyId(1L)).thenReturn(product);
+        when(productService.getProductById(1L)).thenReturn(product);
 
         mockMvc.perform(get("/prod/1"))
                 .andExpect(status().isOk());

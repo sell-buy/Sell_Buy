@@ -1,5 +1,9 @@
 package com.sell_buy.sell_buy.api.service;
 
+import com.sell_buy.sell_buy.db.entity.Member;
+
+import java.util.List;
+
 public interface MemberService {
 
     void createUser();
@@ -8,7 +12,9 @@ public interface MemberService {
 
     void deleteUser();
 
-    void getUserByUserId(Long userId);
+    Member getMemberByMemId(Long userId);
 
-    void getAllUsers();
+    Member getMemberByNickname(String nickname);
+
+    List<Member> getAllMembers();
 }
