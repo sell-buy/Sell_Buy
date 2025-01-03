@@ -11,12 +11,12 @@ $(document).ready(function () {
         };
         $.ajax({
             type: 'POST',
-            url: '<c:url value="/prod/register"/>',
+            url: '<c:url value="/prod"/>',
             contentType: 'application/json',
             data: JSON.stringify(formData),
             success: function () {
                 alert('등록되었습니다.');
-                location.href = '/prod';
+                location.href = '/prod/list';
             },
             error: function () {
                 alert('등록에 실패했습니다.');

@@ -5,12 +5,10 @@ import com.sell_buy.sell_buy.db.entity.Product;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/prod")
@@ -25,14 +23,77 @@ public class ProductController {
         return "prodRegister";
     }
 
-    @PostMapping("/register")
+    @PostMapping()
     public ResponseEntity<?> registerProduct(@RequestBody Product product, HttpSession session) {
         Long seller_id = (Long) session.getAttribute("mem_id");
         if (seller_id == null) {
-            return ResponseEntity.status(401).body("User ID is not present in the session.");
+            return ResponseEntity.status(411).body("User ID is not present in the session.");
         }
         product.setSeller_id(seller_id);
         Product registeredProduct = productService.registerProduct(product);
         return ResponseEntity.status(200).body(product.getProd_id());
+    }
+
+    @PatchMapping("/{prod_id}")
+    public ResponseEntity<?> updateProduct(@RequestBody Product product, HttpSession session, @PathVariable("prod_id") Long prod_id) {
+        Long seller_id = (Long) session.getAttribute("mem_id");
+        if (seller_id == null) {
+            return ResponseEntity.status(411).body("User ID is not present in the session.");
+        }
+        if (!productService.existsById(prod_id)) {
+            return ResponseEntity.status(410).body("Product with id " + prod_id + " not found.");
+        }
+
+        product.setSeller_id(seller_id);
+        product.setProd_id(prod_id);
+        Product updatedProduct = productService.updateProduct(product);
+
+
+        return ResponseEntity.status(200).body(product.getProd_id());
+    }
+
+    @DeleteMapping("/{prod_id}")
+    public ResponseEntity<?> deleteProduct(HttpSession session, @PathVariable("prod_id") Long prod_id) {
+        Long seller_id = (Long) session.getAttribute("mem_id");
+        if (seller_id == null) {
+            return ResponseEntity.status(411).body("User ID is not present in the session.");
+        }
+        if (seller_id != productService.getProductById(prod_id).getSeller_id()) {
+            return ResponseEntity.status(412).body("User ID does not match the seller ID of the product.");
+        }
+        if (!productService.existsById(prod_id)) {
+            return ResponseEntity.status(410).body("Product with id " + prod_id + " not found.");
+        }
+
+        productService.deleteProduct(prod_id);
+        return ResponseEntity.status(200).body("Product with id " + prod_id + " deleted.");
+    }
+
+    @GetMapping("/{prod_id}")
+    public ResponseEntity<?> getProductById(@PathVariable("prod_id") Long prod_id) {
+        if (!productService.existsById(prod_id)) {
+            return ResponseEntity.status(410).body("Product with id " + prod_id + " not found.");
+        }
+        return ResponseEntity.status(200).body(productService.getProductById(prod_id));
+    }
+
+
+    @GetMapping("/list")
+    public ResponseEntity<?> getProductList(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                            @RequestParam(name = "category", required = false) Long category,
+                                            @RequestParam(name = "searchQuery", required = false) String searchQuery,
+                                            @RequestParam(name = "searchType", required = false) String searchType) {
+        if (page < 1) {
+            return ResponseEntity.status(413).body("Page number must be greater than 0.");
+        }
+
+        if (searchType.equals("seller")) {
+            Slice<Product> productList = productService.getProductList(page, category, searchQuery, searchType);
+            return ResponseEntity.status(200).body(productList);
+        }
+
+        Slice<Product> productList = productService.getProductList(page, category, searchQuery, searchType);
+
+        return ResponseEntity.status(200).body(productList);
     }
 }

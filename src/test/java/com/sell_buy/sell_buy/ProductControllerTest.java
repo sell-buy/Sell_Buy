@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -53,12 +53,83 @@ public class ProductControllerTest {
 
         when(productService.registerProduct(any(Product.class))).thenReturn(product);
 
-        mockMvc.perform(post("/prod/register")
+        mockMvc.perform(post("/prod")
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"prod_name\":\"Example Product\",\"prod_disc\":\"This is an example product.\",\"price\":100,\"category\":\"Example Category\",\"is_auction\":false,\"create_date\":\"2023-10-10T10:00:00\"}"))
+                .andExpect(status().isOk());
+
+
+    }
+
+    @Test
+    public void testUpdateProduct() throws Exception {
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("mem_id", 1L);
+
+        Product product = Product.builder()
+                .prod_id(1L)
+                .prod_name("Example Product")
+                .prod_disc("This is an example product.")
+                .price(100)
+                .category("Example Category")
+                .is_auction(false)
+                .create_date(LocalDateTime.now())
+                .build();
+
+        when(productService.existsById(1L)).thenReturn(true);
+        when(productService.updateProduct(any(Product.class))).thenReturn(product);
+
+        mockMvc.perform(patch("/prod/1")
                         .session(session)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"prod_name\":\"Example Product\",\"prod_disc\":\"This is an example product.\",\"price\":100,\"category\":\"Example Category\",\"is_auction\":false,\"create_date\":\"2023-10-10T10:00:00\"}"))
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void testDeleteProduct() throws Exception {
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("mem_id", 1L);
 
+        Product product = Product.builder()
+                .prod_id(1L)
+                .seller_id(1L)
+                .prod_name("Example Product")
+                .prod_disc("This is an example product.")
+                .price(100)
+                .category("Example Category")
+                .is_auction(false)
+                .create_date(LocalDateTime.now())
+                .build();
+
+        when(productService.existsById(1L)).thenReturn(true);
+        when(productService.getProductById(1L)).thenReturn(product);
+
+        mockMvc.perform(delete("/prod/1")
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"prod_name\":\"Example Product\",\"prod_disc\":\"This is an example product.\",\"price\":100,\"category\":\"Example Category\",\"is_auction\":false,\"create_date\":\"2023-10-10T10:00:00\"}"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetProductById() throws Exception {
+        Product product = Product.builder()
+                .prod_id(1L)
+                .seller_id(1L)
+                .prod_name("Example Product")
+                .prod_disc("This is an example product.")
+                .price(100)
+                .category("Example Category")
+                .is_auction(false)
+                .create_date(LocalDateTime.now())
+                .build();
+
+        when(productService.existsById(1L)).thenReturn(true);
+        when(productService.getProductById(1L)).thenReturn(product);
+
+        mockMvc.perform(get("/prod/1"))
+                .andExpect(status().isOk());
+    }
 }
