@@ -5,23 +5,26 @@ import com.sell_buy.sell_buy.db.entity.Product;
 import com.sell_buy.sell_buy.db.repository.MemberRepository;
 import com.sell_buy.sell_buy.db.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
 
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
 
-    @Autowired
+    // This constructor is not needed because of Lombok's @RequiredArgsConstructor
+    /*@Autowired
     public ProductServiceImpl(ProductRepository productRepository, MemberRepository memberRepository) {
         this.productRepository = productRepository;
         this.memberRepository = memberRepository;
-    }
+    } */
 
 
     @Override
@@ -31,11 +34,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product updateProduct(Product product) {
-        if (productRepository.existsById(product.getProd_id())) {
+        if (productRepository.existsById(product.getProdId())) {
             return productRepository.save(product);
 
         } else {
-            throw new EntityNotFoundException("Product with id " + product.getProd_id() + " not found.");
+            throw new EntityNotFoundException("Product with id " + product.getProdId() + " not found.");
         }
     }
 
@@ -56,32 +59,32 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Slice<Product> getProductList(int page, Long category, String searchQuery, String searchType) {
-        PageRequest pageable = PageRequest.of(page - 1, 18);
+        Pageable pageable = PageRequest.of(page - 1, 18);
 
 
         switch (searchType) {
             case "title+desc":
                 if (category == null) {
-                    return productRepository.findByProd_nameContainingOrProd_descContainingOrderByCreate_dateDesc(pageable, searchQuery, searchQuery);
+                    return productRepository.findByProdNameContainingOrProdDiscContainingOrderByCreateDateDesc(pageable, searchQuery, searchQuery);
                 }
 
-                return productRepository.findByCategory_IDAndProd_nameContainingOrProd_descContainingOrderByCreate_dateDesc(pageable, category, searchQuery, searchQuery);
+                return productRepository.findByCategoryAndProdNameContainingOrProdDiscContainingOrderByCreateDateDesc(pageable, category, searchQuery, searchQuery);
 
             case "seller":
                 Long sellerId = memberRepository.findByNickname(searchQuery).getMem_id();
                 if (category == null) {
-                    return productRepository.findBySeller_idByCreate_dateDesc(pageable, sellerId);
+                    return productRepository.findBySellerIdOrderByCreateDateDesc(pageable, sellerId);
                 }
-                return productRepository.findByCategory_IDAndSeller_idByCreate_dateDesc(pageable, category, sellerId);
+                return productRepository.findByCategoryAndSellerIdOrderByCreateDateDesc(pageable, category, sellerId);
 
             default:
-                // searchQuery and searchType is always null
+                // searchQuery and searchType is always null when searchType is not "title+desc" or "seller"
 
                 if (category == null) {
-                    return productRepository.findAllByOrderByCreate_dateDesc(pageable);
+                    return productRepository.findAllByOrderByCreateDateDesc(pageable);
                 }
 
-                return productRepository.findByCategory_IDByCreate_dateDesc(pageable, category);
+                return productRepository.findByCategoryOrderByCreateDateDesc(pageable, category);
         }
 
     }

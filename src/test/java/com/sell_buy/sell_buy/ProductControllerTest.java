@@ -43,12 +43,12 @@ public class ProductControllerTest {
         session.setAttribute("mem_id", 1L);
 
         Product product = Product.builder()
-                .prod_name("Example Product")
-                .prod_disc("This is an example product.")
+                .prodName("Example Product")
+                .prodDisc("This is an example product.")
                 .price(100)
-                .category("Example Category")
-                .is_auction(false)
-                .create_date(LocalDateTime.now())
+                .category(1L)
+                .isAuction(false)
+                .createDate(LocalDateTime.now())
                 .build();
 
         when(productService.registerProduct(any(Product.class))).thenReturn(product);
@@ -56,7 +56,7 @@ public class ProductControllerTest {
         mockMvc.perform(post("/prod")
                         .session(session)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"prod_name\":\"Example Product\",\"prod_disc\":\"This is an example product.\",\"price\":100,\"category\":\"Example Category\",\"is_auction\":false,\"create_date\":\"2023-10-10T10:00:00\"}"))
+                        .content("{\"prodName\":\"Example Product\",\"prodDisc\":\"This is an example product.\",\"price\":100,\"category\":1,\"isAuction\":false,\"createDate\":\"2023-10-10T10:00:00\"}"))
                 .andExpect(status().isOk());
 
 
@@ -68,13 +68,13 @@ public class ProductControllerTest {
         session.setAttribute("mem_id", 1L);
 
         Product product = Product.builder()
-                .prod_id(1L)
-                .prod_name("Example Product")
-                .prod_disc("This is an example product.")
+                .prodId(1L)
+                .prodName("Example Product")
+                .prodDisc("This is an example product.")
                 .price(100)
-                .category("Example Category")
-                .is_auction(false)
-                .create_date(LocalDateTime.now())
+                .category(1L)
+                .isAuction(false)
+                .createDate(LocalDateTime.now())
                 .build();
 
         when(productService.existsById(1L)).thenReturn(true);
@@ -83,7 +83,7 @@ public class ProductControllerTest {
         mockMvc.perform(patch("/prod/1")
                         .session(session)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"prod_name\":\"Example Product\",\"prod_disc\":\"This is an example product.\",\"price\":100,\"category\":\"Example Category\",\"is_auction\":false,\"create_date\":\"2023-10-10T10:00:00\"}"))
+                        .content("{\"prodName\":\"Example Product\",\"prodDisc\":\"This is an example product.\",\"price\":100,\"category\":1,\"isAuction\":false,\"createDate\":\"2023-10-10T10:00:00\"}"))
                 .andExpect(status().isOk());
     }
 
@@ -93,14 +93,14 @@ public class ProductControllerTest {
         session.setAttribute("mem_id", 1L);
 
         Product product = Product.builder()
-                .prod_id(1L)
-                .seller_id(1L)
-                .prod_name("Example Product")
-                .prod_disc("This is an example product.")
+                .prodId(1L)
+                .sellerId(1L)
+                .prodName("Example Product")
+                .prodDisc("This is an example product.")
                 .price(100)
-                .category("Example Category")
-                .is_auction(false)
-                .create_date(LocalDateTime.now())
+                .category(1L)
+                .isAuction(false)
+                .createDate(LocalDateTime.now())
                 .build();
 
         when(productService.existsById(1L)).thenReturn(true);
@@ -109,21 +109,21 @@ public class ProductControllerTest {
         mockMvc.perform(delete("/prod/1")
                         .session(session)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"prod_name\":\"Example Product\",\"prod_disc\":\"This is an example product.\",\"price\":100,\"category\":\"Example Category\",\"is_auction\":false,\"create_date\":\"2023-10-10T10:00:00\"}"))
+                        .content("{\"prodName\":\"Example Product\",\"prodDisc\":\"This is an example product.\",\"price\":100,\"category\":1,\"isAuction\":false,\"createDate\":\"2023-10-10T10:00:00\"}"))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void testGetProductById() throws Exception {
         Product product = Product.builder()
-                .prod_id(1L)
-                .seller_id(1L)
-                .prod_name("Example Product")
-                .prod_disc("This is an example product.")
+                .prodId(1L)
+                .sellerId(1L)
+                .prodName("Example Product")
+                .prodDisc("This is an example product.")
                 .price(100)
-                .category("Example Category")
-                .is_auction(false)
-                .create_date(LocalDateTime.now())
+                .category(1L)
+                .isAuction(false)
+                .createDate(LocalDateTime.now())
                 .build();
 
         when(productService.existsById(1L)).thenReturn(true);
@@ -131,5 +131,61 @@ public class ProductControllerTest {
 
         mockMvc.perform(get("/prod/1"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testDeleteProductNotFound() throws Exception {
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("mem_id", 1L);
+
+        when(productService.existsById(1L)).thenReturn(false);
+
+        mockMvc.perform(delete("/prod/1")
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"prodName\":\"Example Product\",\"prodDisc\":\"This is an example product.\",\"price\":100,\"category\":1,\"isAuction\":false,\"createDate\":\"2023-10-10T10:00:00\"}"))
+                .andExpect(status().is(410));
+    }
+
+    @Test
+    public void testUpdateProductNotFound() throws Exception {
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("mem_id", 1L);
+
+        Product product = Product.builder()
+                .prodId(1L)
+                .prodName("Example Product")
+                .prodDisc("This is an example product.")
+                .price(100)
+                .category(1L)
+                .isAuction(false)
+                .createDate(LocalDateTime.now())
+                .build();
+
+        when(productService.existsById(1L)).thenReturn(false);
+
+        mockMvc.perform(patch("/prod/1")
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"prodName\":\"Example Product\",\"prodDisc\":\"This is an example product.\",\"price\":100,\"category\":1,\"isAuction\":false,\"createDate\":\"2023-10-10T10:00:00\"}"))
+                .andExpect(status().is(410));
+    }
+
+    @Test
+    public void testRegisterProductNoSession() throws Exception {
+        mockMvc.perform(post("/prod")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"prodName\":\"Example Product\",\"prodDisc\":\"This is an example product.\",\"price\":100,\"category\":1,\"isAuction\":false,\"createDate\":\"2023-10-10T10:00:00\"}"))
+                .andExpect(status().is(411));
+    }
+
+    @Test
+    public void testDeleteProductNoSession() throws Exception {
+        when(productService.existsById(1L)).thenReturn(true);
+
+        mockMvc.perform(delete("/prod/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"prodName\":\"Example Product\",\"prodDisc\":\"This is an example product.\",\"price\":100,\"category\":1,\"isAuction\":false,\"createDate\":\"2023-10-10T10:00:00\"}"))
+                .andExpect(status().is(411));
     }
 }
