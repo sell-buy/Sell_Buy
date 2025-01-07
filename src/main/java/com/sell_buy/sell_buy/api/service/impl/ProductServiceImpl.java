@@ -6,10 +6,13 @@ import com.sell_buy.sell_buy.db.repository.MemberRepository;
 import com.sell_buy.sell_buy.db.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -87,6 +90,13 @@ public class ProductServiceImpl implements ProductService {
                 return productRepository.findByCategoryOrderByCreateDateDesc(pageable, category);
         }
 
+
+    }
+
+    public Page<Product> favoriteProductList(List<Long> prodIdList, int page) {
+        Pageable pageable = PageRequest.of(page - 1, 18);
+
+        return productRepository.findByProdIdInOrderByCreateDateDesc(pageable, prodIdList);
     }
 
 }
