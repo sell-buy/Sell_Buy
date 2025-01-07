@@ -37,7 +37,7 @@
         @Test
         public void orderControllerTRegister() throws Exception {
             MockHttpSession session = new MockHttpSession();
-            session.setAttribute("orderId",1L);
+            session.setAttribute("memId",1L);
             Order order = Order.builder()
                     .orderId(1L)
                     .transferId(1L)
@@ -59,7 +59,9 @@
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("{\"transferId\":1,\"prodId\":1,\"sellerId\":3,\"buyerId\":2,\"receiverName\":\"test\"," +
                                     "\"receiverAddress\":\"testaddress\",\"receiverPhone\":\"01011111111\",\"orderStatus\":\"배송준비\"," +
-                                    "\"createdDate\":\"2023-10-10T10:00:00\",\"deliveredDate\":\"2023-10-15T10:00:00\"}"))
+                                    "\"createdDate\":\"2023-10-10T10:00:00\"," +
+                                    "\"deliveredDate\":\"2023-10-15T10:00:00\" ," +
+                                    "\"orderId\":1}"))
                     .andExpect(status().isOk())
                     .andExpect(content().string("1")); // orderId가 반환될 것으로 예상
         }

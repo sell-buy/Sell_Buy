@@ -36,4 +36,9 @@ public class OrderServiceimpl  implements OrderService {
         return orderRepository.save(order);
     }
 
+    @Override
+    public void deleteOrder(long order_id) {
+        orderRepository.deleteById(order_id);
+    }
+
 }
