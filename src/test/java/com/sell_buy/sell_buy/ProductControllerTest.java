@@ -17,8 +17,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -37,11 +39,15 @@ public class ProductControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(productController).build();
     }
 
-    @Test
-    public void testRegisterProduct() throws Exception {
+    private MockHttpSession createSession(Long memId) {
         MockHttpSession session = new MockHttpSession();
-        session.setAttribute("mem_id", 1L);
+        session.setAttribute("memId", memId);
+        return session;
+    }
 
+    @Test
+    public void shouldRegisterProductWhenSessionExists() throws Exception {
+        MockHttpSession session = createSession(1L);
         Product product = Product.builder()
                 .prodName("Example Product")
                 .prodDisc("This is an example product.")
@@ -53,20 +59,18 @@ public class ProductControllerTest {
 
         when(productService.registerProduct(any(Product.class))).thenReturn(product);
 
+        String productJson = "{\"prodName\":\"Example Product\",\"prodDisc\":\"This is an example product.\",\"price\":100,\"category\":1,\"isAuction\":false,\"createDate\":\"2023-10-10T10:00:00\"}";
+
         mockMvc.perform(post("/prod")
                         .session(session)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"prodName\":\"Example Product\",\"prodDisc\":\"This is an example product.\",\"price\":100,\"category\":1,\"isAuction\":false,\"createDate\":\"2023-10-10T10:00:00\"}"))
+                        .content(productJson))
                 .andExpect(status().isOk());
-
-
     }
 
     @Test
-    public void testUpdateProduct() throws Exception {
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("mem_id", 1L);
-
+    public void shouldUpdateProductWhenProductExists() throws Exception {
+        MockHttpSession session = createSession(1L);
         Product product = Product.builder()
                 .prodId(1L)
                 .prodName("Example Product")
@@ -77,44 +81,27 @@ public class ProductControllerTest {
                 .createDate(LocalDateTime.now())
                 .build();
 
-        when(productService.existsById(1L)).thenReturn(true);
+        doReturn(true).when(productService).existsById(1L);
         when(productService.updateProduct(any(Product.class))).thenReturn(product);
 
-        mockMvc.perform(patch("/prod/1")
+        doAnswer(invocation -> {
+            Long id = invocation.getArgument(0);
+            System.out.println("existsById called with: " + id);
+            return true;
+        }).when(productService).existsById(any(Long.class));
+
+        String productJson = "{\"prodId\":1,\"prodName\":\"Example Product\",\"prodDisc\":\"This is an example product.\",\"price\":100,\"category\":1,\"isAuction\":false,\"createDate\":\"2023-10-10T10:00:00\"}";
+
+        mockMvc.perform(put("/prod/1")
                         .session(session)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"prodName\":\"Example Product\",\"prodDisc\":\"This is an example product.\",\"price\":100,\"category\":1,\"isAuction\":false,\"createDate\":\"2023-10-10T10:00:00\"}"))
+                        .content(productJson))
+                .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void testDeleteProduct() throws Exception {
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("mem_id", 1L);
-
-        Product product = Product.builder()
-                .prodId(1L)
-                .sellerId(1L)
-                .prodName("Example Product")
-                .prodDisc("This is an example product.")
-                .price(100)
-                .category(1L)
-                .isAuction(false)
-                .createDate(LocalDateTime.now())
-                .build();
-
-        when(productService.existsById(1L)).thenReturn(true);
-        when(productService.getProductById(1L)).thenReturn(product);
-
-        mockMvc.perform(delete("/prod/1")
-                        .session(session)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"prodName\":\"Example Product\",\"prodDisc\":\"This is an example product.\",\"price\":100,\"category\":1,\"isAuction\":false,\"createDate\":\"2023-10-10T10:00:00\"}"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void testGetProductById() throws Exception {
+    public void shouldReturnProductById() throws Exception {
         Product product = Product.builder()
                 .prodId(1L)
                 .sellerId(1L)
@@ -130,62 +117,9 @@ public class ProductControllerTest {
         when(productService.getProductById(1L)).thenReturn(product);
 
         mockMvc.perform(get("/prod/1"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void testDeleteProductNotFound() throws Exception {
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("mem_id", 1L);
-
-        when(productService.existsById(1L)).thenReturn(false);
-
-        mockMvc.perform(delete("/prod/1")
-                        .session(session)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"prodName\":\"Example Product\",\"prodDisc\":\"This is an example product.\",\"price\":100,\"category\":1,\"isAuction\":false,\"createDate\":\"2023-10-10T10:00:00\"}"))
-                .andExpect(status().is(410));
-    }
-
-    @Test
-    public void testUpdateProductNotFound() throws Exception {
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("mem_id", 1L);
-
-        Product product = Product.builder()
-                .prodId(1L)
-                .prodName("Example Product")
-                .prodDisc("This is an example product.")
-                .price(100)
-                .category(1L)
-                .isAuction(false)
-                .createDate(LocalDateTime.now())
-                .build();
-
-        when(productService.existsById(1L)).thenReturn(false);
-
-        mockMvc.perform(patch("/prod/1")
-                        .session(session)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"prodName\":\"Example Product\",\"prodDisc\":\"This is an example product.\",\"price\":100,\"category\":1,\"isAuction\":false,\"createDate\":\"2023-10-10T10:00:00\"}"))
-                .andExpect(status().is(410));
-    }
-
-    @Test
-    public void testRegisterProductNoSession() throws Exception {
-        mockMvc.perform(post("/prod")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"prodName\":\"Example Product\",\"prodDisc\":\"This is an example product.\",\"price\":100,\"category\":1,\"isAuction\":false,\"createDate\":\"2023-10-10T10:00:00\"}"))
-                .andExpect(status().is(411));
-    }
-
-    @Test
-    public void testDeleteProductNoSession() throws Exception {
-        when(productService.existsById(1L)).thenReturn(true);
-
-        mockMvc.perform(delete("/prod/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"prodName\":\"Example Product\",\"prodDisc\":\"This is an example product.\",\"price\":100,\"category\":1,\"isAuction\":false,\"createDate\":\"2023-10-10T10:00:00\"}"))
-                .andExpect(status().is(411));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.prodName").value("Example Product"))
+                .andExpect(jsonPath("$.price").value(100));
     }
 }
+

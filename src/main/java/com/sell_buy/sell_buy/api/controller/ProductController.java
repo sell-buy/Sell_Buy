@@ -23,30 +23,39 @@ public class ProductController {
 
     @PostMapping()
     public ResponseEntity<?> registerProduct(@RequestBody Product product, HttpSession session) {
-        Long sellerId = (Long) session.getAttribute("mem_id");
+        Long sellerId = (Long) session.getAttribute("memId");
         if (sellerId == null) {
             return ResponseEntity.status(411).body("User ID is not present in the session.");
         }
         product.setSellerId(sellerId);
         productService.registerProduct(product);
+        System.out.println(product.getProdId());
         return ResponseEntity.status(200).body(product.getProdId());
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<?> updateProduct(@RequestBody Product product, HttpSession session, @PathVariable("id") Long prod_id) {
-        Long sellerId = (Long) session.getAttribute("mem_id");
-        if (sellerId == null) {
-            return ResponseEntity.status(411).body("User ID is not present in the session.");
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProduct(@RequestBody Product product, HttpSession session, @PathVariable("id") Long prodId) {
+        System.out.println("updateProduct called with prodId: " + prodId);
+
+        Long sellerId = (Long) session.getAttribute("memId");
+        System.out.println("Session sellerId: " + sellerId);
+
+        if (!productService.existsById(prodId)) {
+            System.out.println("Product with id " + prodId + " not found.");
+            return ResponseEntity.status(410).body("Product with id " + prodId + " not found.");
         }
-        if (!productService.existsById(prod_id)) {
-            return ResponseEntity.status(410).body("Product with id " + prod_id + " not found.");
+
+        if (sellerId == null) {
+            System.out.println("User ID is not present in the session.");
+            return ResponseEntity.status(411).body("User ID is not present in the session.");
         }
 
         product.setSellerId(sellerId);
-        product.setProdId(prod_id);
-        Product updatedProduct = productService.updateProduct(product);
+        product.setProdId(prodId);
 
+        productService.updateProduct(product);
 
+        System.out.println("Product updated successfully: " + product);
         return ResponseEntity.status(200).body(product.getProdId());
     }
 
@@ -55,10 +64,11 @@ public class ProductController {
         if (session == null) {
             return ResponseEntity.status(411).body("Session is not present.");
         }
-        Long sellerId = (Long) session.getAttribute("mem_id");
+        Long sellerId = (Long) session.getAttribute("memId");
         if (sellerId == null) {
             return ResponseEntity.status(411).body("User ID is not present in the session.");
         }
+
         if (!productService.existsById(prodId)) {
             return ResponseEntity.status(410).body("Product with id " + prodId + " not found.");
         }
