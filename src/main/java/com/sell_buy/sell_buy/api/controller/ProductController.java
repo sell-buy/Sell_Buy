@@ -4,7 +4,6 @@ import com.sell_buy.sell_buy.api.service.ProductService;
 import com.sell_buy.sell_buy.db.entity.Product;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -15,8 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ProductController {
 
-    @Autowired
-    ProductService productService;
+    private final ProductService productService;
 
     @GetMapping("/register")
     public String registerProduct() {
@@ -25,52 +23,55 @@ public class ProductController {
 
     @PostMapping()
     public ResponseEntity<?> registerProduct(@RequestBody Product product, HttpSession session) {
-        Long seller_id = (Long) session.getAttribute("mem_id");
-        if (seller_id == null) {
+        Long sellerId = (Long) session.getAttribute("mem_id");
+        if (sellerId == null) {
             return ResponseEntity.status(411).body("User ID is not present in the session.");
         }
-        product.setSeller_id(seller_id);
-        Product registeredProduct = productService.registerProduct(product);
-        return ResponseEntity.status(200).body(product.getProd_id());
+        product.setSellerId(sellerId);
+        productService.registerProduct(product);
+        return ResponseEntity.status(200).body(product.getProdId());
     }
 
-    @PatchMapping("/{prod_id}")
-    public ResponseEntity<?> updateProduct(@RequestBody Product product, HttpSession session, @PathVariable("prod_id") Long prod_id) {
-        Long seller_id = (Long) session.getAttribute("mem_id");
-        if (seller_id == null) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateProduct(@RequestBody Product product, HttpSession session, @PathVariable("id") Long prod_id) {
+        Long sellerId = (Long) session.getAttribute("mem_id");
+        if (sellerId == null) {
             return ResponseEntity.status(411).body("User ID is not present in the session.");
         }
         if (!productService.existsById(prod_id)) {
             return ResponseEntity.status(410).body("Product with id " + prod_id + " not found.");
         }
 
-        product.setSeller_id(seller_id);
-        product.setProd_id(prod_id);
+        product.setSellerId(sellerId);
+        product.setProdId(prod_id);
         Product updatedProduct = productService.updateProduct(product);
 
 
-        return ResponseEntity.status(200).body(product.getProd_id());
+        return ResponseEntity.status(200).body(product.getProdId());
     }
 
-    @DeleteMapping("/{prod_id}")
-    public ResponseEntity<?> deleteProduct(HttpSession session, @PathVariable("prod_id") Long prod_id) {
-        Long seller_id = (Long) session.getAttribute("mem_id");
-        if (seller_id == null) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProduct(HttpSession session, @PathVariable("id") Long prodId) {
+        if (session == null) {
+            return ResponseEntity.status(411).body("Session is not present.");
+        }
+        Long sellerId = (Long) session.getAttribute("mem_id");
+        if (sellerId == null) {
             return ResponseEntity.status(411).body("User ID is not present in the session.");
         }
-        if (seller_id != productService.getProductById(prod_id).getSeller_id()) {
+        if (!productService.existsById(prodId)) {
+            return ResponseEntity.status(410).body("Product with id " + prodId + " not found.");
+        }
+        if (sellerId != productService.getProductById(prodId).getSellerId()) {
             return ResponseEntity.status(412).body("User ID does not match the seller ID of the product.");
         }
-        if (!productService.existsById(prod_id)) {
-            return ResponseEntity.status(410).body("Product with id " + prod_id + " not found.");
-        }
 
-        productService.deleteProduct(prod_id);
-        return ResponseEntity.status(200).body("Product with id " + prod_id + " deleted.");
+        productService.deleteProduct(prodId);
+        return ResponseEntity.status(200).body("Product with id " + prodId + " deleted.");
     }
 
-    @GetMapping("/{prod_id}")
-    public ResponseEntity<?> getProductById(@PathVariable("prod_id") Long prod_id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getProductById(@PathVariable("id") Long prod_id) {
         if (!productService.existsById(prod_id)) {
             return ResponseEntity.status(410).body("Product with id " + prod_id + " not found.");
         }
@@ -87,6 +88,7 @@ public class ProductController {
             return ResponseEntity.status(413).body("Page number must be greater than 0.");
         }
 
+
         if (searchType.equals("seller")) {
             Slice<Product> productList = productService.getProductList(page, category, searchQuery, searchType);
             return ResponseEntity.status(200).body(productList);
@@ -96,4 +98,6 @@ public class ProductController {
 
         return ResponseEntity.status(200).body(productList);
     }
+
+
 }
