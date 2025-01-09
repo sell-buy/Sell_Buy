@@ -13,37 +13,29 @@
     <script async src="<c:url value="/webjars/jquery/3.7.1/dist/jquery.js"/>"></script>
     <link rel="stylesheet" href="<c:url value='/style/common.css'/>">
     <link rel="stylesheet" href="<c:url value='/style/prodRegister.css'/>">
+    <link rel="stylesheet" href="<c:url value='/style/darkBackground.css'/>">
 </head>
 <body>
 <div id="wrap">
     <%@include file="include/header.jsp" %>
     <div class="main-container">
-        <%@include file="include/category.jsp" %>
-        <div class="content">
-            <form id="prodRegForm">
-                <div class="form-group">
-                    <label for="name">상품명</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="price">가격</label>
-                    <input type="number" id="price" name="price" required>
-                </div>
-                <div class="form-group">
-                    <label for="description">상품 설명</label>
-                    <textarea id="description" name="description" required></textarea>
-                </div>
-                <%--<div class="form-group">
-                    <label for="category">카테고리</label>
-                    <input type="text" id="category" name="category" required>
-                </div>--%>
-                <%--<div class="form-group">
-                    <label for="image">상품 이미지</label>
-                    <input type="file" id="image" name="image" required>
-                </div>--%>
-                <button type="submit">등록</button>
-            </form>
-        </div>
+        <h1>중고 상품 등록</h1>
+        <form id="product-form">
+            <label for="productName">상품 이름:</label>
+            <input type="text" id="productName" name="productName" required> <label
+                for="productDescription">상품 설명:</label>
+            <textarea id="productDescription" name="productDescription" rows="4" required></textarea>
+            <label for="productCategory">카테고리:</label>
+            <select id="productCategory" name="productCategory">
+                <option value="fashion">패션의류</option>
+                <option value="electronics">가전제품</option>
+                <option value="furniture">가구/인테리어</option>
+                <!-- 추가 카테고리 --> </select>
+            <label for="productPrice">가격:</label>
+            <input type="number" id="productPrice" name="productPrice" required> <label for="productImage">상품
+            이미지:</label> <input type="file" id="productImage" name="productImage" accept="image/*" required>
+            <button type="submit">등록</button>
+        </form>
     </div>
 
     <%@include file="include/footer.jsp" %>
