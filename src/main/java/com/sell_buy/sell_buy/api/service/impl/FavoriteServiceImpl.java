@@ -45,17 +45,18 @@ public class FavoriteServiceImpl implements FavoriteService {
         return favRepo.existsByMemIdAndProdIdAndIsActivated(memId, prodId, true);
     }
 
-    @Override
-    public Page<Product> getFavoriteProductList(Long memId, int page) {
-        Pageable pageable = PageRequest.of(page - 1, 18);
-
-        List<Long> prodIdList = favRepo.findProdIdListByMemId(memId);
-
-        return productRepository.findByProdIdInOrderByCreateDateDesc(pageable, prodIdList);
-    }
 
     @Override
     public boolean wasFavorite(Long memId, Long prodId) {
         return favRepo.findByMemIdAndProdId(memId, prodId);
+    }
+
+    @Override
+    public Page<Product> getFavoriteProductList(Long memId, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        List<Long> prodIdList = favRepo.findProdIdListByMemId(memId);
+
+        return productRepository.findByProdIdInOrderByCreateDateDesc(pageable, prodIdList);
     }
 }

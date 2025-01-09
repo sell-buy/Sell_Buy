@@ -13,7 +13,7 @@ public interface FavoriteService {
 
     boolean isFavorite(Long memId, Long prodId);
 
-    Page<Product> getFavoriteProductList(Long memId, int page);
+    Page<Product> getFavoriteProductList(Long memId, int page, int size);
 
     boolean wasFavorite(Long memId, Long prodId);
 }
