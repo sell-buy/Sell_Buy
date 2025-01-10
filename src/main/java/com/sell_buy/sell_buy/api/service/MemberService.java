@@ -6,11 +6,12 @@ import java.util.List;
 
 public interface MemberService {
 
-    void createUser();
 
-    void updateUser();
+    Member registerMember(Member member);
 
-    void deleteUser();
+    Member updateMember();
+
+    Member deleteMember();
 
     Member getMemberByMemId(Long userId);
 

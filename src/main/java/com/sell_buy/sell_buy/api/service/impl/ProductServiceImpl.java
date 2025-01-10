@@ -74,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
                 return productRepository.findByCategoryAndProdNameContainingOrProdDiscContainingOrderByCreateDateDesc(pageable, category, searchQuery, searchQuery);
 
             case "seller":
-                Long sellerId = memberRepository.findByNickname(searchQuery).getMem_id();
+                Long sellerId = memberRepository.findByNickname(searchQuery).getMemId();
                 if (category == null) {
                     return productRepository.findBySellerIdOrderByCreateDateDesc(pageable, sellerId);
                 }
