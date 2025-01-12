@@ -16,17 +16,33 @@ public class OrderController {
     OrderService orderService;
 
     @GetMapping("/register")
-    public String registerOrder() {return "orderRegister";}
+    public String registerOrder() {
+        return "orderRegister";
+    }
 
     @PostMapping("/register")
     public ResponseEntity<?> orderRegister(@RequestBody Order order, HttpSession session) {
         Long orderId = (Long) session.getAttribute("orderId");
-        if (order == null) {
-            return ResponseEntity.status(401
-            ).body("OrderID IS NOT PRESENT IN THE SESSION");
+        if (orderId == null) {
+            return ResponseEntity.status(401).body("OrderID IS NOT PRESENT IN THE SESSION");
         }
         order.setOrderId(orderId);
         Order ordered = orderService.registerOrder(order);
         return ResponseEntity.status(200).body(order.getOrderId());
+    }
+
+    @PutMapping("/{orderid}/update")
+    public ResponseEntity<?> updateOrder(@RequestBody Order order, HttpSession session) {
+//        Order ordered =  orderService.checkOrderId();
+        Long orderId = (Long) session.getAttribute("orderId");
+        if (orderId == null) {
+            return ResponseEntity.status(401
+            ).body("OrderID IS NOT PRESENT IN THE SESSION");
+        } else if (order.getOrderId() != orderId) {
+            return ResponseEntity.status(402).body("OrderID IS NOT correct");
+        } else {
+            order.setOrderId(orderId);
+            return ResponseEntity.status(200).body(orderId);
+        }
     }
 }

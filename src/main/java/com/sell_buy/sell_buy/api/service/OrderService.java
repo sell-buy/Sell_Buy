@@ -8,4 +8,7 @@ public interface OrderService {
     void getOrderId(long order_id);
     void setOrderId(long order_id);
     Order registerOrder(Order order);
+    Order changeOrderStatus(Order order);
+    boolean checkOrderId(boolean order_id);
+    Order cancelOrder(long order_id);
 }
