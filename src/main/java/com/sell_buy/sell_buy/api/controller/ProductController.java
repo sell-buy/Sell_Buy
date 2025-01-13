@@ -98,7 +98,6 @@ public class ProductController {
             return ResponseEntity.status(413).body("Page number must be greater than 0.");
         }
 
-
         if (searchType.equals("seller")) {
             Slice<Product> productList = productService.getProductList(page, category, searchQuery, searchType);
             return ResponseEntity.status(200).body(productList);

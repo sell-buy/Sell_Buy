@@ -7,7 +7,9 @@ import com.sell_buy.sell_buy.common.validation.StringValidation;
 import com.sell_buy.sell_buy.common.validation.Validator;
 import com.sell_buy.sell_buy.db.dao.mapper.MemberMapper;
 import com.sell_buy.sell_buy.db.entity.Member;
+import com.sell_buy.sell_buy.db.entity.Point;
 import com.sell_buy.sell_buy.db.repository.MemberRepository;
+import com.sell_buy.sell_buy.db.repository.PointRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberMapper memberMapper;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PointRepository pointRepository;
 
     @Override
     public Long registerMember(Member member) throws Exception {
@@ -29,7 +32,14 @@ public class MemberServiceImpl implements MemberService {
         if (!validator.isValid()) {
             throw new Exception("Invalid input");
         }
+        if (memberRepository.findByLoginId(member.getLoginId()) != null) {
+            throw new Exception("Login ID already exists");
+        }
         member.setPassword(passwordEncoder.encode(member.getPassword()));
+
+        Point point = Point.builder().memId(member.getMemId()).balance(0).build();
+        pointRepository.save(point);
+
         return memberRepository.save(member).getMemId();
     }
 
