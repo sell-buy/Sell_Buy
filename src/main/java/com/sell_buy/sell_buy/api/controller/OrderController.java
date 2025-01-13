@@ -23,20 +23,33 @@ public class OrderController {
     @PostMapping("/register")
     public ResponseEntity<?> orderRegister(@RequestBody Order order, HttpSession session) {
         Long sellerId = (Long) session.getAttribute("memId");
+//        아이디값 없을떄
         if (sellerId == null) {
             return ResponseEntity.status(401
             ).body("OrderID IS NOT PRESENT IN THE SESSION");
         }
         order.setSellerId(sellerId);
-        Order ordered = orderService.registerOrder(order);
+        orderService.registerOrder(order);
         return ResponseEntity.status(200).body(order.getOrderId());
     }
-    @DeleteMapping("/orderId}")
+
+    @DeleteMapping("/{orderId}/delete")
     public ResponseEntity<?> deleteOrder(@PathVariable Long orderId,HttpSession session) {
         Long sellerId = (Long) session.getAttribute("memId");
-        if (sellerId == null) {
+//        판매자아이디가 없을시
+        if (sellerId == null) {return ResponseEntity.status(401).body("UserID IS NOT PRESENT IN THE SESSION");}
+//        오더번호가 존재하지않을 때
+        if(orderService.hasExistOrder(orderId)){ return ResponseEntity.status(400).body("OrderId IS NOT EXIST"); }
+        else{
+            orderService.deleteOrder(orderId);
             return ResponseEntity.status(200).body("deleteOrder Success");
         }
-        return ResponseEntity.status(200).body("deleteOrder Success");
+    }
+
+//    배송상태 업데이트
+    @PutMapping("/{orderId}/put")
+    public ResponseEntity<?> putOrder(@PathVariable Long orderId,@RequestBody Order order,HttpSession session) {
+        Long sellerId = (Long) session.getAttribute("memId");
+        return  null;
     }
 }

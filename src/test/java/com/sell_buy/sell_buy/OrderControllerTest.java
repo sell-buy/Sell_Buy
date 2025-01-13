@@ -53,7 +53,6 @@
                     .build();
 
             when(orderService.registerOrder(any(Order.class))).thenReturn(order);
-
             mockMvc.perform(post("/order/register")
                             .session(session)
                             .contentType(MediaType.APPLICATION_JSON)
