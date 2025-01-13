@@ -1,10 +1,15 @@
 package com.sell_buy.sell_buy.api.service.impl;
 
 import com.sell_buy.sell_buy.api.service.MemberService;
+import com.sell_buy.sell_buy.common.validation.IdValidation;
+import com.sell_buy.sell_buy.common.validation.PasswordValidation;
+import com.sell_buy.sell_buy.common.validation.StringValidation;
+import com.sell_buy.sell_buy.common.validation.Validator;
 import com.sell_buy.sell_buy.db.dao.mapper.MemberMapper;
 import com.sell_buy.sell_buy.db.entity.Member;
 import com.sell_buy.sell_buy.db.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,16 +18,42 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
-
     private final MemberMapper memberMapper;
     private final MemberRepository memberRepository;
-
+    private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Member registerMember(Member member) {
+    public Long registerMember(Member member) throws Exception {
+        Validator<StringValidation> validator = new Validator<>(new IdValidation(member.getLoginId()),
+                new PasswordValidation(member.getPassword()));
+        if (!validator.isValid()) {
+            throw new Exception("Invalid input");
+        }
+        member.setPassword(passwordEncoder.encode(member.getPassword()));
+        return memberRepository.save(member).getMemId();
+    }
 
+    public Long login(Member member) throws Exception {
+        String loginId = member.getLoginId();
+        String password = member.getPassword();
+        return login(loginId, password);
+    }
 
-        return memberRepository.save(member);
+    private Long login(String loginId, String password) throws Exception {
+        Member member = memberRepository.findByLoginId(loginId);
+        try {
+            Validator<StringValidation> validator = new Validator<>(new IdValidation(loginId), new PasswordValidation(password));
+            if (!validator.isValid()) {
+                throw new Exception("Invalid input");
+            }
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+        if (passwordEncoder.encode(password).equals(member.getPassword())) {
+            return member.getMemId();
+        }
+
+        throw new Exception("Login failed");
     }
 
     @Override

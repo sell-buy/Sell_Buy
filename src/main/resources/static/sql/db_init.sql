@@ -629,7 +629,7 @@ ALTER TABLE member
 ALTER TABLE product
     ADD CONSTRAINT chk_is_avaliable CHECK (is_avaliable IN (0, 1));
 ALTER TABLE member
-    ADD CONSTRAINT chk_auth CHECK (auth IN (0, 1));
+    ADD CONSTRAINT chk_auth CHECK (role IN (0, 1));
 ALTER TABLE notification
     ADD CONSTRAINT chk_is_read CHECK (is_read IN (0, 1));
 ALTER TABLE MSG
@@ -663,7 +663,7 @@ ALTER TABLE member
 ALTER TABLE member
     MODIFY img_id DEFAULT NULL;
 ALTER TABLE member
-    MODIFY auth DEFAULT 0;
+    MODIFY role DEFAULT 0;
 
 -- user 테이블에 시퀀스를 디폴트값으로 설정
 ALTER TABLE member

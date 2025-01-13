@@ -7,7 +7,9 @@ import java.util.List;
 public interface MemberService {
 
 
-    Member registerMember(Member member);
+    Long registerMember(Member member) throws Exception;
+
+    Long login(Member member) throws Exception;
 
     Member updateMember();
 

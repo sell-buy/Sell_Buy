@@ -31,10 +31,12 @@
     <div class="header-logo">
         <a href="/">Sell&Buy</a>
     </div>
-    <div class="header-search">
-        <input type="text" placeholder="상품 검색"/>
-        <button type="button">🔍</button>
-    </div>
 </header>
+<div class="search-bar">
+    <label>
+        <input type="text" placeholder="상품 검색"/>
+    </label>
+    <button type="button">🔍</button>
+</div>
 </body>
 </html>
