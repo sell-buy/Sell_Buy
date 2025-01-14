@@ -10,21 +10,26 @@
 <html>
 <script src="<c:url value="/webjars/jquery/3.7.1/dist/jquery.js"/>"></script>
 <link rel="stylesheet" href="<c:url value="/style/common.css"/>">
-<link rel="stylesheet" href="<c:url value="/style/login.css"/>">
+<link rel="stylesheet" href="<c:url value="/style/modal.css"/>">
 <script src="<c:url value="/script/modal.js"/>"></script>
 <title></title>
 <div class="modal">
     <div class="modal_body">
         <h1>Sell&Buy</h1>
-        <form method="post" action="" id="login">
+        <div id="login-failure">Invalid id or password.</div>
+        <form method="post" id="login">
             <label>
                 <input type="text" name="id" placeholder="아이디">
             </label>
             <label>
                 <input type="password" name="password" placeholder="비밀번호">
             </label>
-            <a href="#" id="href-open-register">아직 회원이 아니신가요?</a>
-            <button type="submit">로그인</button>
+            <div class="submit-contain">
+                <label class="is-membership">
+                    <a href="#" id="href-open-register">아직 회원이 아니신가요?</a>
+                </label>
+                <button type="submit" class="modal-submit">로그인</button>
+            </div>
         </form>
     </div>
 </div>

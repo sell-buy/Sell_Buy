@@ -49,6 +49,7 @@ public class MemberController {
         try {
             memId = memberService.login(member);
             session.setAttribute("memId", memId);
+            session.setMaxInactiveInterval(3600);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

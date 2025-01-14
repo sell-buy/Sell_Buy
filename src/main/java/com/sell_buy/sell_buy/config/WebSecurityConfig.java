@@ -1,5 +1,6 @@
 package com.sell_buy.sell_buy.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,8 +27,12 @@ public class WebSecurityConfig {
                         .anyRequest().permitAll())
                 .formLogin((formLogin) -> formLogin
                         .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
-                        .failureUrl("/login?error=true"));
+                        .successHandler((request, response, authentication) ->
+                                response.setStatus(HttpServletResponse.SC_OK))
+                        .failureHandler((request, response, exception) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        })
+                );
 
         return http.build();
     }

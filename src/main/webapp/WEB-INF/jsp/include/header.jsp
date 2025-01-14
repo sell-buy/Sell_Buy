@@ -27,7 +27,7 @@
                 <li><a href="/notifications">알림</a></li>
                 <li><a href="/customer-center">고객센터</a></li>
                 <li><a href="/my-page">내 정보</a></li>
-                <li><a href="#" id="href-open-login">로그인</a></li>
+                <li><a href="#" id="href-open-login-header">로그인</a></li>
             </ul>
         </nav>
     </div>
