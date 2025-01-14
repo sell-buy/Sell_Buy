@@ -4,16 +4,20 @@ import com.sell_buy.sell_buy.api.service.OrderService;
 import com.sell_buy.sell_buy.db.entity.Order;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("/order")
 @RequiredArgsConstructor
 public class OrderController {
-    @Autowired
     OrderService orderService;
+
+//    @GetMapping("/")
+//    public void updateState() {
+//        orderService.updateOrderStatus();
+//    }
 
     @GetMapping("/register")
     public String registerOrder() {
@@ -22,27 +26,37 @@ public class OrderController {
 
     @PostMapping("/register")
     public ResponseEntity<?> orderRegister(@RequestBody Order order, HttpSession session) {
-        Long orderId = (Long) session.getAttribute("orderId");
-        if (orderId == null) {
-            return ResponseEntity.status(401).body("OrderID IS NOT PRESENT IN THE SESSION");
+        Long sellerId = (Long) session.getAttribute("memId");
+//        아이디값 없을떄
+        if (sellerId == null) {
+            return ResponseEntity.status(401
+            ).body("OrderID IS NOT PRESENT IN THE SESSION");
         }
-        order.setOrderId(orderId);
-        Order ordered = orderService.registerOrder(order);
+        order.setSellerId(sellerId);
+        orderService.registerOrder(order);
         return ResponseEntity.status(200).body(order.getOrderId());
     }
 
-    @PutMapping("/{orderid}/update")
-    public ResponseEntity<?> updateOrder(@RequestBody Order order, HttpSession session) {
-//        Order ordered =  orderService.checkOrderId();
-        Long orderId = (Long) session.getAttribute("orderId");
-        if (orderId == null) {
-            return ResponseEntity.status(401
-            ).body("OrderID IS NOT PRESENT IN THE SESSION");
-        } else if (order.getOrderId() != orderId) {
-            return ResponseEntity.status(402).body("OrderID IS NOT correct");
-        } else {
-            order.setOrderId(orderId);
-            return ResponseEntity.status(200).body(orderId);
+    @DeleteMapping("/{orderId}/delete")
+    public ResponseEntity<?> deleteOrder(@PathVariable Long orderId, HttpSession session) {
+        Long sellerId = (Long) session.getAttribute("memId");
+//        판매자아이디가 없을시
+        if (sellerId == null) {
+            return ResponseEntity.status(401).body("UserID IS NOT PRESENT IN THE SESSION");
         }
+//        오더번호가 존재하지않을 때
+        if (orderService.hasExistOrder(orderId)) {
+            return ResponseEntity.status(400).body("OrderId IS NOT EXIST");
+        } else {
+            orderService.deleteOrder(orderId);
+            return ResponseEntity.status(200).body("deleteOrder Success");
+        }
+    }
+
+    //    배송상태 업데이트
+    @PutMapping("/{orderId}/put")
+    public ResponseEntity<?> putOrder(@PathVariable Long orderId, @RequestBody Order order, HttpSession session) {
+        Long sellerId = (Long) session.getAttribute("memId");
+        return null;
     }
 }

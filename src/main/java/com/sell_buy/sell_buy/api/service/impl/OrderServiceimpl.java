@@ -21,7 +21,6 @@ public class OrderServiceimpl implements OrderService {
     private final OrderRepository orderRepository;
     private final DeliveryRepository deliveryRepository;
     private Order order;
-    private Delivery delivery;
 
     public OrderServiceimpl(OrderRepository orderRepository, DeliveryRepository deliveryRepository) {
         this.orderRepository = orderRepository;
@@ -68,14 +67,16 @@ public class OrderServiceimpl implements OrderService {
         return List.of();
     }
 
+
     @Scheduled(fixedRate = 3600000)
     @Override
-    public void updateOrderStatus(long orderId) {
+    public void updateOrderStatus() {
         List<Order> orderIds = getAllOrderId();
         RestTemplate restTemplate = new RestTemplate();
         ObjectMapper objectMapper = new ObjectMapper();
         for (Order order : orderIds) {
-            delivery = deliveryRepository.findByOrderId(orderId);
+            long orderId = order.getOrderId();
+            Delivery delivery = deliveryRepository.findByOrderId(orderId);
             if (delivery != null) {
                 String carrierId = deliveryRepository.findByOrderId(orderId).getCarrierId();
                 String trackingNo = deliveryRepository.findByOrderId(orderId).getTrackingNo();
@@ -100,18 +101,16 @@ public class OrderServiceimpl implements OrderService {
                     LocalDateTime lastTime = LocalDateTime.parse(lastProgressNode.get("time").asText());
                     // 지역 위치
                     String lastLocation = lastProgressNode.get("location").path("name").asText();
-                    order.setCarrierStatus(lastStatus);
+                    if (order.getCarrierStatus().equals(lastStatus)) {
+                    } else {
+                        order.setCarrierStatus(lastStatus);
+                    }
+                    orderRepository.save(order);
 
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
             }
-
-
         }
-
-
     }
-
-
 }
