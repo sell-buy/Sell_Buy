@@ -4,21 +4,25 @@ import com.sell_buy.sell_buy.api.service.OrderService;
 import com.sell_buy.sell_buy.db.entity.Order;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
-import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("/order")
 @RequiredArgsConstructor
 public class OrderController {
-    @Autowired
     OrderService orderService;
 
+//    @GetMapping("/")
+//    public void updateState() {
+//        orderService.updateOrderStatus();
+//    }
+
     @GetMapping("/register")
-    public String registerOrder() {return "orderRegister";}
+    public String registerOrder() {
+        return "orderRegister";
+    }
 
     @PostMapping("/register")
     public ResponseEntity<?> orderRegister(@RequestBody Order order, HttpSession session) {
@@ -34,22 +38,25 @@ public class OrderController {
     }
 
     @DeleteMapping("/{orderId}/delete")
-    public ResponseEntity<?> deleteOrder(@PathVariable Long orderId,HttpSession session) {
+    public ResponseEntity<?> deleteOrder(@PathVariable Long orderId, HttpSession session) {
         Long sellerId = (Long) session.getAttribute("memId");
 //        판매자아이디가 없을시
-        if (sellerId == null) {return ResponseEntity.status(401).body("UserID IS NOT PRESENT IN THE SESSION");}
+        if (sellerId == null) {
+            return ResponseEntity.status(401).body("UserID IS NOT PRESENT IN THE SESSION");
+        }
 //        오더번호가 존재하지않을 때
-        if(orderService.hasExistOrder(orderId)){ return ResponseEntity.status(400).body("OrderId IS NOT EXIST"); }
-        else{
+        if (orderService.hasExistOrder(orderId)) {
+            return ResponseEntity.status(400).body("OrderId IS NOT EXIST");
+        } else {
             orderService.deleteOrder(orderId);
             return ResponseEntity.status(200).body("deleteOrder Success");
         }
     }
 
-//    배송상태 업데이트
+    //    배송상태 업데이트
     @PutMapping("/{orderId}/put")
-    public ResponseEntity<?> putOrder(@PathVariable Long orderId,@RequestBody Order order,HttpSession session) {
+    public ResponseEntity<?> putOrder(@PathVariable Long orderId, @RequestBody Order order, HttpSession session) {
         Long sellerId = (Long) session.getAttribute("memId");
-        return  null;
+        return null;
     }
 }

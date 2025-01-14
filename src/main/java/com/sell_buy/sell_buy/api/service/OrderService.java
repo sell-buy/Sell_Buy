@@ -26,5 +26,5 @@ public interface OrderService {
     List<Order> getAllOrderId();
 
     //모든 오더아이디값의 베송상태 확인
-    void updateOrderStatus(long orderId);
+    void updateOrderStatus();
 }
