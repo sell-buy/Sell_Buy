@@ -7,6 +7,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -27,7 +28,12 @@
                 <li><a href="/notifications">알림</a></li>
                 <li><a href="/customer-center">고객센터</a></li>
                 <li><a href="/my-page">내 정보</a></li>
-                <li><a href="#" id="href-open-login-header">로그인</a></li>
+                <sec:authorize access="isAuthenticated()">
+                    <li><a href="/member/logout">로그아웃</a></li>
+                </sec:authorize>
+                <sec:authorize access="!isAuthenticated()">
+                    <li><a href="#" id="href-open-login-header">로그인</a></li>
+                </sec:authorize>
             </ul>
         </nav>
     </div>

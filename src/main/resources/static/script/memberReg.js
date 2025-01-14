@@ -1,13 +1,16 @@
 $(document).ready(function () {
+    $('#register-button').click(function () {
+        $('#register').submit();
+    })
     $('#register').submit(function (event) {
         event.preventDefault();
         let formData = {
-            memId : $('#id').val(),
-            password : $('#password').val(),
-            name : $('#name').val(),
-            phone : $('#phone').val(),
-            email : $('#email').val(),
-            nickname : $('#nickname').val()
+            loginId: $('#loginId').val(),
+            password: $('#password').val(),
+            name: $('#name').val(),
+            phoneNum: $('#phone').val(),
+            email: $('#email').val(),
+            nickname: $('#nickname').val()
         };
         $.ajax({
             type: 'POST',

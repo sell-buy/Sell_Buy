@@ -35,4 +35,11 @@ public class Product {
     private long category;
     @Column(name = "create_date")
     private LocalDateTime createDate;
+
+    @PrePersist
+    protected void onCreate() {
+        if (createDate == null)
+            createDate = LocalDateTime.now();
+        System.out.println("createDate: " + createDate);
+    }
 }

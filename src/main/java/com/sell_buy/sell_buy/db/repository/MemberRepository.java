@@ -4,6 +4,8 @@ import com.sell_buy.sell_buy.db.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
     Member findByNickname(String searchQuery);
@@ -14,5 +16,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     boolean existsByPhoneNum(String phoneNum);
 
-    Member findByLoginId(String loginId);
+    Optional<Member> findByLoginId(String loginId);
 }

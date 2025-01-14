@@ -12,25 +12,27 @@
 <link rel="stylesheet" href="<c:url value="/style/common.css"/>">
 <link rel="stylesheet" href="<c:url value="/style/modal.css"/>">
 <script src="<c:url value="/script/modal.js"/>"></script>
+<script src="<c:url value="/script/login.js"/>"></script>
 <title></title>
 <div class="modal">
     <div class="modal_body">
         <h1>Sell&Buy</h1>
         <div id="login-failure">Invalid id or password.</div>
-        <form method="post" id="login">
+
+        <form action="<c:url value="/member/login"/>" method="post" id="login">
             <label>
-                <input type="text" name="id" placeholder="아이디">
+                <input type="text" name="loginId" id="loginId" placeholder="아이디">
             </label>
             <label>
-                <input type="password" name="password" placeholder="비밀번호">
+                <input type="password" name="password" id="password" placeholder="비밀번호">
             </label>
-            <div class="submit-contain">
-                <label class="is-membership">
-                    <a href="#" id="href-open-register">아직 회원이 아니신가요?</a>
-                </label>
-                <button type="submit" class="modal-submit">로그인</button>
-            </div>
         </form>
+        <div class="submit-container">
+            <label class="is-membership">
+                <a href="#" id="href-open-register">아직 회원이 아니신가요?</a>
+            </label>
+            <button type="submit" class="modal-submit" id="login-button">로그인</button>
+        </div>
     </div>
 </div>
 </html>

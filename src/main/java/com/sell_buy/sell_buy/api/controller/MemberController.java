@@ -3,7 +3,6 @@ package com.sell_buy.sell_buy.api.controller;
 
 import com.sell_buy.sell_buy.api.service.MemberService;
 import com.sell_buy.sell_buy.db.entity.Member;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -32,7 +31,7 @@ public class MemberController {
         return "include/login";
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody Member member) {
         Long registeredMemberId;
         try {
@@ -42,9 +41,11 @@ public class MemberController {
         }
         return ResponseEntity.status(200).body(registeredMemberId);
     }
-
+/*
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Member member, HttpSession session) {
+        System.out.println("login called");
+        System.out.println(member.getLoginId());
         Long memId;
         try {
             memId = memberService.login(member);
@@ -55,4 +56,6 @@ public class MemberController {
         }
         return ResponseEntity.status(200).body(memId);
     }
+*/
+
 }

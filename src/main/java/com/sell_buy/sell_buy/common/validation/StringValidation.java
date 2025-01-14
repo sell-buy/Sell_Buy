@@ -67,11 +67,11 @@ public class StringValidation implements Validation {
         }
         if (this.exclusive) {
             if (min < this.value.length() && this.value.length() < this.max) {
-                throw new StringValidationException(this.value);
+                return true;
             }
         } else {
             if (min <= this.value.length() && this.value.length() <= this.max) {
-                throw new StringValidationException(this.value);
+                return true;
             }
         }
         throw new StringLengthValidateException(this.min, this.max, this.value);

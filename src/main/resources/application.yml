@@ -24,6 +24,10 @@ server:
       charset: utf-8
       enabled: true
       force: true
+    session:
+      cookie:
+        name: JSESSIONID
+      timeout: 30s
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   config-location: classpath:mybatis-config.xml

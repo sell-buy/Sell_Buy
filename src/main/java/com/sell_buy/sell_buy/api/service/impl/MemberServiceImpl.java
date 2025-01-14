@@ -27,6 +27,11 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Long registerMember(Member member) throws Exception {
+        if (member.getLoginId().isEmpty() || member.getPassword().isEmpty() || member.getNickname().isEmpty()) {
+            throw new Exception("Invalid input");
+
+        }
+        System.out.println(member.getLoginId());
         Validator<StringValidation> validator = new Validator<>(new IdValidation(member.getLoginId()),
                 new PasswordValidation(member.getPassword()));
         if (!validator.isValid()) {
@@ -36,21 +41,21 @@ public class MemberServiceImpl implements MemberService {
             throw new Exception("Login ID already exists");
         }
         member.setPassword(passwordEncoder.encode(member.getPassword()));
-
-        Point point = Point.builder().memId(member.getMemId()).balance(0).build();
+        Member registeredMember = memberRepository.save(member);
+        Point point = Point.builder().memId(registeredMember.getMemId()).balance(0).build();
         pointRepository.save(point);
 
-        return memberRepository.save(member).getMemId();
+        return registeredMember.getMemId();
     }
 
-    public Long login(Member member) throws Exception {
+/*    public Long login(Member member) throws Exception {
         String loginId = member.getLoginId();
         String password = member.getPassword();
         return login(loginId, password);
-    }
+    }*/
 
-    private Long login(String loginId, String password) throws Exception {
-        Member member = memberRepository.findByLoginId(loginId);
+    /*private Long login(String loginId, String password) throws Exception {
+        Optional<Member> member = memberRepository.findByLoginId(loginId);
         try {
             Validator<StringValidation> validator = new Validator<>(new IdValidation(loginId), new PasswordValidation(password));
             if (!validator.isValid()) {
@@ -59,12 +64,12 @@ public class MemberServiceImpl implements MemberService {
         } catch (Exception e) {
             throw new Exception(e);
         }
-        if (passwordEncoder.encode(password).equals(member.getPassword())) {
+        if (passwordEncoder.matches(password, member.getPassword())) {
             return member.getMemId();
         }
 
         throw new Exception("Login failed");
-    }
+    }*/
 
     @Override
     public Member updateMember() {

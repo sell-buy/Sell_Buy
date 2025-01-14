@@ -9,7 +9,7 @@ public interface MemberService {
 
     Long registerMember(Member member) throws Exception;
 
-    Long login(Member member) throws Exception;
+//    Long login(Member member) throws Exception;
 
     Member updateMember();
 

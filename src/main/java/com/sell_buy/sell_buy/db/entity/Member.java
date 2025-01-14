@@ -6,6 +6,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,12 +36,19 @@ public class Member implements UserDetails {
     @Column(unique = true)
     private String email;
     @Column(name = "create_date")
-    private String createDate;
+    private LocalDateTime createDate;
     @Column(name = "phone_num", unique = true)
     private String phoneNum;
     @Column(name = "role")
-    private boolean role;
+    private String role;
 
+    @PrePersist
+    protected void onCreate() {
+        if (createDate == null)
+            createDate = LocalDateTime.now();
+        System.out.println("createDate: " + createDate);
+        role = "ROLE_USER";
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
