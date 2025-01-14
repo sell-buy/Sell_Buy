@@ -8,6 +8,7 @@ import com.sell_buy.sell_buy.db.entity.Delivery;
 import com.sell_buy.sell_buy.db.entity.Order;
 import com.sell_buy.sell_buy.db.repository.DeliveryRepository;
 import com.sell_buy.sell_buy.db.repository.OrderRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+@Slf4j
 @Service
 public class OrderServiceimpl implements OrderService {
     private final OrderRepository orderRepository;
@@ -102,6 +103,7 @@ public class OrderServiceimpl implements OrderService {
                     // 지역 위치
                     String lastLocation = lastProgressNode.get("location").path("name").asText();
                     if (order.getCarrierStatus().equals(lastStatus)) {
+                        log.debug(order.toString());
                     } else {
                         order.setCarrierStatus(lastStatus);
                     }

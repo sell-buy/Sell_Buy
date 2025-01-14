@@ -1,250 +1,154 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <title>Sell&Buy</title>
     <script async src="<c:url value="/webjars/jquery/3.7.1/dist/jquery.js"/>"></script>
     <link rel="stylesheet" href="<c:url value="/style/common.css"/>">
     <style>
-        #wrap {
-            width: 100%;
-            height: 100%;
-        }
-
-        .main-container {
-            min-height: 100%;
-            min-width: 100%;
-        }
-
-        .content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .product-title {
-            color: white;
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        .product-layout {
+        .content-left {
+            flex: 0.2; /* 20% 너비 설정 */
             display: flex;
-            gap: 30px;
-            justify-content: space-between;
-            width: 100%;
+            flex-direction: column; /* 세로 방향으로 정렬 */
+            justify-content: flex-start; /* 수평 가운데 정렬 */
+            align-items: center; /* 수직 중앙 정렬 */
+            background-color: #291b25; /* 배경색 */
+            border-top: 1px solid #444; /* 구분선 */
+            padding-top: 10px; /* 상단 여백 추가 */
         }
-
-        .category-list {
-            width: 15%;
-            color: white;
+        label{
+            min-width: 200px; /* 라벨의 최소 너비 설정 */
+            text-align: center;
+            padding: 5px;
+            margin: 3px;
         }
-
-        .category-item {
-            padding: 10px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
+        input{
+            min-width: 200px;
         }
-
-        .image-section {
-            width: 60%;
+        .content-left select{
+            min-width: 100px; /* 라벨의 최소 너비 설정 */
+            text-align: center;
+            padding: 5px;
+            margin: 15px;
+        }
+        .content-center {
+            flex: 0.5; /* 동일한 비율로 공간 차지 */
             display: flex;
-            gap: 20px;
+            justify-content: center; /* 수평 가운데 정렬 */
+            align-items: center; /* 수직 가운데 정렬 */
+            background-color: #291b25; /* 배경색 추가 (테스트용) */
+            border-top: 1px solid #444; /* 구분선 (테스트용) */
         }
 
-        .thumbnail-list {
+
+        .content-right{
+            flex: 0.3; /* 20% 너비 설정 */
             display: flex;
-            flex-direction: column;
+            flex-direction: column; /* 세로 방향으로 정렬 */
+            justify-content: flex-start; /* 수평 가운데 정렬 */
+            align-items: center; /* 수직 중앙 정렬 */
+            background-color: #291b25; /* 배경색 */
+            border-top: 1px solid #444; /* 구분선 */
             gap: 10px;
         }
-
-        .thumbnail {
-            width: 100px;
-            height: 100px;
-            background-color: #666;
+        .order_status {
+            padding: 15px 10px;
+        }
+        .order_status input[type=radio]{
+            display: none;
+        }
+        .order_status input[type=radio]+label{
+            display: inline-block;
             cursor: pointer;
-            transition: all 0.3s ease;
-            border-radius: 4px;
+            height: 24px;
+            width: 90px;
+            border: 1px solid #333;
+            line-height: 24px;
+            text-align: center;
+            font-weight:bold;
+            font-size:13px;
         }
-
-        .main-image {
-            width: 100%;
-            aspect-ratio: 4/3;
-            background-color: #666;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            transition: all 0.3s ease;
-            border-radius: 4px;
+        .order_status input[type=radio]+label{
+            background-color: #fff;
+            color: #333;
         }
-
-        .product-info {
-            width: 20%;
-            color: white;
-        }
-
-        .price {
-            font-size: 20px;
-            margin: 20px 0;
-        }
-
-        .delivery-options {
-            display: flex;
-            gap: 20px;
-            margin: 20px 0;
-        }
-
-        .product-description {
-            width: 100%;
-            height: 200px;
+        .order_status input[type=radio]:checked+label{
             background-color: #333;
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 4px;
-            border: none;
-            color: white;
-            resize: vertical;
+            color: #fff;
         }
-
-        @media screen and (max-width: 1024px) {
-            .content {
-                padding: 15px;
-            }
-
-            .product-layout {
-                gap: 20px;
-            }
-
-            .category-list {
-                width: 150px;
-            }
-        }
-
-        @media screen and (max-width: 768px) {
-            .product-layout {
-                flex-direction: column;
-            }
-
-            .category-list {
-                width: 100%;
-                display: flex;
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-
-            .category-list,
-            .image-section,
-            .product-info {
-                width: 100%;
-            }
-
-            .category-item {
-                flex: 1;
-                text-align: center;
-                margin-bottom: 0;
-            }
-
-            .image-section {
-                flex-direction: column-reverse;
-            }
-
-            .thumbnail-list {
-                flex-direction: row;
-                overflow-x: auto;
-                width: 100%;
-                padding-bottom: 10px;
-            }
-
-            .thumbnail {
-                min-width: 80px;
-                height: 80px;
-                margin-right: 10px;
-            }
-
-            .product-info {
-                width: 100%;
-            }
-        }
-
-        @media screen and (max-width: 480px) {
-            .content {
-                padding: 10px;
-            }
-
-            .product-title {
-                font-size: 20px;
-            }
-
-            .price {
-                font-size: 18px;
-            }
-
-            .product-description {
-                height: 150px;
-            }
-
-            .delivery-options {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .thumbnail {
-                min-width: 60px;
-                height: 60px;
-            }
-        }
-
     </style>
 </head>
 <body>
 <div id="wrap">
     <%@include file="include/header.jsp" %>
-    <div class="main-container">
-        <div class="content">
-            <h1 class="product-title">상품 등록 페이지</h1>
-            <div class="product-layout">
-                <div class="category-list">
-                    <div class="category-item">카테고리1</div>
-                    <div class="category-item">카테고리1</div>
-                    <div class="category-item">카테고리1</div>
-                </div>
-
-                <div class="image-section">
-                    <div class="thumbnail-list">
-                        <div class="thumbnail">상품 이미지</div>
-                        <div class="thumbnail">상품 이미지</div>
-                        <div class="thumbnail">상품 이미지</div>
-                        <div class="thumbnail">상품 이미지</div>
-                    </div>
-                    <div class="main-image">썸네일 이미지 등록</div>
-                </div>
-
-                <div class="product-info">
-                    <h2>상품 이름</h2>
-                    <div class="price">₩10,000</div>
-                    <div class="delivery-options">
-                        <label><input type="radio" name="delivery"> 직거래</label>
-                        <label><input type="radio" name="delivery"> 택배</label>
-                    </div>
-                    <textarea class="product-description" placeholder="상품 설명"></textarea>
-                </div>
+        <h1 style="color: white">상품 등록 페이지</h1>
+    <div class="main-container" style="color: white">
+        <div class="content-left">
+            <label>카테고리</label>
+                <select>
+                    <option>--------------</option>
+                </select>
+            <select>
+                <option>dd1</option>
+                <option>dd2</option>
+            </select>
+            <select>
+                <option>ddd1</option>
+                <option>ddd2</option>
+            </select>
+            <hr/>
+        </div>
+        <div class="content-center">
+            <h1 style="color: white">상품등록 페이지</h1>
+        </div>
+        <div class="content-right">
+            <label for="name">상품명</label>
+            <input type="text" id="name" name="name" required>
+            <label for="price">가격</label>
+            <input type="text" id="price" name="price" required>
+            <div class="order_status">
+                <input type="radio" id="select" name="trade_type" value="0">
+                <label for="select">직거래</label>
+                <input type="radio" id="select2" name="trade_type" value="1">
+                <label for="select2">택배거래</label>
             </div>
+            <label for="description">상품 설명</label>
+            <textarea id="description" name="description" required style="flex: 1; width: 400px"></textarea>
+            <BUTTON type="submit">등록하기</BUTTON>
         </div>
     </div>
     <%@include file="include/footer.jsp" %>
-</div>
 </body>
-</html>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const header_search = document.querySelector('.header-search');
-        if (header_search) {
-            header_search.style.display = 'none';
-        }
+        const category = document.querySelector('#category');
+        let isAdded = false;
+        //카테고리 클릭시 컨트롤러에서 json타입으로 값 리턴한거 계층 구조로 표시
+        category.addEventListener('click', function () {
+            if (!isAdded) {
+                const options = [
+                    new Option("category_name", "category_id"),
+                    new Option("category_name", "category_id"),
+                    new Option("category_name", "category_id"),
+                    new Option("category_name", "category_id"),
+                ]
+                isAdded = true
+                options.forEach(option => {
+                    this.add(option);
+                })
+
+            }
+        })
+        // 가격입력
+        document.getElementById('price').addEventListener('input', function () {
+            if (isNaN(this.value)) {
+                alert('숫자만 입력 가능합니다.');
+                this.value = this.value.replace(/[^0-9]/g, '');
+            }
+        });
     });
 
 </script>
+</html>

@@ -47,9 +47,10 @@
                     .receiverName("test")
                     .receiverAddress("testaddress")
                     .receiverPhone("01011111111")
-                    .orderStatus("배송준비")
+                    .orderStatus(1)
                     .createdDate(LocalDateTime.now())
                     .deliveredDate(LocalDateTime.now())
+                    .carrierStatus("배송준비")
                     .build();
 
             when(orderService.registerOrder(any(Order.class))).thenReturn(order);

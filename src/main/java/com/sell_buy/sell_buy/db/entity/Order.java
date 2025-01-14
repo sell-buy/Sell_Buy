@@ -32,9 +32,8 @@ public class Order {
     private String receiverAddress;
     @Column(name = "receiver_phone")
     private String receiverPhone;
-    @Enumerated(EnumType.STRING)
     @Column(name = "order_status")
-    private OrderStatus orderStatus;
+    private int orderStatus;
     @Column(name = "created_date")
     private LocalDateTime createdDate;
     @Column(name = "delivered_date")
