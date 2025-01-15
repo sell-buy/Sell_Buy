@@ -15,6 +15,7 @@
     <script async src="<c:url value="/webjars/bootstrap/5.3.3/js/bootstrap.esm.js"/>"></script>
     <link rel="stylesheet" href="<c:url value='/style/common.css'/>">
     <link rel="stylesheet" href="<c:url value='/style/header.css'/>">
+    <title></title>
 </head>
 <body>
 <header class="header">

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class OrderController {
     OrderService orderService;
-
 //    @GetMapping("/")
 //    public void updateState() {
 //        orderService.updateOrderStatus();
@@ -23,7 +22,6 @@ public class OrderController {
     public String registerOrder() {
         return "orderRegister";
     }
-
     @PostMapping("/register")
     public ResponseEntity<?> orderRegister(@RequestBody Order order, HttpSession session) {
         Long sellerId = (Long) session.getAttribute("memId");
