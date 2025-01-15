@@ -61,33 +61,33 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Slice<Product> getProductList(int page, Long category, String searchQuery, String searchType) {
+    public Slice<Product> getProductList(int page, Long catId, String searchQuery, String searchType) {
         Pageable pageable = PageRequest.of(page - 1, 18);
 
 
         switch (searchType) {
             case "title+desc":
-                if (category == null) {
+                if (catId == null) {
                     return productRepository.findByProdNameContainingOrProdDiscContainingOrderByCreateDateDesc(pageable, searchQuery, searchQuery);
                 }
 
-                return productRepository.findByCategoryAndProdNameContainingOrProdDiscContainingOrderByCreateDateDesc(pageable, category, searchQuery, searchQuery);
+                return productRepository.findByCategoryAndProdNameContainingOrProdDiscContainingOrderByCreateDateDesc(pageable, catId, searchQuery, searchQuery);
 
             case "seller":
                 Long sellerId = memberRepository.findByNickname(searchQuery).getMemId();
-                if (category == null) {
+                if (catId == null) {
                     return productRepository.findBySellerIdOrderByCreateDateDesc(pageable, sellerId);
                 }
-                return productRepository.findByCategoryAndSellerIdOrderByCreateDateDesc(pageable, category, sellerId);
+                return productRepository.findByCategoryAndSellerIdOrderByCreateDateDesc(pageable, catId, sellerId);
 
             default:
                 // searchQuery and searchType is always null when searchType is not "title+desc" or "seller"
 
-                if (category == null) {
+                if (catId == null) {
                     return productRepository.findAllByOrderByCreateDateDesc(pageable);
                 }
 
-                return productRepository.findByCategoryOrderByCreateDateDesc(pageable, category);
+                return productRepository.findByCategoryOrderByCreateDateDesc(pageable, catId);
         }
 
 
