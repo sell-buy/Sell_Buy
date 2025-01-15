@@ -13,7 +13,7 @@
     <script src="<c:url value="/webjars/jquery/3.7.1/dist/jquery.js"/>"></script>
     <script src="<c:url value="/webjars/jquery-validation/1.20.0/jquery.validate.js"/>"></script>
     <script src="<c:url value="/webjars/jquery-ui/1.14.1/jquery-ui.js"/>"></script>
-    <link rel="stylesheet" href="<c:url value="webjars/jquery-ui/1.14.1/jquery-ui.css"/>">
+    <link rel="stylesheet" href="<c:url value="/webjars/jquery-ui/1.14.1/jquery-ui.css"/>">
     <script src="<c:url value="/script/modal.js"/>"></script>
     <script src="<c:url value="/script/memberReg.js"/>"></script>
     <script src="<c:url value="/script/registerValidation.js"/>"></script>
