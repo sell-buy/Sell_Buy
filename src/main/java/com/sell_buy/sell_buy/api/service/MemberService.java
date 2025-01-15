@@ -1,13 +1,23 @@
 package com.sell_buy.sell_buy.api.service;
 
+import com.sell_buy.sell_buy.db.entity.Member;
+
+import java.util.List;
+
 public interface MemberService {
-    void createUser();
 
-    void updateUser();
 
-    void deleteUser();
+    Long registerMember(Member member) throws Exception;
 
-    void getUserByUserId(Long userId);
+//    Long login(Member member) throws Exception;
 
-    void getAllUsers();
+    Member updateMember();
+
+    Member deleteMember();
+
+    Member getMemberByMemId(Long userId);
+
+    Member getMemberByNickname(String nickname);
+
+    List<Member> getAllMembers();
 }

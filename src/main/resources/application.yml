@@ -15,6 +15,8 @@ spring:
     redis:
       port: 6379
       host: localhost
+  jpa:
+    show-sql: false
 server:
   port: 80
   servlet:
@@ -22,3 +24,10 @@ server:
       charset: utf-8
       enabled: true
       force: true
+    session:
+      cookie:
+        name: JSESSIONID
+      timeout: 30s
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  config-location: classpath:mybatis-config.xml

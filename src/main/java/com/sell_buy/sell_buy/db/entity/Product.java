@@ -18,13 +18,28 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "prod_seq")
     @SequenceGenerator(name = "prod_seq", sequenceName = "prod_seq", allocationSize = 1)
-    private long prod_id;
-    private long seller_id;
-    private String prod_name;
-    private String prod_disc;
-    private boolean is_auction;
+    @Column(name = "prod_id")
+    private long prodId;
+    @Column(name = "seller_id")
+    private long sellerId;
+    @Column(name = "prod_name")
+    private String prodName;
+    @Column(name = "prod_disc")
+    private String prodDisc;
+    @Column(name = "is_auction")
+    private boolean isAuction;
     private int price;
-    private boolean is_available;
-    private String category;
-    private LocalDateTime create_date;
+    @Column(name = "is_available")
+    private boolean isAvailable;
+    @Column(name = "category_id")
+    private long category;
+    @Column(name = "create_date")
+    private LocalDateTime createDate;
+
+    @PrePersist
+    protected void onCreate() {
+        if (createDate == null)
+            createDate = LocalDateTime.now();
+        System.out.println("createDate: " + createDate);
+    }
 }
