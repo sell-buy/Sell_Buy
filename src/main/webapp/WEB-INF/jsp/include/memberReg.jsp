@@ -26,7 +26,7 @@
         <h1>Sell&Buy</h1>
         <div id="register-failure">Register failed.</div>
         <form method="post" id="register">
-            <input type="text" name="id" id="loginId" placeholder="아이디">
+            <input type="text" name="loginId" id="loginId" placeholder="아이디">
             <input type="password" name="password" id="password" placeholder="비밀번호">
             <input type="password" name="passwordCheck" id="passwordCheck" placeholder="비밀번호 확인">
             <input type="text" name="name" id="name" placeholder="이름">

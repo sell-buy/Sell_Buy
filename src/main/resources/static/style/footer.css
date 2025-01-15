@@ -1,5 +1,7 @@
 footer {
     bottom: 0;
+    margin-top: auto;
+    position: relative;
     flex: 0 0 auto;
     max-height: 20vh;
     min-height: 10%;

@@ -1,7 +1,12 @@
-var loginPageCache = null;
-var registerPageCache = null;
-
 $(document).ready(function () {
+    var loginPageCache = null;
+    var registerPageCache = null;
+
+    function closeModal() {
+        $('.modal').css('display', 'none');
+        $('.modal_body [title]').tooltip('destroy');
+    }
+
     $('#href-open-login').on('click', function (event) {
         event.preventDefault();
         if (loginPageCache) {
@@ -46,11 +51,16 @@ $(document).ready(function () {
 
     $(document).on('click', function (event) {
         if (!$(event.target).closest('.modal_body').length && !$(event.target).closest('#href-open-login').length && !$(event.target).closest('#href-open-register').length) {
-            $('.modal').css('display', 'none');
+            closeModal();
         }
     });
 
     $(document).on('click', '.modal_body', function (event) {
         event.stopPropagation();
+    });
+
+    // Example of how to close the modal (you can adjust this based on your actual implementation)
+    $('#close-modal-button').click(function () {
+        closeModal();
     });
 });

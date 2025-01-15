@@ -1,5 +1,6 @@
 package com.sell_buy.sell_buy.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -84,11 +85,14 @@ public class WebSecurityConfig {
     private AuthenticationFailureHandler jsonAuthenticationFailureHandler() {
         return (request, response, exception) -> {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
 
             Map<String, Object> responseData = new HashMap<>();
             responseData.put("status", "error");
-            responseData.put("message", "Login failed: " + exception.getMessage());
+            responseData.put("message", "Login failed.");
 
+            response.getWriter().write(new ObjectMapper().writeValueAsString(responseData));
         };
     }
 }

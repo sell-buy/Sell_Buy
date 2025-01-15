@@ -1,17 +1,28 @@
 $(function () {
+    // Add custom pattern method
+    $.validator.addMethod("pattern", function (value, element, param) {
+        if (this.optional(element)) {
+            return true;
+        }
+        if (typeof param === "string") {
+            param = new RegExp("^(?:" + param + ")$");
+        }
+        return param.test(value);
+    }, "Invalid format.");
+
     $("#register").validate({
         rules: {
             loginId: {
+                pattern: /^[a-z0-9_]*$/,
                 required: true,
                 minlength: 6,
                 maxlength: 20,
-                pattern: /^[a-z0-9_]*$/
             },
             password: {
+                pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]+$/,
                 required: true,
                 minlength: 10,
                 maxlength: 30,
-                pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]+$/
             },
             passwordCheck: {
                 required: true,
@@ -23,15 +34,15 @@ $(function () {
             },
             name: {
                 required: true,
+                pattern: /^[가-힣a-zA-Z]*$/,
                 minlength: 1,
                 maxlength: 20,
-                pattern: /^[가-힣a-zA-Z]*$/
             },
             nickname: {
                 required: true,
+                pattern: /^[가-힣a-zA-Z]*$/,
                 minlength: 2,
                 maxlength: 20,
-                pattern: /^[가-힣a-zA-Z]*$/
             },
         },
         messages: {
@@ -56,7 +67,7 @@ $(function () {
                 email: "이메일 형식이 올바르지 않습니다."
             },
             name: {
-                required: "이��을 입력 해 주세요.",
+                required: "이름을 입력 해 주세요.",
                 minlength: "이름은 1자 이상이어야 합니다.",
                 maxlength: "이름은 20자 이하여야 합니다.",
                 pattern: "이름은 한글과 영문 대소문자만 사용할 수 있습니다."
@@ -74,16 +85,31 @@ $(function () {
                     my: "left+15 center",
                     at: "right center"
                 }
-            });
+            }).tooltip("open");
         },
         success: function (label, element) {
             $(element).tooltip("destroy");
         },
         highlight: function (element, errorClass, validClass) {
-            $(element).addClass("is-invalid").removeClass("is-valid");
+            if (!$(element).data("ui-tooltip")) {
+                $(element).tooltip({
+                    position: {
+                        my: "left+15 center",
+                        at: "right center"
+                    }
+                });
+            }
+            $(element).addClass("is-invalid").removeClass("is-valid").tooltip("open");
         },
         unhighlight: function (element, errorClass, validClass) {
-            $(element).addClass("is-valid").removeClass("is-invalid");
+            if ($(element).data("ui-tooltip")) {
+                $(element).removeClass("is-invalid").addClass("is-valid").tooltip("close");
+            }
         }
+    });
+
+    // Add keyup event to trigger validation on input
+    $("#register input").on("keyup", function () {
+        $(this).valid();
     });
 });

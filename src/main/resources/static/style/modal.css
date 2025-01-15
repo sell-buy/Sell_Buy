@@ -51,6 +51,7 @@
     line-height: 3vh;
     height: 3vh;
     margin-bottom: 1vh;
+    width: 100%;
 
 }
 
@@ -107,4 +108,8 @@
     margin-bottom: 5%;
     text-align: center;
     padding-top: 10px;
+}
+
+.ui-tooltip {
+    z-index: 10000;
 }
