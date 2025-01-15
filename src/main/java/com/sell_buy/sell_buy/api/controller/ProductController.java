@@ -91,7 +91,7 @@ public class ProductController {
 
     @GetMapping("/list")
     public ResponseEntity<?> getProductList(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                                            @RequestParam(name = "category", required = false) Long category,
+                                            @RequestParam(name = "catId", required = false) Long catId,
                                             @RequestParam(name = "searchQuery", required = false) String searchQuery,
                                             @RequestParam(name = "searchType", required = false) String searchType) {
         if (page < 1) {
@@ -99,11 +99,11 @@ public class ProductController {
         }
 
         if (searchType.equals("seller")) {
-            Slice<Product> productList = productService.getProductList(page, category, searchQuery, searchType);
+            Slice<Product> productList = productService.getProductList(page, catId, searchQuery, searchType);
             return ResponseEntity.status(200).body(productList);
         }
 
-        Slice<Product> productList = productService.getProductList(page, category, searchQuery, searchType);
+        Slice<Product> productList = productService.getProductList(page, catId, searchQuery, searchType);
 
         return ResponseEntity.status(200).body(productList);
     }
