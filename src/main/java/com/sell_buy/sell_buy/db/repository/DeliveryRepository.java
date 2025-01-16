@@ -6,11 +6,13 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface DeliveryRepository extends JpaRepository<Delivery,String> {
+public interface DeliveryRepository extends JpaRepository<Delivery, String> {
     // trackingno,carrier확인
     Delivery findByOrderId(long orderId);
+
     // 택배사 확인
-    Delivery findByCarrier(String deliveryId);
+    Delivery findByCarrierId(String deliveryId);
+
     // 배송번호 조회
     Delivery findByTrackingNo(String trackingNo);
 

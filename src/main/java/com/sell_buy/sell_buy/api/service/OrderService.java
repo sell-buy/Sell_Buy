@@ -22,9 +22,14 @@ public interface OrderService {
     //오더가 존재하는지
     boolean hasExistOrder(Long orderId);
 
+    // 오더번호&판매자아이디
+    boolean hasExistOrderIdBySellerId(long sellerId);
+
     // 모든 오더아이디값 가져오기
     List<Order> getAllOrderId();
 
     //모든 오더아이디값의 베송상태 확인
     void updateOrderStatus();
+
+    void updateProdOrder(long orderId, int orderType, String carrierName, String trackingNo);
 }

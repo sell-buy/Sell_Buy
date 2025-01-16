@@ -1,16 +1,20 @@
 package com.sell_buy.sell_buy.api.controller;
-import jakarta.servlet.http.HttpServletRequest;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.ui.Model;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -20,17 +24,19 @@ import java.util.Base64;
 public class WidgetController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @GetMapping(value = "/payment")
     public String payment() {
         return "payment_checkout";
     }
+
     @GetMapping(value = "/success")
     public String success() {
         return "payment_success";
     }
+
     @RequestMapping(value = "/confirm")
     public ResponseEntity<JSONObject> confirmPayment(@RequestBody String jsonBody) throws Exception {
-
         JSONParser parser = new JSONParser();
         String orderId;
         String amount;
@@ -43,7 +49,7 @@ public class WidgetController {
             amount = (String) requestData.get("amount");
         } catch (ParseException e) {
             throw new RuntimeException(e);
-        };
+        }
         JSONObject obj = new JSONObject();
         obj.put("orderId", orderId);
         obj.put("amount", amount);
@@ -65,7 +71,7 @@ public class WidgetController {
         connection.setDoOutput(true);
 
         OutputStream outputStream = connection.getOutputStream();
-        outputStream.write(obj.toString().getBytes("UTF-8"));
+        outputStream.write(obj.toString().getBytes(StandardCharsets.UTF_8));
 
         int code = connection.getResponseCode();
         boolean isSuccess = code == 200;
@@ -79,4 +85,4 @@ public class WidgetController {
 
         return ResponseEntity.status(code).body(jsonObject);
     }
-    }
+}

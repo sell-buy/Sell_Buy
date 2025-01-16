@@ -32,8 +32,8 @@ public class Order {
     private String receiverAddress;
     @Column(name = "receiver_phone")
     private String receiverPhone;
-    @Column(name = "order_status")
-    private int orderStatus;
+    @Column(name = "ORDER_TYPE")
+    private int orderType;
     @Column(name = "created_date")
     private LocalDateTime createdDate;
     @Column(name = "delivered_date")

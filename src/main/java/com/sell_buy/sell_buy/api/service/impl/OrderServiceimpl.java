@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sell_buy.sell_buy.api.service.OrderService;
 import com.sell_buy.sell_buy.db.entity.Delivery;
 import com.sell_buy.sell_buy.db.entity.Order;
+import com.sell_buy.sell_buy.db.repository.CarrierRepository;
 import com.sell_buy.sell_buy.db.repository.DeliveryRepository;
 import com.sell_buy.sell_buy.db.repository.OrderRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -16,16 +17,19 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Slf4j
 @Service
 public class OrderServiceimpl implements OrderService {
     private final OrderRepository orderRepository;
     private final DeliveryRepository deliveryRepository;
+    private final CarrierRepository carrierRepository;
     private Order order;
 
-    public OrderServiceimpl(OrderRepository orderRepository, DeliveryRepository deliveryRepository) {
+    public OrderServiceimpl(OrderRepository orderRepository, DeliveryRepository deliveryRepository, CarrierRepository carrierRepository) {
         this.orderRepository = orderRepository;
         this.deliveryRepository = deliveryRepository;
+        this.carrierRepository = carrierRepository;
     }
 
 
@@ -41,11 +45,11 @@ public class OrderServiceimpl implements OrderService {
 
     @Override
     public void getOrderId(long order_id) {
-
     }
 
     @Override
     public void setOrderId(long order_id) {
+
     }
 
     @Override
@@ -64,10 +68,14 @@ public class OrderServiceimpl implements OrderService {
     }
 
     @Override
-    public List<Order> getAllOrderId() {
-        return List.of();
+    public boolean hasExistOrderIdBySellerId(long sellerId) {
+        return orderRepository.existsOrderIdBySellerId(sellerId);
     }
 
+    @Override
+    public List<Order> getAllOrderId() {
+        return orderRepository.findAll();
+    }
 
     @Scheduled(fixedRate = 3600000)
     @Override
@@ -81,6 +89,7 @@ public class OrderServiceimpl implements OrderService {
             if (delivery != null) {
                 String carrierId = deliveryRepository.findByOrderId(orderId).getCarrierId();
                 String trackingNo = deliveryRepository.findByOrderId(orderId).getTrackingNo();
+                // Example https://apis.tracker.delivery/carriers/kr.epost/tracks/1111111111111
                 String url = String.format("https://apis.tracker.delivery/carriers/%s/tracks/%s", carrierId, trackingNo);
                 try {
                     ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
@@ -108,11 +117,24 @@ public class OrderServiceimpl implements OrderService {
                         order.setCarrierStatus(lastStatus);
                     }
                     orderRepository.save(order);
-
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
             }
         }
+    }
+
+    @Override
+    public void updateProdOrder(long orderId, int OrderType, String carrierName, String trackingNo) {
+        Order order = orderRepository.findByOrderId(orderId);
+        String carrierId = (carrierRepository.findCarrierNameByCarrierId(carrierName)).getCarrierId();
+        Delivery delivery = deliveryRepository.findByOrderId(orderId);
+        // 저장인지 판매완료인지
+        order.setOrderType(OrderType);
+        delivery.setCarrierId(carrierId);
+        delivery.setCarrier(carrierName);
+        delivery.setTrackingNo(trackingNo);
+        orderRepository.save(order);
+
     }
 }

@@ -1,6 +1,8 @@
 package com.sell_buy.sell_buy.api.controller;
 
 import com.sell_buy.sell_buy.api.service.OrderService;
+import com.sell_buy.sell_buy.db.entity.Carrier;
+import com.sell_buy.sell_buy.db.entity.Delivery;
 import com.sell_buy.sell_buy.db.entity.Order;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class OrderController {
     public String registerOrder() {
         return "orderRegister";
     }
+
     @PostMapping("/register")
     public ResponseEntity<?> orderRegister(@RequestBody Order order, HttpSession session) {
         Long sellerId = (Long) session.getAttribute("memId");
@@ -51,10 +54,21 @@ public class OrderController {
         }
     }
 
-    //    배송상태 업데이트
+    //    택배사 등록   업데이트
     @PutMapping("/{orderId}/put")
-    public ResponseEntity<?> putOrder(@PathVariable Long orderId, @RequestBody Order order, HttpSession session) {
+    public ResponseEntity<?> putOrder(@PathVariable Long orderId, @RequestBody Delivery delivery, @RequestBody Order order, @RequestBody Carrier carrier, HttpSession session) {
         Long sellerId = (Long) session.getAttribute("memId");
-        return null;
+        int orderType = order.getOrderType();
+        String carrierName = carrier.getCarrierName();
+        String trackingNo = delivery.getTrackingNo();
+        if (sellerId == null) {
+            return ResponseEntity.status(403).body("UserID IS NOT PRESENT IN THE SESSION");
+        }
+        if (orderService.hasExistOrder(orderId)) {
+            return ResponseEntity.status(400).body("OrderId IS not EXIST");
+        } else {
+            orderService.updateProdOrder(orderId, orderType, carrierName, trackingNo);
+            return ResponseEntity.status(200).body("updateOrder Success");
+        }
     }
 }
