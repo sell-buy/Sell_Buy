@@ -33,6 +33,7 @@ public class Product {
     private boolean isAvailable;
     @Column(name = "category_id")
     private long category;
+    // 0 직거래 1 택배거래 2 둘다
     @Column(name = "prod_type")
     private int prodType;
     @Column(name = "create_date")

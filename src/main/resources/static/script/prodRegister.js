@@ -1,123 +1,133 @@
 $(document).ready(function () {
+    loadCategories();
+
     $('#prodRegisterForm').submit(function (event) {
         event.preventDefault();
-        let formData = {
-            name: $('#name').val(),
+
+        const directType = $('#type_direct').is(':checked');
+        const deliveryType = $('#type_delivery').is(':checked');
+
+        let tradeType = -1;
+        if (directType && deliveryType) {
+            tradeType = 2;
+        } else if (directType || !deliveryType) {
+            tradeType = 0;
+        } else if (!directType || deliveryType) {
+            tradeType = 1;
+        }
+        if (tradeType === -1) {
+            alert('거래 방식을 선택해주세요.');
+            return false;
+        }
+        const formData = new FormData();
+        const product = {
+            prodName: $('#prodName').val(),
             price: $('#price').val(),
-            description: $('#description').val(),
-            category: 1,
-            is_auction: false,
-            create_date: new Date().toLocaleString('sv-SE', {timeZone: 'Asia/Seoul'}).replace(' ', 'T') + '.' + String(new Date().getMilliseconds()).padStart(3, '0')
-        };
+            prodDesc: $('#prodDesc').val(),
+            tradeType: tradeType,
+            catId: $('#category').val()
+        }
+
+        formData.append('product', new Blob([JSON.stringify(product)],
+            {type: 'application/json'})
+        );
+
+        const imgFiles = $('#images').files;
+        if (imgFiles.length > 4) {
+            alert('이미지는 최대 4개까지 업로드 가능합니다.');
+            return false;
+        }
+
+        for (const file of imgFiles) {
+            formData.append('images', file);
+        }
+
         $.ajax({
             type: 'POST',
-            url: '<c:url value="/prod"/>',
-            contentType: 'application/json',
-            data: JSON.stringify(formData),
-            success: function () {
-                alert('등록되었습니다.');
-                location.href = '/prod/list';
+            url: '/prod/register',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (xhr) {
+                window.location.href = '/prod/' + xhr;
             },
-            error: function () {
-                alert('등록에 실패했습니다.');
+            error: function (xhr) {
+                alert('상품 등록에 실패했습니다.');
+                console.error(xhr);
             }
         });
+
     });
-    loadCategories();
-});
 
-function loadCategories(catId) {
-    if (catId === undefined) {
-        $.get('/categories')
-            .done(function (data) {
-                let categoryNav = $('#category-dep1');
-                categoryNav.empty(); // Clear any existing content
+    function loadCategories(catId) {
+        if (catId === undefined) {
+            $.get('/categories')
+                .done(function (data) {
+                    let categoryNav = $('#category-dep1');
+                    categoryNav.empty(); // 기존 내용 삭제
 
-                // Sort categories alphabetically by name
-                data.sort(function (a, b) {
-                    return a.name.localeCompare(b.name);
-                });
+                    // 카테고리를 이름순으로 정렬
+                    data.sort(function (a, b) {
+                        return a.name.localeCompare(b.name);
+                    });
 
-                data.forEach(function (category) {
-                    let categoryItem = $('<ll>').addClass('category-item');
-                    let categoryBtn = $('<button>').addClass('category-btn').attr('type', 'button')
-                        .on('click', function () {
-                            loadCategories(category.catId);
-                        });
-                    let categoryName = $('<p>').text(category.name);
-                    categoryItem.append(categoryBtn);
-                    categoryBtn.append(categoryName);
-                    categoryNav.append(categoryItem);
-                });
-            });
-    } else {
-        $.get('/categories', {catId: catId})
-            .done(function (data) {
-                let categoryNav;
-                if (catId < 100) {
-                    categoryNav = $('#category-dep2');
-                } else if (catId < 10000) {
-                    categoryNav = $('#category-dep3');
-                }
-                categoryNav.empty(); // Clear any existing content
-
-                // Sort categories alphabetically by name
-                data.sort(function (a, b) {
-                    return a.name.localeCompare(b.name);
-                });
-
-                data.forEach(function (category) {
-                    let categoryItem = $('<ll>').addClass('category-item');
-                    let categoryBtn
-                    if (!(categoryNav === $('#category-dep3'))) {
-                        categoryBtn = $('<button>').addClass('category-btn').attr('type', 'button')
+                    data.forEach(function (category) {
+                        let categoryItem = $('<li>').addClass('category-item')
                             .on('click', function () {
+                                $(this).siblings().removeClass('selected'); // 같은 레벨의 항목에서 selected 클래스 제거
+                                $(this).addClass('selected'); // 클릭된 항목에 selected 클래스 추가
                                 loadCategories(category.catId);
+                                $('#category-dep2').empty(); // 하위 카테고리 삭제
+                                $('#category-dep3').empty(); // 하위 카테고리 삭제
+                                $('#category').val(''); // hidden input 초기화
                             });
-                    } else {
-                        categoryBtn = $('<button>').addClass('category-btn').attr('type', 'button')
-                            .on('click', function () {
-                                $('#category').val(category.catId);
-                            });
-                    }
-                    let categoryName = $('<p>').text(category.name);
-                    categoryItem.append(categoryBtn);
-                    categoryBtn.append(categoryName);
-                    categoryNav.append(categoryItem);
 
+                        let categoryBtn = $('<button>').addClass('category-btn').attr('type', 'button');
+                        let categoryName = $('<p>').text(category.name);
+                        categoryItem.append(categoryBtn);
+                        categoryBtn.append(categoryName);
+                        categoryNav.append(categoryItem);
+                    });
                 });
-            });
+        } else {
+            $.get('/categories', {catId: catId})
+                .done(function (data) {
+                    let categoryNav;
+                    if (catId < 100) {
+                        categoryNav = $('#category-dep2');
+                        $('#category-dep3').empty(); // 하위 카테고리 삭제
+                        $('#category').val(''); // hidden input 초기화
+                    } else if (catId < 10000) {
+                        categoryNav = $('#category-dep3');
+                    }
+                    categoryNav.empty(); // 기존 내용 삭제
+
+                    // 카테고리를 이름순으로 정렬
+                    data.sort(function (a, b) {
+                        return a.name.localeCompare(b.name);
+                    });
+
+                    data.forEach(function (category) {
+                        let categoryItem = $('<li>').addClass('category-item')
+                            .on('click', function () {
+                                $(this).siblings().removeClass('selected'); // 같은 레벨의 항목에서 selected 클래스 제거
+                                $(this).addClass('selected'); // 클릭된 항목에 selected 클래스 추가
+
+                                if (categoryNav.is($('#category-dep3'))) {
+                                    $('#category').val(category.catId); // hidden input에 하위 카테고리 ID 설정
+                                } else {
+                                    loadCategories(category.catId);
+                                    $('#category').val(''); // hidden input 초기화
+                                }
+                            });
+
+                        let categoryBtn = $('<button>').addClass('category-btn').attr('type', 'button');
+                        let categoryName = $('<p>').text(category.name);
+                        categoryItem.append(categoryBtn);
+                        categoryBtn.append(categoryName);
+                        categoryNav.append(categoryItem);
+                    });
+                });
+        }
     }
-}
-
-/*
-
-document.addEventListener('DOMContentLoaded', function () {
-    const header_search = document.querySelector('.header-search');
-    const category = document.querySelector('#category');
-    let isAdded = false;
-    //카테고리 클릭시 컨트롤러에서 json타입으로 값 리턴한거 계층 구조로 표시
-    category.addEventListener('click', function () {
-        if (!isAdded) {
-            const options = [
-                new Option("category_name", "category_id"),
-                new Option("category_name", "category_id"),
-                new Option("category_name", "category_id"),
-                new Option("category_name", "category_id"),
-            ]
-            isAdded = true
-            options.forEach(option => {
-                this.add(option);
-            })
-
-        }
-    })
-    // 가격입력
-    document.getElementById('price').addEventListener('input', function () {
-        if (isNaN(this.value)) {
-            alert('숫자만 입력 가능합니다.');
-            this.value = this.value.replace(/[^0-9]/g, '');
-        }
-    });
 });
-*/

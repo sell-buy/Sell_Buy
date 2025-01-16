@@ -38,14 +38,13 @@ public class ProductController {
             return ResponseEntity.status(411).body("User ID is not present in the session.");
         }
         product.setSellerId(sellerId);
-        
+
         if (images.size() > 4)
             return ResponseEntity.status(414).body("Maximum 4 images allowed.");
 
-
         List<String> imageUrls = new ArrayList<>();
-        for (MultipartFile image : images) {
 
+        for (MultipartFile image : images) {
             String imageUrl = awsFileService.uploadFile(image);
             imageUrls.add(imageUrl);
         }
