@@ -1,6 +1,8 @@
 package com.sell_buy.sell_buy.api.controller;
 
+import com.sell_buy.sell_buy.api.service.AWSFileService;
 import com.sell_buy.sell_buy.api.service.ProductService;
+import com.sell_buy.sell_buy.common.utills.ListToJsonUtils;
 import com.sell_buy.sell_buy.db.entity.Product;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +10,11 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/prod")
@@ -15,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
 
     private final ProductService productService;
+    private final AWSFileService awsFileService;
 
     @GetMapping("/register")
     public String registerProduct() {
@@ -22,12 +30,27 @@ public class ProductController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerProduct(@RequestBody Product product, HttpSession session) {
+    public ResponseEntity<?> registerProduct(@RequestPart("product") Product product,
+                                             @RequestPart("images") List<MultipartFile> images,
+                                             HttpSession session) throws IOException {
         Long sellerId = (Long) session.getAttribute("memId");
         if (sellerId == null) {
             return ResponseEntity.status(411).body("User ID is not present in the session.");
         }
         product.setSellerId(sellerId);
+        
+        if (images.size() > 4)
+            return ResponseEntity.status(414).body("Maximum 4 images allowed.");
+
+
+        List<String> imageUrls = new ArrayList<>();
+        for (MultipartFile image : images) {
+
+            String imageUrl = awsFileService.uploadFile(image);
+            imageUrls.add(imageUrl);
+        }
+        product.setImageUrls(ListToJsonUtils.convertListToJson(imageUrls));
+
         productService.registerProduct(product);
         System.out.println(product.getProdId());
         return ResponseEntity.status(200).body(product.getProdId());

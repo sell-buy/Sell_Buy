@@ -1,5 +1,5 @@
 $(function () {
-    $.get("categories")
+    $.get("/categories")
         .done(function (data) {
             let categoryNav = $('.category');
             categoryNav.empty(); // Clear any existing content

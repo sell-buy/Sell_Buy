@@ -25,7 +25,7 @@ public class Product {
     @Column(name = "prod_name")
     private String prodName;
     @Column(name = "prod_disc")
-    private String prodDisc;
+    private String prodDesc;
     @Column(name = "is_auction")
     private boolean isAuction;
     private int price;
@@ -37,6 +37,8 @@ public class Product {
     private int prodType;
     @Column(name = "create_date")
     private LocalDateTime createDate;
+    @Column(name = "img_urls")
+    private String imageUrls;
 
     @PrePersist
     protected void onCreate() {

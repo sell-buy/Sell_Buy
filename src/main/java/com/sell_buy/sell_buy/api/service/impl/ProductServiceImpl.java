@@ -70,14 +70,14 @@ public class ProductServiceImpl implements ProductService {
             }
             return productRepository.findByCategoryOrderByCreateDateDesc(pageable, catId);
         }
-        
+
         switch (searchType) {
             case "title+desc":
                 if (catId == null) {
-                    return productRepository.findByProdNameContainingOrProdDiscContainingOrderByCreateDateDesc(pageable, searchQuery, searchQuery);
+                    return productRepository.findByProdNameContainingOrProdDescContainingOrderByCreateDateDesc(pageable, searchQuery, searchQuery);
                 }
 
-                return productRepository.findByCategoryAndProdNameContainingOrProdDiscContainingOrderByCreateDateDesc(pageable, catId, searchQuery, searchQuery);
+                return productRepository.findByCategoryAndProdNameContainingOrProdDescContainingOrderByCreateDateDesc(pageable, catId, searchQuery, searchQuery);
 
             case "seller":
                 Long sellerId = memberRepository.findByNickname(searchQuery).getMemId();
