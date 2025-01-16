@@ -33,6 +33,8 @@ public class Product {
     private boolean isAvailable;
     @Column(name = "category_id")
     private long category;
+    @Column(name = "prod_type")
+    private int prodType;
     @Column(name = "create_date")
     private LocalDateTime createDate;
 

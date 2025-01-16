@@ -32,7 +32,7 @@ public class Order {
     private String receiverAddress;
     @Column(name = "receiver_phone")
     private String receiverPhone;
-    @Column(name = "order_status")
+    @Column(name = "ORDER_TYPE")
     private int orderStatus;
     @Column(name = "created_date")
     private LocalDateTime createdDate;

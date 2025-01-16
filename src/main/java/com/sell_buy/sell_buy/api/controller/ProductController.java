@@ -21,7 +21,7 @@ public class ProductController {
         return "prodRegister";
     }
 
-    @PostMapping()
+    @PostMapping("/register")
     public ResponseEntity<?> registerProduct(@RequestBody Product product, HttpSession session) {
         Long sellerId = (Long) session.getAttribute("memId");
         if (sellerId == null) {
