@@ -34,6 +34,7 @@
                 <li><a href="/customer-center">고객센터</a></li>
                 <li><a href="/my-page">내 정보</a></li>
                 <sec:authorize access="isAuthenticated()">
+                    <li><a href="/prod/register">상품등록</a></li>
                     <li><a href="/member/logout">로그아웃</a></li>
                 </sec:authorize>
                 <sec:authorize access="!isAuthenticated()">
