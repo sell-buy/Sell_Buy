@@ -17,12 +17,13 @@ body, html {
     overflow-x: auto;
 }
 
+.content {
+    display: flex;
+    flex: 1;
+}
+
 .main-container {
     display: flex;
     flex: 1;
 }
 
-.content {
-    display: flex;
-    flex: 1;
-}

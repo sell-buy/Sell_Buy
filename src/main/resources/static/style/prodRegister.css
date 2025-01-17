@@ -1,6 +1,9 @@
 .main-container {
     color: white;
     padding: 0; /* 상단과 좌우의 빈 공간 제거 */
+    min-height: 600px;
+    height: calc(100vh - 260px);
+
 }
 
 .content-center {
@@ -13,7 +16,8 @@
     border: 1px solid #444;
     padding: 0; /* 상단과 좌우의 빈 공간 제거 */
     width: 100%; /* 가로를 꽉 채우도록 설정 */
-    height: calc(100vh - 260px); /* 세로를 꽉 채우도록 설정 */
+    max-height: 100%; /* 세로를 꽉 채우도록 설정 */
+
 }
 
 .category-item {
@@ -192,3 +196,146 @@ input {
     background-color: saddlebrown;
     color: white;
 }
+
+.image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 600px;
+    gap: 20px; /* 간격을 더 넓게 */
+    width: 100%;
+    justify-content: center;
+}
+
+.big-image {
+    width: 300px;
+    height: 300px;
+    background-color: #444;
+    border: 2px solid #ccc;
+    border-radius: 10px; /* 경계선 둥글게 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
+}
+
+.small-images {
+    display: flex;
+    justify-content: center; /* 왼쪽 정렬 */
+    height: 100px;
+    gap: 15px; /* 이미지 간 간격 확대 */
+    width: 100%;
+    padding: 10px 0;
+}
+
+.img-insert {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #666;
+    border: 1px solid #ccc;
+    border-radius: 8px; /* 경계선 둥글게 */
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-size: cover;
+}
+
+.img-insert img {
+    width: 100%; /* 컨테이너의 가로 크기에 맞게 */
+    height: 100%; /* 컨테이너의 세로 크기에 맞게 */
+    object-fit: cover; /* 이미지가 꽉 차게 */
+    object-position: center; /* 중앙을 기준으로 표시 */
+}
+
+.img-insert:hover {
+    transform: translateY(-5px); /* 살짝 위로 올라감 */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3); /* 그림자 강조 */
+}
+
+.img-insert.has-image {
+    background-color: #fff; /* 이미지가 있으면 배경 흰색 */
+}
+
+.img-upload {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 1; /* 업로드 버튼이 위로 */
+}
+
+.img-controls {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.view-btn,
+.delete-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.view-btn:hover,
+.delete-btn:hover {
+    background-color: #0056b3; /* 버튼 호버 색상 */
+    transform: scale(1.05); /* 살짝 커짐 */
+}
+
+.img-insert.has-image .view-btn,
+.img-insert.has-image .delete-btn {
+    display: block;
+    background-color: #d79672;
+    color: white;
+    border: 1px solid #ccc;
+    font-size: 12px;
+    width: 100%;
+}
+
+.view-btn:hover,
+.delete-btn:hover {
+    background-color: #b07860;
+}
+
+/*
+!* 반응형 설정 *!
+@media (max-width: 600px) {
+    .big-image {
+        width: 200px;
+        height: 200px;
+    }
+
+    .img-insert {
+        width: 60px;
+        height: 60px;
+    }
+
+    .view-btn,
+    .delete-btn {
+        font-size: 10px;
+        padding: 3px 5px;
+    }
+
+    .small-images {
+        gap: 10px;
+        justify-content: center; !* 작은 화면에서는 가운데 정렬 *!
+    }
+}
+*/
