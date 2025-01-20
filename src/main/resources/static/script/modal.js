@@ -1,15 +1,10 @@
-var loginPageCache = null;
-var registerPageCache = null;
-
 $(document).ready(function () {
+    var loginPageCache = null;
+    var registerPageCache = null;
 
     function closeModal() {
         $('.modal').css('display', 'none');
-        $('.modal_body [title]').each(function () {
-            if ($(this).data('ui-tooltip')) {
-                $(this).tooltip('destroy');
-            }
-        });
+        $('.modal_body [title]').tooltip('destroy');
     }
 
     $('#href-open-login').on('click', function (event) {

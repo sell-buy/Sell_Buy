@@ -64,20 +64,14 @@ public class ProductServiceImpl implements ProductService {
     public Slice<Product> getProductList(int page, Long catId, String searchQuery, String searchType) {
         Pageable pageable = PageRequest.of(page - 1, 18);
 
-        if (searchType == null) {
-            if (catId == null) {
-                return productRepository.findAllByOrderByCreateDateDesc(pageable);
-            }
-            return productRepository.findByCategoryOrderByCreateDateDesc(pageable, catId);
-        }
 
         switch (searchType) {
             case "title+desc":
                 if (catId == null) {
-                    return productRepository.findByProdNameContainingOrProdDescContainingOrderByCreateDateDesc(pageable, searchQuery, searchQuery);
+                    return productRepository.findByProdNameContainingOrProdDiscContainingOrderByCreateDateDesc(pageable, searchQuery, searchQuery);
                 }
 
-                return productRepository.findByCategoryAndProdNameContainingOrProdDescContainingOrderByCreateDateDesc(pageable, catId, searchQuery, searchQuery);
+                return productRepository.findByCategoryAndProdNameContainingOrProdDiscContainingOrderByCreateDateDesc(pageable, catId, searchQuery, searchQuery);
 
             case "seller":
                 Long sellerId = memberRepository.findByNickname(searchQuery).getMemId();
