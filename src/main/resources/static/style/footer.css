@@ -3,7 +3,8 @@ footer {
     margin-top: auto;
     position: relative;
     flex: 0 0 auto;
-    height: 120px;
+    max-height: 20vh;
+    min-height: 10%;
     width: 100%;
     background-color: #f6f6e9;
     text-align: center;
@@ -14,13 +15,15 @@ footer {
 .footer-top {
     margin: 0;
     padding: 0;
+    /*asdkasjlklsss*/
+    /*asd*/
 }
 
 .footer-logo {
     text-align: left;
     font-size: 24px;
     font-weight: bold;
-    height: 8%;
+    height: 8vh;
     margin: 10px 20px 0;
 }
 
