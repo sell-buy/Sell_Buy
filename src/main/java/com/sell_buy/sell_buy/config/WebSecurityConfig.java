@@ -42,7 +42,6 @@ public class WebSecurityConfig {
                         .passwordParameter("password")
                         .successHandler(jsonAuthenticationSuccessHandler())
                         .failureHandler(jsonAuthenticationFailureHandler())
-                        .defaultSuccessUrl("/")
                 )
                 .sessionManagement((sessionManagement) ->
                         sessionManagement.maximumSessions(1).expiredUrl("/session-expired"))
@@ -78,6 +77,8 @@ public class WebSecurityConfig {
             }
 
             response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write("{\"message\": \"Login successful\", \"status\": \"success\"}");
         };
     }
 

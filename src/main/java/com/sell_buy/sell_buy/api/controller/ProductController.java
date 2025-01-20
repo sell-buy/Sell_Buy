@@ -1,10 +1,11 @@
 package com.sell_buy.sell_buy.api.controller;
 
 import com.sell_buy.sell_buy.api.service.AWSFileService;
+import com.sell_buy.sell_buy.api.service.AuthenticationService;
 import com.sell_buy.sell_buy.api.service.ProductService;
 import com.sell_buy.sell_buy.common.utills.ListToJsonUtils;
+import com.sell_buy.sell_buy.db.entity.Member;
 import com.sell_buy.sell_buy.db.entity.Product;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final AWSFileService awsFileService;
+    private final AuthenticationService authenticationService;
 
     @GetMapping("/register")
     public String registerProduct() {
@@ -31,21 +33,20 @@ public class ProductController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerProduct(@RequestPart("product") Product product,
-                                             @RequestPart("images") List<MultipartFile> images,
-                                             HttpSession session) throws IOException {
-        Long sellerId = (Long) session.getAttribute("memId");
-        if (sellerId == null) {
-            return ResponseEntity.status(411).body("User ID is not present in the session.");
-        }
+                                             @RequestPart(value = "images", required = false) List<MultipartFile> images) throws IOException {
+
+        Member member = authenticationService.getAuthenticatedMember();
+
+        Long sellerId = member.getMemId();
+
         product.setSellerId(sellerId);
-        
+
         if (images.size() > 4)
             return ResponseEntity.status(414).body("Maximum 4 images allowed.");
 
-
         List<String> imageUrls = new ArrayList<>();
-        for (MultipartFile image : images) {
 
+        for (MultipartFile image : images) {
             String imageUrl = awsFileService.uploadFile(image);
             imageUrls.add(imageUrl);
         }
@@ -57,10 +58,12 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateProduct(@RequestBody Product product, HttpSession session, @PathVariable("id") Long prodId) {
+    public ResponseEntity<?> updateProduct(@RequestBody Product product, @PathVariable("id") Long prodId) {
         System.out.println("updateProduct called with prodId: " + prodId);
 
-        Long sellerId = (Long) session.getAttribute("memId");
+        Member member = authenticationService.getAuthenticatedMember();
+
+        Long sellerId = member.getMemId();
         System.out.println("Session sellerId: " + sellerId);
 
         if (!productService.existsById(prodId)) {
@@ -83,11 +86,10 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProduct(HttpSession session, @PathVariable("id") Long prodId) {
-        if (session == null) {
-            return ResponseEntity.status(411).body("Session is not present.");
-        }
-        Long sellerId = (Long) session.getAttribute("memId");
+    public ResponseEntity<?> deleteProduct(@PathVariable("id") Long prodId) {
+        Member member = authenticationService.getAuthenticatedMember();
+
+        Long sellerId = member.getMemId();
         if (sellerId == null) {
             return ResponseEntity.status(411).body("User ID is not present in the session.");
         }
