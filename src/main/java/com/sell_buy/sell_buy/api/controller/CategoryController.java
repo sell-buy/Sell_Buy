@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequiredArgsConstructor
 public class CategoryController {
-    
+
     private final CategoryService categoryService;
+    
 
     @GetMapping("/categories")
     public ResponseEntity<?> getCategories(@RequestParam(name = "catId", required = false) Long catId) {
@@ -28,5 +29,6 @@ public class CategoryController {
         }
         return ResponseEntity.ok(categoryService.getCategory(catId));
     }
+
 
 }
