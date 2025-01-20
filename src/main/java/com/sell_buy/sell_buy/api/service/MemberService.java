@@ -20,4 +20,6 @@ public interface MemberService {
     Member getMemberByNickname(String nickname);
 
     List<Member> getAllMembers();
+
+    Member getMemberByLoginId(String loginId);
 }

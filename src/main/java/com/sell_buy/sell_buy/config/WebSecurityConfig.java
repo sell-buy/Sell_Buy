@@ -1,6 +1,8 @@
 package com.sell_buy.sell_buy.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sell_buy.sell_buy.api.service.MemberService;
+import com.sell_buy.sell_buy.db.entity.Member;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +12,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -25,10 +25,7 @@ import java.util.Map;
 public class WebSecurityConfig {
 
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    private final MemberService memberService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -70,15 +67,17 @@ public class WebSecurityConfig {
     private AuthenticationSuccessHandler jsonAuthenticationSuccessHandler() {
         return (request, response, authentication) -> {
             HttpSession session = request.getSession();
-            session.setAttribute("memId", authentication.getName());
             session.setMaxInactiveInterval(3600);
 
+            String loginId = authentication.getName();
+            Member member = memberService.getMemberByLoginId(loginId);
+
+            if (member != null) {
+                session.setAttribute("memId", member.getMemId());
+                session.setAttribute("nickname", member.getNickname());
+            }
+
             response.setStatus(HttpServletResponse.SC_OK);
-
-            Map<String, Object> responseData = new HashMap<>();
-            responseData.put("status", "success");
-            responseData.put("message", "Login successful");
-
         };
     }
 
