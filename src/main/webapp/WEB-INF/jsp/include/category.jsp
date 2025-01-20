@@ -11,9 +11,12 @@
 <head>
     <link rel="stylesheet" href="<c:url value='/style/category.css'/> ">
     <link rel="stylesheet" href="<c:url value='/style/common.css'/> ">
+    <script src="<c:url value='/webjars/jquery/3.7.1/dist/jquery.js'/> "></script>
+    <script src="<c:url value='/script/category.js'/> "></script>
+
 </head>
-<body>
-<nav class="category">
+<body class="custom-scrollbar">
+<nav class="category custom-scrollbar">
 
 </nav>
 </body>
