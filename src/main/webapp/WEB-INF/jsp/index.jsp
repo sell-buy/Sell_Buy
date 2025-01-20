@@ -10,16 +10,13 @@
 <html>
 <head>
     <title>Sell&Buy</title>
-    <script src="<c:url value="/webjars/jquery/3.7.1/dist/jquery.js"/>"></script>
+    <script async src="<c:url value="/webjars/jquery/3.7.1/dist/jquery.js"/>"></script>
     <link rel="stylesheet" href="<c:url value="/style/common.css"/>">
 </head>
-<body class="custom-scrollbar">
+<body>
 <div id="wrap">
     <%@include file="include/header.jsp" %>
-    <div class="content">
-        <%@include file="include/category.jsp" %>
-        <div class="main-container"></div>
-    </div>
+    <%@include file="include/category.jsp" %>
     <%@include file="include/footer.jsp" %>
 </div>
 </body>

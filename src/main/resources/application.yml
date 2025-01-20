@@ -15,15 +15,6 @@ spring:
     redis:
       port: 6379
       host: localhost
-  jpa:
-    show-sql: false
-  cloud:
-    aws:
-      credentials:
-        access-key: AKIA6K5V7S2RLV5WUQOS
-        secret-key: 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
-      region:
-        static: ap-northeast-1
 server:
   port: 80
   servlet:
@@ -31,10 +22,3 @@ server:
       charset: utf-8
       enabled: true
       force: true
-    session:
-      cookie:
-        name: JSESSIONID
-      timeout: 30s
-mybatis:
-  mapper-locations: classpath:mapper/*.xml
-  config-location: classpath:mybatis-config.xml
