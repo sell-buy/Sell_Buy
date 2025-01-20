@@ -221,6 +221,14 @@ input {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
 }
 
+.img-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    height: 200px;
+}
+
 .small-images {
     display: flex;
     justify-content: center; /* 왼쪽 정렬 */

@@ -2,6 +2,7 @@
     flex: 0 0 200px;
     background-color: #f6f6e9;
     border-right: 1px solid #ccc;
+    overflow-y: auto;
 }
 
 .category-item {

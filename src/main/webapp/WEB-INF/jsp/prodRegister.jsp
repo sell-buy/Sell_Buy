@@ -32,7 +32,8 @@
                         <label for="type_delivery">택배거래</label>
                     </div>
                     <label for="prodDesc">
-                        <textarea id="prodDesc" name="prodDesc" placeholder="상품 설명" required style=""></textarea>
+                        <textarea id="prodDesc" name="prodDesc" placeholder="상품 설명" class="custom-scrollbar"
+                                  required></textarea>
                     </label>
                     <button type="submit">등록하기</button>
                 </form>

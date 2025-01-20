@@ -4,60 +4,97 @@ $(document).ready(function () {
     $('#prodRegisterForm').submit(function (event) {
         event.preventDefault();
 
-        const directType = $('#type_direct').is(':checked');
-        const deliveryType = $('#type_delivery').is(':checked');
-
-        let tradeType = -1;
-        if (directType && deliveryType) {
-            tradeType = 2;
-        } else if (directType || !deliveryType) {
-            tradeType = 0;
-        } else if (!directType || deliveryType) {
-            tradeType = 1;
-        }
-        if (tradeType === -1) {
+        const prodType = determineTradeType();
+        if (prodType === -1) {
             alert('거래 방식을 선택해주세요.');
             return false;
         }
-        const formData = new FormData();
+
         const product = {
             prodName: $('#prodName').val(),
             price: $('#price').val(),
             prodDesc: $('#prodDesc').val(),
-            tradeType: tradeType,
-            catId: $('#category').val()
+            prodType: prodType,
+            category: $('#category').val(),
+        };
+
+        const formData = createFormData(product);
+
+        if (!formData) {
+            return false; // 이미지 관련 오류가 있으면 처리 중단
         }
 
-        formData.append('product', new Blob([JSON.stringify(product)],
-            {type: 'application/json'})
+        sendFormData(formData);
+    });
+
+    function determineTradeType() {
+        const directType = $('#type_direct').is(':checked');
+        const deliveryType = $('#type_delivery').is(':checked');
+
+        if (directType && deliveryType) {
+            return 2;
+        } else if (directType || !deliveryType) {
+            return 0;
+        } else if (!directType || deliveryType) {
+            return 1;
+        }
+        return -1;
+    }
+
+    function createFormData(product) {
+        const formData = new FormData();
+
+        // 상품 정보 추가
+        formData.append(
+            'product',
+            new Blob([JSON.stringify(product)], {type: 'application/json'})
         );
 
-        const imgFiles = $('#images').files;
-        if (imgFiles.length > 4) {
+        // 이미지 파일 처리
+        const imageIds = ['img1', 'img2', 'img3', 'img4'];
+        let imageCount = 0;
+
+        for (const id of imageIds) {
+            const fileInput = $(`#${id}`).find('input[type="file"]').get(0);
+
+            if (fileInput && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                formData.append('images', file);
+                imageCount++;
+            }
+        }
+
+        if (imageCount === 0) {
+            alert('최소 하나의 이미지를 업로드해야 합니다.');
+            return null;
+        }
+
+        if (imageCount > 4) {
             alert('이미지는 최대 4개까지 업로드 가능합니다.');
-            return false;
+            return null;
         }
 
-        for (const file of imgFiles) {
-            formData.append('images', file);
-        }
+        return formData;
+    }
 
+    function sendFormData(formData) {
         $.ajax({
             type: 'POST',
             url: '/prod/register',
             data: formData,
             processData: false,
             contentType: false,
-            success: function (xhr) {
-                window.location.href = '/prod/' + xhr;
+            success: function (response) {
+                alert('상품이 성공적으로 등록되었습니다!');
+                window.location.href = '/prod/' + response;
             },
             error: function (xhr) {
-                alert('상품 등록에 실패했습니다.');
+                const errorMessage = xhr.responseJSON?.message || '상품 등록에 실패했습니다.';
+                alert(errorMessage);
                 console.error(xhr);
-            }
+            },
         });
-
-    });
+    }
 
     function loadCategories(catId) {
         if (catId === undefined) {
@@ -132,6 +169,9 @@ $(document).ready(function () {
     }
 });
 
+
+/* 이미지 관련 함수들 */
+
 // 이미지 업로드
 function uploadImage(input, id) {
     const container = $("#" + id);
@@ -169,6 +209,16 @@ function uploadImage(input, id) {
 function deleteImage(id) {
     const container = $("#" + id);
     const hiddenInput = $('#hidden-' + id);
+    const bigPreview = $('#big-preview');
+
+
+    // 현재 큰 이미지 프리뷰가 이 이미지라면 초기화
+    const containerBg = container.css('background-image');
+    const bigPreviewBg = bigPreview.css('background-image');
+
+    if (bigPreviewBg && bigPreviewBg === containerBg) {
+        bigPreview.css('background-image', ''); // 큰 이미지 미리보기 초기화
+    }
 
     // 배경 이미지 및 hidden input 초기화
     container.css('background-image', '');
@@ -177,15 +227,13 @@ function deleteImage(id) {
     // 이미지 컨테이너에 상태 클래스 제거
     container.removeClass('has-image');
 
-    if ()
-
     // 이미지 리스트 재정렬
     reorderImages();
 }
 
 // 이미지 리스트 재정렬
 function reorderImages() {
-    const images = $('.img-wrapper'); // 모든 이미지 래퍼 선택
+    const images = $('.img-card'); // 모든 이미지 래퍼 선택
     const parent = $('.small-images'); // 부모 컨테이너
 
     // 이미지를 가진 요소를 앞쪽으로, 없는 요소를 뒤쪽으로 정렬
@@ -208,14 +256,13 @@ function viewImage(id) {
     const bigPreview = $('#big-preview');
     const backgroundImage = container.css('background-image');
 
-
     // 이미지가 없으면 실행하지 않음
-    if (!backgroundImage && backgroundImage === 'none') {
-
-    } else {
-        // 이미지가 있으면 이미지를 큰 이미지 미리보기에 설정
-        bigPreview.css('background-image', backgroundImage);
+    if (!backgroundImage || backgroundImage === 'none') {
+        return;
     }
+
+    // 큰 이미지 미리보기에 설정
+    bigPreview.css('background-image', backgroundImage);
 }
 
 // 이벤트 핸들러를 jQuery 방식으로 설정
