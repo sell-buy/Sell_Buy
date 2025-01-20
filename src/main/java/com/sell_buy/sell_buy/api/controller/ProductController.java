@@ -1,17 +1,21 @@
 package com.sell_buy.sell_buy.api.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sell_buy.sell_buy.api.service.AWSFileService;
 import com.sell_buy.sell_buy.api.service.AuthenticationService;
 import com.sell_buy.sell_buy.api.service.ProductService;
-import com.sell_buy.sell_buy.common.utills.ListToJsonUtils;
+import com.sell_buy.sell_buy.common.utills.JsonUtils;
 import com.sell_buy.sell_buy.db.entity.Member;
 import com.sell_buy.sell_buy.db.entity.Product;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,8 +31,10 @@ public class ProductController {
     private final AuthenticationService authenticationService;
 
     @GetMapping("/register")
-    public String registerProduct() {
-        return "prodRegister";
+    public ModelAndView registerProduct() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("prodRegister");
+        return modelAndView;
     }
 
     @PostMapping("/register")
@@ -50,7 +56,7 @@ public class ProductController {
             String imageUrl = awsFileService.uploadFile(image);
             imageUrls.add(imageUrl);
         }
-        product.setImageUrls(ListToJsonUtils.convertListToJson(imageUrls));
+        product.setImageUrls(JsonUtils.convertListToJson(imageUrls));
 
         productService.registerProduct(product);
         System.out.println(product.getProdId());
@@ -106,11 +112,40 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getProductById(@PathVariable("id") Long prod_id) {
-        if (!productService.existsById(prod_id)) {
-            return ResponseEntity.status(410).body("Product with id " + prod_id + " not found.");
+    public ModelAndView getProductById(@PathVariable("id") Long prodId, HttpServletResponse response)
+            throws JsonProcessingException {
+        ModelAndView modelAndView = new ModelAndView();
+        ObjectMapper objectMapper = new ObjectMapper();
+        Member member = authenticationService.getAuthenticatedMember();
+        boolean isSeller = false;
+
+        if (!productService.existsById(prodId)) {
+            modelAndView.setViewName("exception");
+            modelAndView.addObject("errorCode", 410);
+            modelAndView.addObject("errorMessage", "상품이 존재하지 않습니다.");
+
+            response.setStatus(HttpServletResponse.SC_GONE);
+            return modelAndView;
         }
-        return ResponseEntity.status(200).body(productService.getProductById(prod_id));
+
+        Product product = productService.getProductById(prodId);
+
+        // 판매자인지 확인
+        if (member != null) {
+            Long sellerId = member.getMemId();
+            if (sellerId != null && sellerId == productService.getProductById(prodId).getSellerId()) {
+                isSeller = true;
+            }
+        }
+
+        List<String> imageUrls = JsonUtils.convertJsonToList(product.getImageUrls());
+
+        modelAndView.setViewName("prodSpec");
+        modelAndView.addObject("product", product);
+        modelAndView.addObject("isSeller", isSeller);
+        modelAndView.addObject("imageUrls", imageUrls);
+        response.setStatus(HttpServletResponse.SC_OK);
+        return modelAndView;
     }
 
 

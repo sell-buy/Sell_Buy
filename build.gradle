@@ -22,6 +22,10 @@ configurations {
     }
 }
 
+bootRun {
+    jvmArgs = ["-XX:ReservedCodeCacheSize=256m"]
+}
+
 ext {
     set('springCloudVersion', "2024.0.0")
     set('springCloudAwsVersion', "3.3.0-RC1")

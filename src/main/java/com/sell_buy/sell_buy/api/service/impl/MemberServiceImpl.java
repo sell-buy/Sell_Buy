@@ -37,7 +37,7 @@ public class MemberServiceImpl implements MemberService {
         if (!validator.isValid()) {
             throw new Exception("Invalid input");
         }
-        if (memberRepository.findByLoginId(member.getLoginId()) != null) {
+        if (memberRepository.findByLoginId(member.getLoginId()).isPresent()) {
             throw new Exception("Login ID already exists");
         }
         member.setPassword(passwordEncoder.encode(member.getPassword()));

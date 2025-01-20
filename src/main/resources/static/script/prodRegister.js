@@ -1,8 +1,13 @@
 $(document).ready(function () {
     loadCategories();
 
+
     $('#prodRegisterForm').submit(function (event) {
         event.preventDefault();
+
+        if (!$(this).valid()) {
+            return;
+        }
 
         const prodType = determineTradeType();
         if (prodType === -1) {

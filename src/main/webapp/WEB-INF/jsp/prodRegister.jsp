@@ -5,9 +5,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sell&Buy</title>
-    <script async src="<c:url value="/webjars/jquery/3.7.1/dist/jquery.js"/>"></script>
+    <title>Sell&Buy :: Product Register</title>
+
+    <script src="<c:url value="/webjars/jquery/3.7.1/dist/jquery.js"/>"></script>
+    <script src="<c:url value="/webjars/jquery-validation/1.20.0/jquery.validate.js"/>"></script>
+    <script src="<c:url value="/webjars/jquery-ui/1.14.1/jquery-ui.js"/>"></script>
+    <link rel="stylesheet" href="<c:url value="/webjars/jquery-ui/1.14.1/jquery-ui.css"/>">
+
     <script async src="<c:url value="/script/prodRegister.js"/>"></script>
+    <script async src="<c:url value="/script/prodRegisterValidator.js"/>"></script>
     <link rel="stylesheet" href="<c:url value="/style/common.css"/>">
     <link rel="stylesheet" href="<c:url value="/style/prodRegister.css"/>">
 </head>
@@ -39,13 +45,13 @@
                 </form>
             </div>
             <div class="content-center">
-                <div class="category-dep1">
+                <div class="category-dep1 custom-scrollbar">
                     <ul id="category-dep1"></ul>
                 </div>
-                <div class="category-dep2">
+                <div class="category-dep2 custom-scrollbar">
                     <ul id="category-dep2"></ul>
                 </div>
-                <div class="category-dep3">
+                <div class="category-dep3 custom-scrollbar">
                     <ul id="category-dep3"></ul>
                 </div>
             </div>
