@@ -2,14 +2,15 @@ package com.sell_buy.sell_buy.api.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sell_buy.sell_buy.api.service.AWSFileService;
 import com.sell_buy.sell_buy.api.service.AuthenticationService;
 import com.sell_buy.sell_buy.api.service.ProductService;
+import com.sell_buy.sell_buy.api.service.impl.AWSFileService;
 import com.sell_buy.sell_buy.common.utills.JsonUtils;
 import com.sell_buy.sell_buy.db.entity.Member;
 import com.sell_buy.sell_buy.db.entity.Product;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.naming.AuthenticationException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/prod")
 @RequiredArgsConstructor
+@Slf4j
 public class ProductController {
 
     private final ProductService productService;
@@ -40,11 +43,8 @@ public class ProductController {
     @PostMapping("/register")
     public ResponseEntity<?> registerProduct(@RequestPart("product") Product product,
                                              @RequestPart(value = "images", required = false) List<MultipartFile> images) throws IOException {
-
         Member member = authenticationService.getAuthenticatedMember();
-
         Long sellerId = member.getMemId();
-
         product.setSellerId(sellerId);
 
         if (images.size() > 4)
@@ -66,7 +66,6 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProduct(@RequestBody Product product, @PathVariable("id") Long prodId) {
         System.out.println("updateProduct called with prodId: " + prodId);
-
         Member member = authenticationService.getAuthenticatedMember();
 
         Long sellerId = member.getMemId();
@@ -112,12 +111,9 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ModelAndView getProductById(@PathVariable("id") Long prodId, HttpServletResponse response)
-            throws JsonProcessingException {
+    public ModelAndView getProductById(@PathVariable("id") Long prodId, HttpServletResponse response) throws JsonProcessingException, AuthenticationException {
         ModelAndView modelAndView = new ModelAndView();
         ObjectMapper objectMapper = new ObjectMapper();
-        Member member = authenticationService.getAuthenticatedMember();
-        boolean isSeller = false;
 
         if (!productService.existsById(prodId)) {
             modelAndView.setViewName("exception");
@@ -127,22 +123,12 @@ public class ProductController {
             response.setStatus(HttpServletResponse.SC_GONE);
             return modelAndView;
         }
-
         Product product = productService.getProductById(prodId);
-
-        // 판매자인지 확인
-        if (member != null) {
-            Long sellerId = member.getMemId();
-            if (sellerId != null && sellerId == productService.getProductById(prodId).getSellerId()) {
-                isSeller = true;
-            }
-        }
 
         List<String> imageUrls = JsonUtils.convertJsonToList(product.getImageUrls());
 
         modelAndView.setViewName("prodSpec");
         modelAndView.addObject("product", product);
-        modelAndView.addObject("isSeller", isSeller);
         modelAndView.addObject("imageUrls", imageUrls);
         response.setStatus(HttpServletResponse.SC_OK);
         return modelAndView;
@@ -150,17 +136,25 @@ public class ProductController {
 
 
     @GetMapping("/list")
-    public ResponseEntity<?> getProductList(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                                            @RequestParam(name = "catId", required = false) Long catId,
-                                            @RequestParam(name = "searchQuery", required = false) String searchQuery,
-                                            @RequestParam(name = "searchType", required = false) String searchType) {
+    public ModelAndView getProductList(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                       @RequestParam(name = "catId", required = false) Long catId,
+                                       @RequestParam(name = "searchQuery", required = false) String searchQuery,
+                                       @RequestParam(name = "searchType", required = false) String searchType,
+                                       HttpServletResponse response) {
+        ModelAndView modelAndView = new ModelAndView();
         if (page < 1) {
-            return ResponseEntity.status(413).body("Page number must be greater than 0.");
+            modelAndView.setViewName("exception");
+            response.setStatus(413);
+            modelAndView.addObject("errorCode", 413);
+            modelAndView.addObject("errorMessage", "페이지 번호는 1보다 커야 합니다.");
+            return modelAndView;
         }
 
         Slice<Product> productList = productService.getProductList(page, catId, searchQuery, searchType);
 
-        return ResponseEntity.status(200).body(productList);
+        modelAndView.setViewName("prodList");
+        modelAndView.addObject("productList", productList.getContent());
+        return modelAndView;
     }
 
 

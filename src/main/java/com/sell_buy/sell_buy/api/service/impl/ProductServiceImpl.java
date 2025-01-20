@@ -64,7 +64,7 @@ public class ProductServiceImpl implements ProductService {
     public Slice<Product> getProductList(int page, Long catId, String searchQuery, String searchType) {
         Pageable pageable = PageRequest.of(page - 1, 18);
 
-        if (searchType == null) {
+        if (searchType.isEmpty()) {
             if (catId == null) {
                 return productRepository.findAllByOrderByCreateDateDesc(pageable);
             }
@@ -72,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         switch (searchType) {
-            case "title+desc":
+            case "title-desc":
                 if (catId == null) {
                     return productRepository.findByProdNameContainingOrProdDescContainingOrderByCreateDateDesc(pageable, searchQuery, searchQuery);
                 }

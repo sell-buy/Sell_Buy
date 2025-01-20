@@ -7,6 +7,7 @@
 --%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
@@ -39,6 +40,14 @@
                 </div>
                 <button class="purchase-button">구매</button>
             </div>
+            <sec:authorize access="isAuthenticated()">
+                <c:if test="${product.sellerId == memId}"> <%--memId 하면 왠지 몰라도 세션에 memId가 불러와짐 ㅋㅋ--%>
+                    <div class="product-control">
+                        <button class="product-control-button" id="btn-modify">수정</button>
+                        <button class="product-control-button" id="btn-delete">삭제</button>
+                    </div>
+                </c:if>
+            </sec:authorize>
         </div>
     </div>
     <%@include file="include/footer.jsp" %>

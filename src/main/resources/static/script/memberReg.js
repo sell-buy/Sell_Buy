@@ -17,7 +17,7 @@ $(document).ready(function () {
         };
         $.ajax({
             type: 'POST',
-            url: 'localhost://member/register',
+            url: 'http://localhost/member/register',
             contentType: 'application/json',
             data: JSON.stringify(formData),
             success: function () {

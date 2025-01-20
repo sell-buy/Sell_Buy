@@ -11,13 +11,14 @@ import org.springframework.stereotype.Service;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
-    public Member getAuthenticatedMember() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    public Member getAuthenticatedMember() throws AuthenticationException {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (auth == null || !auth.isAuthenticated())
-            throw new AuthenticationException("Unauthenticated user") {
+        if (principal instanceof Member) {
+            return (Member) principal;
+        } else {
+            throw new AuthenticationException("User not authenticated") {
             };
-
-        return (Member) auth.getPrincipal();
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.sell_buy.sell_buy.api.service;
+package com.sell_buy.sell_buy.api.service.impl;
 
 import com.sell_buy.sell_buy.common.utills.CommonUtils;
 import lombok.RequiredArgsConstructor;
