@@ -64,7 +64,7 @@ public class ProductServiceImpl implements ProductService {
     public Slice<Product> getProductList(int page, Long catId, String searchQuery, String searchType) {
         Pageable pageable = PageRequest.of(page - 1, 18);
 
-        if (searchType.isEmpty()) {
+        if (searchType == null) {
             if (catId == null) {
                 return productRepository.findAllByOrderByCreateDateDesc(pageable);
             }

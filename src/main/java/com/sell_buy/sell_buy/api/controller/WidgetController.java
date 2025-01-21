@@ -1,5 +1,8 @@
 package com.sell_buy.sell_buy.api.controller;
 
+import com.sell_buy.sell_buy.api.service.AuthenticationService;
+import com.sell_buy.sell_buy.db.entity.Member;
+import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -10,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,14 +25,30 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+@RequestMapping(value = "/payment")
+@RequiredArgsConstructor
 @Controller
 public class WidgetController {
-
+    private final AuthenticationService authenticationService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @GetMapping(value = "/payment")
-    public String payment() {
-        return "payment_checkout";
+    @GetMapping("/{id}")
+    public ModelAndView processPayment(@RequestParam("productId") String productId,
+                                       @RequestParam("price") String price) {
+        Member member = authenticationService.getAuthenticatedMember();
+        // 받은 값 처리
+        System.out.println("Product ID: " + productId);
+        System.out.println("Price: " + price);
+        // 결제 페이지로 이동
+        ModelAndView modelAndView = new ModelAndView("payment_checkout");
+        modelAndView.setViewName("payment_checkout");
+        modelAndView.addObject("prodName", productId);
+        modelAndView.addObject("price", price);
+        modelAndView.addObject("email", member.getEmail());
+        modelAndView.addObject("phone", member.getPhoneNum());
+        modelAndView.addObject("address", member.getAddress());
+        modelAndView.addObject("memName", member.getName());
+        return modelAndView;
     }
 
     @GetMapping(value = "/success")

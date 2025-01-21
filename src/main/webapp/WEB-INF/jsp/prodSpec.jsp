@@ -8,7 +8,7 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-
+<script src="https://js.tosspayments.com/v2/standard"></script>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -38,7 +38,7 @@
                 <div class="product-description">
                     <c:out value="${product.prodDesc}"/>
                 </div>
-                <button class="purchase-button">구매</button>
+                <button class="purchase-button" id="purchase-button">구매</button>
             </div>
             <sec:authorize access="isAuthenticated()">
                 <c:if test="${product.sellerId == memId}"> <%--memId 하면 왠지 몰라도 세션에 memId가 불러와짐 ㅋㅋ--%>
@@ -52,5 +52,15 @@
     </div>
     <%@include file="include/footer.jsp" %>
 </div>
+<script>
+    const button = document.getElementById('purchase-button')
+    button.addEventListener('click', () => {
+        window.open(`/payment/${product.prodId}?productId=${product.prodName}&price=${product.price}`,
+            'PaymentPopup',
+            'width=800,height=600,scrollbars=yes,resizable=no');
+
+    })
+</script>
+
 </body>
 </html>
