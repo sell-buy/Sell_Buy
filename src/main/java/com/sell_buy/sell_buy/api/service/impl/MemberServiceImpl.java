@@ -53,6 +53,11 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.getMemberByLoginId(loginId);
     }
 
+    @Override
+    public Member getMember(Long memId) {
+        return memberRepository.findById(memId).orElse(null);
+    }
+
 
     @Override
     public Member updateMember() {

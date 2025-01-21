@@ -22,4 +22,6 @@ public interface MemberService {
     List<Member> getAllMembers();
 
     Member getMemberByLoginId(String loginId);
+
+    Member getMember(Long memId);
 }

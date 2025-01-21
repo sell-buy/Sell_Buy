@@ -1,6 +1,7 @@
 package com.sell_buy.sell_buy.api.controller;
 
 
+import com.sell_buy.sell_buy.api.service.AuthenticationService;
 import com.sell_buy.sell_buy.api.service.MemberService;
 import com.sell_buy.sell_buy.db.entity.Member;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class MemberController {
 
     private final MemberService memberService;
+    private final AuthenticationService authenticationService;
 
     @GetMapping("/register")
     public ModelAndView registerMember() {
@@ -44,6 +46,17 @@ public class MemberController {
         }
         return ResponseEntity.status(200).body(registeredMemberId);
     }
+
+    @GetMapping("/")
+    public ModelAndView getMember() {
+        Member member = authenticationService.getAuthenticatedMember();
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("memberInfo");
+        modelAndView.addObject("member", member);
+        return modelAndView;
+    }
+
 /* Not needed for using Spring Security
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Member member, HttpSession session) {

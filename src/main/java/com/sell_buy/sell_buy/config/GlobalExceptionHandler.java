@@ -1,5 +1,6 @@
 package com.sell_buy.sell_buy.config;
 
+import com.sell_buy.sell_buy.common.exception.auth.AuthenticateNotMatchException;
 import com.sell_buy.sell_buy.common.exception.product.ProductAlreadyExistsException;
 import com.sell_buy.sell_buy.common.exception.product.ProductNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,18 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ModelAndView handleException(Exception e, HttpServletResponse response) {
-        ModelAndView modelAndView = new ModelAndView("exception");
-        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-
-        log.error("Exception occurred: ", e);
-        modelAndView.addObject("errorCode", HttpStatus.INTERNAL_SERVER_ERROR.value());
-        modelAndView.addObject("errorMessage", "Internal server error occurred. Please try again later.");
-        return modelAndView;
-    }
-
     @ExceptionHandler(AuthenticationException.class)
     public ModelAndView handleAuthenticationException(AuthenticationException e, HttpServletResponse response) {
         ModelAndView modelAndView = new ModelAndView("exception");
@@ -35,6 +24,17 @@ public class GlobalExceptionHandler {
         log.error("AuthenticationException occurred: ", e);
         modelAndView.addObject("errorCode", HttpStatus.UNAUTHORIZED.value());
         modelAndView.addObject("errorMessage", "User not authenticated.");
+        return modelAndView;
+    }
+
+    @ExceptionHandler(AuthenticateNotMatchException.class)
+    public ModelAndView handleAuthenticateNotMatchException(AuthenticateNotMatchException e, HttpServletResponse response) {
+        ModelAndView modelAndView = new ModelAndView("exception");
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+
+        log.error("AuthenticateNotMatchException occurred: ", e);
+        modelAndView.addObject("errorCode", HttpStatus.UNAUTHORIZED.value());
+        modelAndView.addObject("errorMessage", e.getMessage());
         return modelAndView;
     }
 
@@ -60,5 +60,16 @@ public class GlobalExceptionHandler {
         return modelAndView;
     }
 
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ModelAndView handleException(Exception e, HttpServletResponse response) {
+        ModelAndView modelAndView = new ModelAndView("exception");
+        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+
+        log.error("Exception occurred: ", e);
+        modelAndView.addObject("errorCode", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        modelAndView.addObject("errorMessage", "Internal server error occurred. Please try again later.");
+        return modelAndView;
+    }
 
 }

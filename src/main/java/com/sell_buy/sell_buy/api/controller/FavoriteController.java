@@ -1,6 +1,9 @@
 package com.sell_buy.sell_buy.api.controller;
 
+import com.sell_buy.sell_buy.api.service.AuthenticationService;
 import com.sell_buy.sell_buy.api.service.FavoriteService;
+import com.sell_buy.sell_buy.common.exception.product.ProductNotFoundException;
+import com.sell_buy.sell_buy.db.entity.Member;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class FavoriteController {
 
     private final FavoriteService favoriteService;
+    private final AuthenticationService authenticationService;
 
     @GetMapping()
     public String favorite() {
@@ -22,13 +26,11 @@ public class FavoriteController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> toggleFavorite(HttpSession session, Long prodId) {
-        Long memId = (Long) session.getAttribute("memId");
-        if (memId == null) {
-            return ResponseEntity.status(411).body("User ID is not present in the session.");
-        }
+    public ResponseEntity<?> toggleFavorite(HttpSession session, Long prodId) throws ProductNotFoundException {
+        Member member = authenticationService.getAuthenticatedMember();
+        Long memId = member.getMemId();
         if (prodId == null) {
-            return ResponseEntity.status(412).body("Product ID is not present in the request.");
+            throw new ProductNotFoundException("Product ID is not present.");
         }
         if (favoriteService.wasFavorite(memId, prodId)) {
             if (favoriteService.isFavorite(memId, prodId)) {
@@ -46,10 +48,8 @@ public class FavoriteController {
 
     @GetMapping("/list")
     public ResponseEntity<?> getFavoriteList(HttpSession session, int page, int size) {
-        Long memId = (Long) session.getAttribute("memId");
-        if (memId == null) {
-            return ResponseEntity.status(411).body("User ID is not present in the session.");
-        }
+        Member member = authenticationService.getAuthenticatedMember();
+        Long memId = member.getMemId();
         return ResponseEntity.status(200).body(favoriteService.getFavoriteProductList(memId, page, size));
     }
 }
