@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    loadCategories();
 
 
     $('#prodRegisterForm').submit(function (event) {

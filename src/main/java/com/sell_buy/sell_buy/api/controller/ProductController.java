@@ -3,6 +3,7 @@ package com.sell_buy.sell_buy.api.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sell_buy.sell_buy.api.service.AuthenticationService;
+import com.sell_buy.sell_buy.api.service.CategoryService;
 import com.sell_buy.sell_buy.api.service.ProductService;
 import com.sell_buy.sell_buy.api.service.impl.AWSFileService;
 import com.sell_buy.sell_buy.common.exception.AuthenticateNotMatchException;
@@ -34,6 +35,7 @@ public class ProductController {
     private final ProductService productService;
     private final AWSFileService awsFileService;
     private final AuthenticationService authenticationService;
+    private final CategoryService categoryService;
 
     @GetMapping("/register")
     public ModelAndView registerProduct() {
@@ -60,8 +62,14 @@ public class ProductController {
             modelAndView.addObject("errorMessage", "허가되지 않은 접근입니다.");
             return modelAndView;
         }
+
         List<String> imageUrls = JsonUtils.convertJsonToList(product.getImageUrls());
+
+        List<Long> CategoryIds = categoryService.findAllSuperCategory(product.getCategory());
+        CategoryIds.add(product.getCategory());
+
         modelAndView.setViewName("prodUpdate");
+        modelAndView.addObject("categoryIds", CategoryIds);
         modelAndView.addObject("imageUrls", imageUrls);
         modelAndView.addObject("product", product);
         return modelAndView;

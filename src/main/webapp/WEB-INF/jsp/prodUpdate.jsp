@@ -20,48 +20,40 @@
     <script src="<c:url value="/script/category.js"/>"></script>
 
     <script>
+        let dep1;
+        let dep2;
+        $(window).on('load', function () {
+            let categoryIds = ${categoryIds};
 
-        function preselectCategories(catId, isCategoryLoaded) {
-            if (catId === undefined) return;
+            loadCategories();
+            loadCategories(categoryIds[0]);
+            loadCategories(categoryIds[1]);
 
-            $.get('http://localhost/category/super?catId=' + catId)
-                .done(function (data) {
-                    const dep1 = data.dep1[0];
-                    const dep2 = data.dep2[0];
-
-                    console.log(dep1, dep2, catId);
-
-                    if (isCategoryLoaded) {
-                        handleCategoryLoaded();
-                    } else {
-                        document.addEventListener('categoriesLoaded', handleCategoryLoaded);
+            setTimeout(function () {
+                $('.category-dep1 li').each(function () {
+                    if ($(this).attr('catid') == categoryIds[0]) {
+                        $(this).addClass('selected');
                     }
+                });
 
-                    function handleCategoryLoaded() {
-                        console.log('categoriesLoaded event detected!');
-
-
-                        // dep1 선택
-                        $('.category-dep1 li').filter(function () {
-                            console.log($(this).attr('catid') === dep1);
-                            return $(this).attr('catId') === dep1;
-                        }).trigger('click');
-
-                        // dep2 선택
-                        $('.category-dep2 li').filter(function () {
-                            return $(this).attr('catId') === dep2;
-                        }).trigger('click');
-
-                        // dep3 선택
-                        $('.category-dep3 li').filter(function () {
-                            return $(this).attr('catId') === catId;
-                        }).trigger('click');
+                $('.category-dep2 li').each(function () {
+                    if ($(this).attr('catid') == categoryIds[1]) {
+                        $(this).addClass('selected');
                     }
-                })
-                .fail(() => console.error('Failed to fetch category data.'));
-        }
+                });
 
+                $('.category-dep3 li').each(function () {
+                    if ($(this).attr('catid') == categoryIds[2]) {
+                        $(this).addClass('selected');
+                    }
+                });
+
+                $('#category').val(categoryIds[2]);
+            }, 1000);
+            console.log(categoryIds[2]);
+        });
         $(function () {
+
             let prodType = ${product.prodType};
             if (prodType === 0) {
                 $('#type_direct').prop('checked', true);
@@ -71,14 +63,7 @@
                 $('#type_direct').prop('checked', true);
                 $('#type_delivery').prop('checked', true);
             }
-            const productCatId = ${product.category};
-            console.log(productCatId);
-            let isCategoryLoaded = false;
-            document.addEventListener('categoriesLoaded', () => {
-                isCategoryLoaded = true;
-            });
-
-            preselectCategories(productCatId);
+            console.log(${categoryIds});
         });
 
 

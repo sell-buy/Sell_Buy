@@ -51,7 +51,6 @@ function loadCategories(catId) {
                     categoryBtn.append(categoryName);
                     categoryNav.append(categoryItem);
                 });
-                document.dispatchEvent(new Event('categoriesLoaded'));
             });
     } else {
         $.get('/categories', {catId: catId})
@@ -73,6 +72,7 @@ function loadCategories(catId) {
 
                 data.forEach(function (category) {
                     let categoryItem = $('<li>').addClass('category-item')
+                        .attr('catId', category.catId)
                         .on('click', function () {
                             $(this).siblings().removeClass('selected'); // 같은 레벨의 항목에서 selected 클래스 제거
                             $(this).addClass('selected'); // 클릭된 항목에 selected 클래스 추가

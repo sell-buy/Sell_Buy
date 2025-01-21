@@ -16,6 +16,12 @@
     <link rel="stylesheet" href="<c:url value="/style/prodRegister.css"/>">
     <script src="<c:url value="/script/prodRegister.js"/>"></script>
     <script src="<c:url value="/script/prodRegisterValidator.js"/>"></script>
+
+    <script>
+        $(function () {
+            loadCategories();
+        });
+    </script>
 </head>
 <body>
 <div id="wrap">

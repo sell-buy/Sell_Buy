@@ -44,7 +44,8 @@
                 <c:if test="${product.sellerId == memId}"> <%--memId 하면 왠지 몰라도 세션에 memId가 불러와짐 ㅋㅋ--%>
                     <div class="product-control">
                         <button class="product-control-button" id="btn-modify">수정</button>
-                        <button class="product-control-button" id="btn-delete">삭제</button>
+                        <button class="product-control-button" id="btn-delete" onclick="window.location.href ">삭제
+                        </button>
                     </div>
                 </c:if>
             </sec:authorize>
