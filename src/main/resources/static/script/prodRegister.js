@@ -4,9 +4,16 @@ $(document).ready(function () {
 
     $('#prodRegisterForm').submit(function (event) {
         event.preventDefault();
+        let selectedCategory = $('#category').val();
+        let isUpdate = false;
 
         if (!$(this).valid()) {
             return;
+        }
+
+        if (!selectedCategory) {
+            alert('카테고리를 선택해주세요.');
+            return false;
         }
 
         const prodType = determineTradeType();
@@ -15,12 +22,13 @@ $(document).ready(function () {
             return false;
         }
 
+
         const product = {
             prodName: $('#prodName').val(),
             price: $('#price').val(),
             prodDesc: $('#prodDesc').val(),
             prodType: prodType,
-            category: $('#category').val(),
+            category: selectedCategory
         };
 
         const formData = createFormData(product);
@@ -30,6 +38,45 @@ $(document).ready(function () {
         }
 
         sendFormData(formData);
+    });
+
+    $('#prodUpdateForm').submit(function (event) {
+        event.preventDefault();
+        let selectedCategory = $('#category').val();
+        let isUpdate = true;
+
+        if (!$(this).valid()) {
+            return;
+        }
+
+        if (!selectedCategory) {
+            alert('카테고리를 선택해주세요.');
+            return false;
+        }
+
+        const prodType = determineTradeType();
+        if (prodType === -1) {
+            alert('거래 방식을 선택해주세요.');
+            return false;
+        }
+
+
+        const product = {
+            prodName: $('#prodName').val(),
+            price: $('#price').val(),
+            prodDesc: $('#prodDesc').val(),
+            prodType: prodType,
+            category: selectedCategory
+        };
+
+        const formData = createFormData(product, isUpdate);
+
+        if (!formData) {
+            return false; // 이미지 관련 오류가 있으면 처리 중단
+        }
+
+        sendFormData(formData);
+
     });
 
     function determineTradeType() {
@@ -46,7 +93,7 @@ $(document).ready(function () {
         return -1;
     }
 
-    function createFormData(product) {
+    function createFormData(product, isUpdate) {
         const formData = new FormData();
 
         // 상품 정보 추가
@@ -55,28 +102,31 @@ $(document).ready(function () {
             new Blob([JSON.stringify(product)], {type: 'application/json'})
         );
 
-        // 이미지 파일 처리
-        const imageIds = ['img1', 'img2', 'img3', 'img4'];
-        let imageCount = 0;
+        if (isUpdate) {
 
-        for (const id of imageIds) {
-            const fileInput = $(`#${id}`).find('input[type="file"]').get(0);
+            // 이미지 파일 처리
+            const imageIds = ['img1', 'img2', 'img3', 'img4'];
+            let imageCount = 0;
 
-            if (fileInput && fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                formData.append('images', file);
-                imageCount++;
+            for (const id of imageIds) {
+                const fileInput = $(`#${id}`).find('input[type="file"]').get(0);
+
+                if (fileInput && fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    formData.append('images', file);
+                    imageCount++;
+                }
             }
-        }
 
-        if (imageCount === 0) {
-            alert('최소 하나의 이미지를 업로드해야 합니다.');
-            return null;
-        }
+            if (imageCount === 0) {
+                alert('최소 하나의 이미지를 업로드해야 합니다.');
+                return null;
+            }
 
-        if (imageCount > 4) {
-            alert('이미지는 최대 4개까지 업로드 가능합니다.');
-            return null;
+            if (imageCount > 4) {
+                alert('이미지는 최대 4개까지 업로드 가능합니다.');
+                return null;
+            }
         }
 
         return formData;
@@ -85,13 +135,13 @@ $(document).ready(function () {
     function sendFormData(formData) {
         $.ajax({
             type: 'POST',
-            url: '/prod/register',
+            url: 'http://localhost/prod/register',
             data: formData,
             processData: false,
             contentType: false,
             success: function (response) {
                 alert('상품이 성공적으로 등록되었습니다!');
-                window.location.href = '/prod/' + response;
+                window.location.href = 'http://localhost/prod/' + response;
             },
             error: function (xhr) {
                 const errorMessage = xhr.responseJSON?.message || '상품 등록에 실패했습니다.';
@@ -101,77 +151,7 @@ $(document).ready(function () {
         });
     }
 
-    function loadCategories(catId) {
-        if (catId === undefined) {
-            $.get('/categories')
-                .done(function (data) {
-                    let categoryNav = $('#category-dep1');
-                    categoryNav.empty(); // 기존 내용 삭제
 
-                    // 카테고리를 이름순으로 정렬
-                    data.sort(function (a, b) {
-                        return a.name.localeCompare(b.name);
-                    });
-
-                    data.forEach(function (category) {
-                        let categoryItem = $('<li>').addClass('category-item')
-                            .on('click', function () {
-                                $(this).siblings().removeClass('selected'); // 같은 레벨의 항목에서 selected 클래스 제거
-                                $(this).addClass('selected'); // 클릭된 항목에 selected 클래스 추가
-                                loadCategories(category.catId);
-                                $('#category-dep2').empty(); // 하위 카테고리 삭제
-                                $('#category-dep3').empty(); // 하위 카테고리 삭제
-                                $('#category').val(''); // hidden input 초기화
-                            });
-
-                        let categoryBtn = $('<button>').addClass('category-btn').attr('type', 'button');
-                        let categoryName = $('<p>').text(category.name);
-                        categoryItem.append(categoryBtn);
-                        categoryBtn.append(categoryName);
-                        categoryNav.append(categoryItem);
-                    });
-                });
-        } else {
-            $.get('/categories', {catId: catId})
-                .done(function (data) {
-                    let categoryNav;
-                    if (catId < 100) {
-                        categoryNav = $('#category-dep2');
-                        $('#category-dep3').empty(); // 하위 카테고리 삭제
-                        $('#category').val(''); // hidden input 초기화
-                    } else if (catId < 10000) {
-                        categoryNav = $('#category-dep3');
-                    }
-                    categoryNav.empty(); // 기존 내용 삭제
-
-                    // 카테고리를 이름순으로 정렬
-                    data.sort(function (a, b) {
-                        return a.name.localeCompare(b.name);
-                    });
-
-                    data.forEach(function (category) {
-                        let categoryItem = $('<li>').addClass('category-item')
-                            .on('click', function () {
-                                $(this).siblings().removeClass('selected'); // 같은 레벨의 항목에서 selected 클래스 제거
-                                $(this).addClass('selected'); // 클릭된 항목에 selected 클래스 추가
-
-                                if (categoryNav.is($('#category-dep3'))) {
-                                    $('#category').val(category.catId); // hidden input에 하위 카테고리 ID 설정
-                                } else {
-                                    loadCategories(category.catId);
-                                    $('#category').val(''); // hidden input 초기화
-                                }
-                            });
-
-                        let categoryBtn = $('<button>').addClass('category-btn').attr('type', 'button');
-                        let categoryName = $('<p>').text(category.name);
-                        categoryItem.append(categoryBtn);
-                        categoryBtn.append(categoryName);
-                        categoryNav.append(categoryItem);
-                    });
-                });
-        }
-    }
 });
 
 

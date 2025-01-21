@@ -2,6 +2,7 @@ package com.sell_buy.sell_buy.api.service.impl;
 
 import com.sell_buy.sell_buy.api.service.ProductService;
 import com.sell_buy.sell_buy.db.entity.Product;
+import com.sell_buy.sell_buy.db.repository.CategoryRepository;
 import com.sell_buy.sell_buy.db.repository.MemberRepository;
 import com.sell_buy.sell_buy.db.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,6 +23,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
+    private final CategoryRepository categoryRepository;
 
     // This constructor is not needed because of Lombok's @RequiredArgsConstructor
     /*@Autowired
@@ -64,39 +67,38 @@ public class ProductServiceImpl implements ProductService {
     public Slice<Product> getProductList(int page, Long catId, String searchQuery, String searchType) {
         Pageable pageable = PageRequest.of(page - 1, 18);
 
-        if (searchType.isEmpty()) {
-            if (catId == null) {
+        List<Long> categoryIds = new ArrayList<>();
+        if (catId != null) {
+            categoryIds = categoryRepository.findAllLeafSubcategoryIds(catId);
+        }
+
+        if (searchType == null) {
+            if (categoryIds.isEmpty()) {
                 return productRepository.findAllByOrderByCreateDateDesc(pageable);
             }
-            return productRepository.findByCategoryOrderByCreateDateDesc(pageable, catId);
+            return productRepository.findByCategoryInOrderByCreateDateDesc(pageable, categoryIds);
         }
 
         switch (searchType) {
             case "title-desc":
-                if (catId == null) {
+                if (categoryIds.isEmpty()) {
                     return productRepository.findByProdNameContainingOrProdDescContainingOrderByCreateDateDesc(pageable, searchQuery, searchQuery);
                 }
-
-                return productRepository.findByCategoryAndProdNameContainingOrProdDescContainingOrderByCreateDateDesc(pageable, catId, searchQuery, searchQuery);
+                return productRepository.findByCategoryInAndProdNameContainingOrProdDescContainingOrderByCreateDateDesc(pageable, categoryIds, searchQuery, searchQuery);
 
             case "seller":
                 Long sellerId = memberRepository.findByNickname(searchQuery).getMemId();
-                if (catId == null) {
+                if (categoryIds.isEmpty()) {
                     return productRepository.findBySellerIdOrderByCreateDateDesc(pageable, sellerId);
                 }
-                return productRepository.findByCategoryAndSellerIdOrderByCreateDateDesc(pageable, catId, sellerId);
+                return productRepository.findByCategoryInAndSellerIdOrderByCreateDateDesc(pageable, categoryIds, sellerId);
 
             default:
-                // searchQuery and searchType is always null when searchType is not "title+desc" or "seller"
-
-                if (catId == null) {
+                if (categoryIds.isEmpty()) {
                     return productRepository.findAllByOrderByCreateDateDesc(pageable);
                 }
-
-                return productRepository.findByCategoryOrderByCreateDateDesc(pageable, catId);
+                return productRepository.findByCategoryInOrderByCreateDateDesc(pageable, categoryIds);
         }
-
-
     }
 
     public Page<Product> favoriteProductList(List<Long> prodIdList, int page) {
