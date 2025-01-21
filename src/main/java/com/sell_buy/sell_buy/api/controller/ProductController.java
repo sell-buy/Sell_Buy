@@ -6,8 +6,9 @@ import com.sell_buy.sell_buy.api.service.AuthenticationService;
 import com.sell_buy.sell_buy.api.service.CategoryService;
 import com.sell_buy.sell_buy.api.service.ProductService;
 import com.sell_buy.sell_buy.api.service.impl.AWSFileService;
-import com.sell_buy.sell_buy.common.exception.AuthenticateNotMatchException;
-import com.sell_buy.sell_buy.common.exception.ProductNotFoundException;
+import com.sell_buy.sell_buy.common.exception.auth.AuthenticateNotMatchException;
+import com.sell_buy.sell_buy.common.exception.product.ProductAlreadyExistsException;
+import com.sell_buy.sell_buy.common.exception.product.ProductNotFoundException;
 import com.sell_buy.sell_buy.common.utills.JsonUtils;
 import com.sell_buy.sell_buy.db.entity.Member;
 import com.sell_buy.sell_buy.db.entity.Product;
@@ -77,9 +78,14 @@ public class ProductController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerProduct(@RequestPart("product") Product product,
-                                             @RequestPart(value = "images", required = false) List<MultipartFile> images) throws IOException {
+                                             @RequestPart(value = "images", required = false) List<MultipartFile> images) throws IOException, ProductAlreadyExistsException {
         Member member = authenticationService.getAuthenticatedMember();
         Long sellerId = member.getMemId();
+
+        if (product.getProdId() != null && productService.existsById(product.getProdId())) {
+            throw new ProductAlreadyExistsException("Product already exists.");
+        }
+
         product.setSellerId(sellerId);
 
         if (images.size() > 4)

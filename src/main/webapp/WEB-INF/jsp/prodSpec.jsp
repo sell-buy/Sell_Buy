@@ -16,6 +16,21 @@
     <script src="<c:url value='/webjars/jquery/3.7.1/dist/jquery.js'/>"></script>
     <link rel="stylesheet" href="<c:url value='/style/common.css'/>">
     <link rel="stylesheet" href="<c:url value='/style/prodSpec.css'/>">
+    <script>
+        function deleteProd() {
+            $.ajax({
+                url: `http://localhost/prod/${product.prodId}`,  // 요청을 보낼 URL
+                type: 'DELETE',  // HTTP 메소드
+                success: function () {
+                    console.log('삭제 성공');
+                    window.location.href = 'http://localhost/prod/list';
+                },
+                error: function (xhr, status, error) {
+                    console.log('삭제 실패', error);
+                }
+            });
+        }
+    </script>
 </head>
 <body class="custom-scrollbar">
 <div id="wrap">
@@ -43,8 +58,12 @@
             <sec:authorize access="isAuthenticated()">
                 <c:if test="${product.sellerId == memId}"> <%--memId 하면 왠지 몰라도 세션에 memId가 불러와짐 ㅋㅋ--%>
                     <div class="product-control">
-                        <button class="product-control-button" id="btn-modify">수정</button>
-                        <button class="product-control-button" id="btn-delete" onclick="window.location.href ">삭제
+                        <button class="product-control-button" id="btn-modify"
+                                onclick="window.location.href = `http://localhost/prod/update/${product.prodId}`">
+                            수정
+                        </button>
+                        <button class="product-control-button" id="btn-delete" onclick="">
+                            삭제
                         </button>
                     </div>
                 </c:if>

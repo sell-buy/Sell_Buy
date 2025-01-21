@@ -5,44 +5,7 @@ $(document).ready(function () {
         event.preventDefault();
         let selectedCategory = $('#category').val();
         let isUpdate = false;
-
-        if (!$(this).valid()) {
-            return;
-        }
-
-        if (!selectedCategory) {
-            alert('카테고리를 선택해주세요.');
-            return false;
-        }
-
-        const prodType = determineTradeType();
-        if (prodType === -1) {
-            alert('거래 방식을 선택해주세요.');
-            return false;
-        }
-
-
-        const product = {
-            prodName: $('#prodName').val(),
-            price: $('#price').val(),
-            prodDesc: $('#prodDesc').val(),
-            prodType: prodType,
-            category: selectedCategory
-        };
-
-        const formData = createFormData(product);
-
-        if (!formData) {
-            return false; // 이미지 관련 오류가 있으면 처리 중단
-        }
-
-        sendFormData(formData);
-    });
-
-    $('#prodUpdateForm').submit(function (event) {
-        event.preventDefault();
-        let selectedCategory = $('#category').val();
-        let isUpdate = true;
+        let method = 'POST';
 
         if (!$(this).valid()) {
             return;
@@ -74,7 +37,46 @@ $(document).ready(function () {
             return false; // 이미지 관련 오류가 있으면 처리 중단
         }
 
-        sendFormData(formData);
+        sendFormData(formData, method);
+    });
+
+    $('#prodUpdateForm').submit(function (event) {
+        event.preventDefault();
+        let selectedCategory = $('#category').val();
+        let isUpdate = true;
+        let method = 'PUT';
+
+        if (!$(this).valid()) {
+            return;
+        }
+
+        if (!selectedCategory) {
+            alert('카테고리를 선택해주세요.');
+            return false;
+        }
+
+        const prodType = determineTradeType();
+        if (prodType === -1) {
+            alert('거래 방식을 선택해주세요.');
+            return false;
+        }
+
+
+        const product = {
+            prodName: $('#prodName').val(),
+            price: $('#price').val(),
+            prodDesc: $('#prodDesc').val(),
+            prodType: prodType,
+            category: selectedCategory
+        };
+
+        const formData = createFormData(product, isUpdate);
+
+        if (!formData) {
+            return false; // 이미지 관련 오류가 있으면 처리 중단
+        }
+
+        sendFormData(formData, method);
 
     });
 
@@ -101,7 +103,7 @@ $(document).ready(function () {
             new Blob([JSON.stringify(product)], {type: 'application/json'})
         );
 
-        if (isUpdate) {
+        if (!isUpdate) {
 
             // 이미지 파일 처리
             const imageIds = ['img1', 'img2', 'img3', 'img4'];
@@ -131,9 +133,9 @@ $(document).ready(function () {
         return formData;
     }
 
-    function sendFormData(formData) {
+    function sendFormData(formData, isUpdate, method) {
         $.ajax({
-            type: 'POST',
+            type: method,
             url: 'http://localhost/prod/register',
             data: formData,
             processData: false,
