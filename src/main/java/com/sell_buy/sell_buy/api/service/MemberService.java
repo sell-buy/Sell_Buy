@@ -6,15 +6,20 @@ import java.util.List;
 
 public interface MemberService {
 
-    void createUser();
 
-    void updateUser();
+    Long registerMember(Member member) throws Exception;
 
-    void deleteUser();
+//    Long login(Member member) throws Exception;
+
+    Member updateMember();
+
+    Member deleteMember();
 
     Member getMemberByMemId(Long userId);
 
     Member getMemberByNickname(String nickname);
 
     List<Member> getAllMembers();
+
+    Member getMemberByLoginId(String loginId);
 }
