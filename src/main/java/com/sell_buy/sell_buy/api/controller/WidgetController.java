@@ -1,6 +1,7 @@
 package com.sell_buy.sell_buy.api.controller;
 
 import com.sell_buy.sell_buy.api.service.AuthenticationService;
+import com.sell_buy.sell_buy.api.service.OrderService;
 import com.sell_buy.sell_buy.db.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
@@ -31,6 +32,7 @@ import java.util.Base64;
 public class WidgetController {
     private final AuthenticationService authenticationService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final OrderService orderService;
 
     @GetMapping("/{id}")
     public ModelAndView processPayment(@RequestParam("productId") String productId,
@@ -42,6 +44,8 @@ public class WidgetController {
         // 결제 페이지로 이동
         ModelAndView modelAndView = new ModelAndView("payment_checkout");
         modelAndView.setViewName("payment_checkout");
+        modelAndView.addObject("prodId", productId);
+        modelAndView.addObject("memId", member.getMemId());
         modelAndView.addObject("prodName", productId);
         modelAndView.addObject("price", price);
         modelAndView.addObject("email", member.getEmail());
@@ -59,15 +63,17 @@ public class WidgetController {
     @RequestMapping(value = "/confirm")
     public ResponseEntity<JSONObject> confirmPayment(@RequestBody String jsonBody) throws Exception {
         JSONParser parser = new JSONParser();
-        String orderId;
-        String amount;
+        String orderId; //난수
+        String amount; // 금액
         String paymentKey;
+        String prodName;
         try {
             // 클라이언트에서 받은 JSON 요청 바디입니다.
             JSONObject requestData = (JSONObject) parser.parse(jsonBody);
             paymentKey = (String) requestData.get("paymentKey");
             orderId = (String) requestData.get("orderId");
             amount = (String) requestData.get("amount");
+            prodName = (String) requestData.get("prodName");
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
@@ -103,7 +109,13 @@ public class WidgetController {
         Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8);
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
         responseStream.close();
+        if (code == 200) {
+            //결제 성공시
+            return ResponseEntity.status(code).body(jsonObject);
+        } else {
+            return ResponseEntity.status(code).body(jsonObject);
+        }
 
-        return ResponseEntity.status(code).body(jsonObject);
+
     }
 }

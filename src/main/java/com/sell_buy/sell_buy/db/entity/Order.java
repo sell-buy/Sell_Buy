@@ -40,5 +40,7 @@ public class Order {
     private LocalDateTime deliveredDate;
     @Column(name = "carrier_status")
     private String carrierStatus;
+    @Column(name = "order_status")
+    private String orderStatus;
 
 }

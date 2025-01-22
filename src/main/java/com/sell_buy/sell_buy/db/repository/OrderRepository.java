@@ -15,6 +15,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     void findBySellerId(long sellerId);
 
     boolean existsOrderIdBySellerId(long sellerId);
-    
+
 //    List<Order> orderId(long orderId);
 }

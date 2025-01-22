@@ -34,19 +34,11 @@ public class OrderServiceimpl implements OrderService {
 
 
     @Override
-    public void getSellOrder(long seller_id) {
+    public Long getSellOrder(long seller_id) {
         orderRepository.findBySellerId(seller_id);
+        return null;
     }
-
-    @Override
-    public void getBuyOrder(long buyer_id) {
-        orderRepository.findByBuyerId(buyer_id);
-    }
-
-    @Override
-    public void getOrderId(long order_id) {
-    }
-
+    
     @Override
     public void setOrderId(long order_id) {
 
@@ -115,6 +107,10 @@ public class OrderServiceimpl implements OrderService {
                         log.debug(order.toString());
                     } else {
                         order.setCarrierStatus(lastStatus);
+                    }
+                    if (lastStatus.equals("배달완료")) {
+
+                        //
                     }
                     orderRepository.save(order);
                 } catch (JsonProcessingException e) {

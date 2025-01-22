@@ -5,12 +5,8 @@ import com.sell_buy.sell_buy.db.entity.Order;
 import java.util.List;
 
 public interface OrderService {
-    void getSellOrder(long sellerId);
-
-    void getBuyOrder(long buyerId);
-
-    void getOrderId(long orderId);
-
+    Long getSellOrder(long sellerId);
+    
     void setOrderId(long orderId);
 
     // 오더 등록

@@ -49,6 +49,11 @@
         let memName = "${memName}"//memname
         let phone = "${phone}" //phone
         let price =${price};
+        //order setting
+        // orderid = auto increase
+        let memId = ${memId}; //buyerid
+        let prodId = "${prodId}" //prodId
+
         const amount = {
             currency: "KRW",
             value: price,
@@ -107,15 +112,31 @@
         button.addEventListener("click", async function () {
             // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
             // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
-            await widgets.requestPayment({
-                orderId: generateRandomString(),
-                orderName: prodName, //prodname
-                successUrl: "http://localhost/payment/success",
-                failUrl: "http://localhost/payment/fail",
-                customerEmail: email, //email
-                customerName: memName, //memname
-                customerMobilePhone: phone, //phone
-            });
+            try {
+                await widgets.requestPayment({
+                    orderId: generateRandomString(),
+                    orderName: prodName, //prodname
+                    successUrl: "http://localhost/payment/success",
+                    failUrl: "http://localhost/payment/fail",
+                    customerEmail: email, //email
+                    customerName: memName, //memname
+                    customerMobilePhone: phone, //phone
+
+                });
+                // orderregister에 상품번호 넘겨서 sellerid넣어주기/ buyer컬럼에 memid넣어주기
+                await fetch("order/register")({
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        buyer_id: memId,
+                        prod_id: prodId
+                    })
+                })
+            } catch (e) {
+
+            }
         });
     }
 
