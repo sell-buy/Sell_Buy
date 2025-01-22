@@ -30,7 +30,7 @@
     <div class="header-top">
         <nav class="header-menu">
             <ul class="list-menu">
-                <li><a href="/notifications">알림</a></li>
+                <li><a href="/api/points/payment">결제</a></li> <!-- 포인트 결제 API 페이지로 이동 -->
                 <li><a href="/customer-center">고객센터</a></li>
                 <li><a href="/my-page">내 정보</a></li>
                 <sec:authorize access="isAuthenticated()">
