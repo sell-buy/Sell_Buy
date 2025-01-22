@@ -12,7 +12,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Sell&Buy - Product Details</title>
+    <title>Sell&Buy :: Product Details</title>
     <script src="<c:url value='/webjars/jquery/3.7.1/dist/jquery.js'/>"></script>
     <link rel="stylesheet" href="<c:url value='/style/common.css'/>">
     <link rel="stylesheet" href="<c:url value='/style/prodSpec.css'/>">
@@ -27,6 +27,19 @@
                 },
                 error: function (xhr, status, error) {
                     console.log('삭제 실패', error);
+                }
+            });
+        }
+
+        function toggleFavorite(prodId) {
+            $.ajax({
+                url: `http://localhost/fav?prodId=` + prodId,
+                type: 'POST',
+                success: function () {
+                    window.location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.log('찜하기 실패', error);
                 }
             });
         }
@@ -56,17 +69,30 @@
                 <button class="purchase-button">구매</button>
             </div>
             <sec:authorize access="isAuthenticated()">
-                <c:if test="${product.sellerId == memId}"> <%--memId 하면 왠지 몰라도 세션에 memId가 불러와짐 ㅋㅋ--%>
+                <c:if test="${product.sellerId.equals(memId)}"> <%--memId 하면 왠지 몰라도 세션에 memId가 불러와짐 ㅋㅋ--%>
                     <div class="product-control">
-                        <button class="product-control-button" id="btn-modify"
-                                onclick="window.location.href = `http://localhost/prod/update/${product.prodId}`">
-                            수정
-                        </button>
-                        <button class="product-control-button" id="btn-delete" onclick="">
-                            삭제
-                        </button>
-                    </div>
+                    <button class="product-control-button" id="btn-modify"
+                            onclick="window.location.href = `http://localhost/prod/update/${product.prodId}`">
+                        수정
+                    </button>
+                    <button class="product-control-button" id="btn-delete" onclick="">
+                        삭제
+                    </button>
+
                 </c:if>
+                <c:if test="${!product.sellerId.equals(memId)}">
+                    <script>
+                        $.get(`http://localhost/fav?prodId=${product.prodId}`, function (data) {
+                            if (data) {
+                                $('#toggle-favorite').text('찜하기 취소');
+                            } else {
+                                $('#toggle-favorite').text('찜하기');
+                            }
+                        })
+                    </script>
+                    <button id="toggle-favorite" onclick="toggleFavorite(${product.prodId})">찜하기</button>
+                </c:if>
+                </div>
             </sec:authorize>
         </div>
     </div>

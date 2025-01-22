@@ -24,7 +24,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     public Favorite addFavorite(Long memId, Long prodId) {
         Favorite fav = Favorite.builder()
                 .memId(memId)
-                .prodId(prodId)
+                .prod(prodId)
                 .build();
 
         return favRepo.save(fav);
@@ -48,7 +48,7 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
     public boolean wasFavorite(Long memId, Long prodId) {
-        return favRepo.findByMemIdAndProdId(memId, prodId);
+        return favRepo.existsByMemIdAndProd(memId, prodId);
     }
 
     @Override
@@ -57,6 +57,17 @@ public class FavoriteServiceImpl implements FavoriteService {
 
         List<Long> prodIdList = favRepo.findProdIdListByMemId(memId);
 
-        return productRepository.findByProdIdInOrderByCreateDateDesc(pageable, prodIdList);
+        return productRepository.findByProdIdInOrderByCreateDateDesc(prodIdList, pageable);
+    }
+
+    @Override
+    public void deleteFavorite(Long memId, Long prodId) {
+        if (prodId == null) {
+            favRepo.deleteByMemId(memId);
+        } else if (memId == null) {
+            favRepo.deleteByProd(prodId);
+        } else {
+            favRepo.deleteByMemIdOrProd(memId, prodId);
+        }
     }
 }

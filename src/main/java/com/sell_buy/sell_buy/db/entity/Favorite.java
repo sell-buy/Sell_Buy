@@ -21,7 +21,7 @@ public class Favorite {
     @Column(name = "mem_id")
     private Long memId;
     @Column(name = "prod_id")
-    private Long prodId;
+    private Long prod;
     @Column(name = "is_activated")
     private boolean isActivated;
 }

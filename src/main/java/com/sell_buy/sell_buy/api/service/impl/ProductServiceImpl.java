@@ -2,9 +2,7 @@ package com.sell_buy.sell_buy.api.service.impl;
 
 import com.sell_buy.sell_buy.api.service.ProductService;
 import com.sell_buy.sell_buy.db.entity.Product;
-import com.sell_buy.sell_buy.db.repository.CategoryRepository;
-import com.sell_buy.sell_buy.db.repository.MemberRepository;
-import com.sell_buy.sell_buy.db.repository.ProductRepository;
+import com.sell_buy.sell_buy.db.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +22,8 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
+    private final FavoriteRepository favoriteRepository;
+    private final OrderRepository orderRepository;
 
     // This constructor is not needed because of Lombok's @RequiredArgsConstructor
     /*@Autowired
@@ -55,6 +55,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(Long prodId) {
+        if (orderRepository.existsByProdId(prodId)) {
+            throw new IllegalStateException("Product with id " + prodId + " is already ordered.");
+        }
+        favoriteRepository.deleteByProd(prodId);
         productRepository.deleteById(prodId);
     }
 
@@ -104,7 +108,7 @@ public class ProductServiceImpl implements ProductService {
     public Page<Product> favoriteProductList(List<Long> prodIdList, int page) {
         Pageable pageable = PageRequest.of(page - 1, 18);
 
-        return productRepository.findByProdIdInOrderByCreateDateDesc(pageable, prodIdList);
+        return productRepository.findByProdIdInOrderByCreateDateDesc(prodIdList, pageable);
     }
 
 }

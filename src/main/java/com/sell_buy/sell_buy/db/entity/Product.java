@@ -1,5 +1,6 @@
 package com.sell_buy.sell_buy.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
@@ -37,6 +38,7 @@ public class Product {
     @Column(name = "prod_type")
     private Integer prodType;
     @Column(name = "create_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createDate;
     @Column(name = "img_urls")
     private String imageUrls;

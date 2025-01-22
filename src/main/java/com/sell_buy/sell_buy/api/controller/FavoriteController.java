@@ -4,13 +4,13 @@ import com.sell_buy.sell_buy.api.service.AuthenticationService;
 import com.sell_buy.sell_buy.api.service.FavoriteService;
 import com.sell_buy.sell_buy.common.exception.product.ProductNotFoundException;
 import com.sell_buy.sell_buy.db.entity.Member;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/fav")
@@ -21,12 +21,14 @@ public class FavoriteController {
     private final AuthenticationService authenticationService;
 
     @GetMapping()
-    public String favorite() {
-        return "favorite";
+    public ResponseEntity<?> getIsFavorite(@RequestParam Long prodId) {
+        Member member = authenticationService.getAuthenticatedMember();
+        System.out.println(favoriteService.isFavorite(12L, 1L));
+        return ResponseEntity.status(200).body(favoriteService.isFavorite(member.getMemId(), prodId));
     }
 
     @PostMapping()
-    public ResponseEntity<?> toggleFavorite(HttpSession session, Long prodId) throws ProductNotFoundException {
+    public ResponseEntity<?> toggleFavorite(@RequestParam Long prodId) throws ProductNotFoundException {
         Member member = authenticationService.getAuthenticatedMember();
         Long memId = member.getMemId();
         if (prodId == null) {
@@ -47,7 +49,7 @@ public class FavoriteController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<?> getFavoriteList(HttpSession session, int page, int size) {
+    public ResponseEntity<?> getFavoriteList(int page, int size) {
         Member member = authenticationService.getAuthenticatedMember();
         Long memId = member.getMemId();
         return ResponseEntity.status(200).body(favoriteService.getFavoriteProductList(memId, page, size));
