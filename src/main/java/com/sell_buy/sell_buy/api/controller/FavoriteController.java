@@ -44,6 +44,7 @@ public class FavoriteController {
             }
         } else {
             favoriteService.addFavorite(memId, prodId);
+            favoriteService.activateFavorite(memId, prodId);
             return ResponseEntity.status(200).body("Favorite added.");
         }
     }

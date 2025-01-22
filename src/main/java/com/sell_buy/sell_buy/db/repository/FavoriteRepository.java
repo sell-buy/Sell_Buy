@@ -35,4 +35,7 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     void deleteByProd(Long prodId);
 
     void deleteByMemId(Long memId);
+
+    @Query("select f.prod from Favorite f where f.memId = :memId and f.isActivated = :activated")
+    List<Long> findProdIdListByMemIdAndIsActivated(Long memId, boolean activated);
 }
