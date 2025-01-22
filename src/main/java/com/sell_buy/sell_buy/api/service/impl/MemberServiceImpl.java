@@ -49,6 +49,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public Member updateMember(Member member) {
+        return null;
+    }
+
+    @Override
     public Member getMemberByLoginId(String loginId) {
         return memberRepository.getMemberByLoginId(loginId);
     }

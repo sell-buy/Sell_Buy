@@ -11,6 +11,8 @@ public interface MemberService {
 
 //    Long login(Member member) throws Exception;
 
+    Member updateMember(Member member);
+
     Member updateMember();
 
     Member deleteMember();

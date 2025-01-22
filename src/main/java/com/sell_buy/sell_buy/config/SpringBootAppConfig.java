@@ -10,7 +10,6 @@ public class SpringBootAppConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-
         return new BCryptPasswordEncoder();
     }
 }

@@ -41,8 +41,8 @@
             <ul class="list-menu">
                 <li><a href="<c:url value="/notifications"/>">알림</a></li>
                 <li><a href="<c:url value="/customer-center"/>">고객센터</a></li>
-                <li><a href="<c:url value="/my-page"/>">내 정보</a></li>
                 <sec:authorize access="isAuthenticated()">
+                    <li><a href="<c:url value="/member"/>">내 정보</a></li>
                     <li><a href="<c:url value="/prod/register"/>">상품등록</a></li>
                     <li><a href="<c:url value="/member/logout"/>">로그아웃</a></li>
                 </sec:authorize>

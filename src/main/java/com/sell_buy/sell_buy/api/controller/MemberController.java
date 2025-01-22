@@ -3,9 +3,11 @@ package com.sell_buy.sell_buy.api.controller;
 
 import com.sell_buy.sell_buy.api.service.AuthenticationService;
 import com.sell_buy.sell_buy.api.service.MemberService;
+import com.sell_buy.sell_buy.common.exception.auth.AuthenticateNotMatchException;
 import com.sell_buy.sell_buy.db.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,10 +20,25 @@ public class MemberController {
 
     private final MemberService memberService;
     private final AuthenticationService authenticationService;
+    private final PasswordEncoder passwordEncoder;
+
+    @GetMapping()
+    public ModelAndView memberInfo() {
+        Member member = authenticationService.getAuthenticatedMember();
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("memberInfo");
+        modelAndView.addObject("member", member);
+        return modelAndView;
+    }
 
     @GetMapping("/register")
     public ModelAndView registerMember() {
         return new ModelAndView("include/memberReg");
+    }
+
+    @GetMapping("/update")
+    public ModelAndView updateMember() {
+        return new ModelAndView("memberUpdate");
     }
 
 
@@ -55,6 +72,21 @@ public class MemberController {
         modelAndView.setViewName("memberInfo");
         modelAndView.addObject("member", member);
         return modelAndView;
+    }
+
+    @PutMapping("/")
+    public ResponseEntity<?> updateMember(@RequestBody Member member) throws AuthenticateNotMatchException {
+        Member authMember = authenticationService.getAuthenticatedMember();
+        if (authMember.getMemId().equals(member.getMemId())) {
+            throw new AuthenticateNotMatchException("사용자가 일치하지 않습니다.");
+        }
+
+        if (passwordEncoder.matches(member.getPassword(), authMember.getPassword())) {
+            throw new AuthenticateNotMatchException("비밀번호가 일치하지 않습니다.");
+        }
+
+        memberService.updateMember(member);
+        return ResponseEntity.status(200).body("Update Success");
     }
 
 /* Not needed for using Spring Security

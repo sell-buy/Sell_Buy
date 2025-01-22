@@ -185,5 +185,19 @@ public class ProductController {
         return modelAndView;
     }
 
+    @GetMapping("/list/another")
+    public ResponseEntity<?> getProductList2(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                             @RequestParam(name = "catId", required = false) Long catId,
+                                             @RequestParam(name = "searchQuery", required = false) String searchQuery,
+                                             @RequestParam(name = "searchType", required = false) String searchType,
+                                             HttpServletResponse response) {
+        if (page < 1) {
+            throw new IllegalArgumentException("Page number must be greater than 1.");
+        }
+
+        Slice<Product> productList = productService.getProductList(page, catId, searchQuery, searchType);
+
+        return ResponseEntity.status(200).body(productList);
+    }
 
 }
