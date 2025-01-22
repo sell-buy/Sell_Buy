@@ -27,7 +27,7 @@ $(function () {
         messages: {
             prodName: {
                 required: "상품명을 입력하세요.",
-                minlength: "상품명은 최소 20자 이상 입력하세요.",
+                minlength: "상품명은 최소 2자 이상 입력하세요.",
                 maxlength: "상품명은 최대 30자 이하 입력하세요."
             },
             prodPrice: {
@@ -36,7 +36,7 @@ $(function () {
             },
             prodDesc: {
                 required: "상품 설명을 입력하세요.",
-                minlength: "상품 설명은 최소 2자 이상 입력하세요.",
+                minlength: "상품 설명은 최소 20자 이상 입력하세요.",
                 maxlength: "상품 설명은 최대 100자 이하 입력하세요."
             }
         },

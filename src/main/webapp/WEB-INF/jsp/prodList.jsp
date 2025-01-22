@@ -40,7 +40,8 @@
                             <div class="product-description">
                                 <c:out value="${product.prodDesc}"/>
                             </div>
-                            <a href="<c:url value="/prod/${product.prodId}"/>" class="product-spec-button">상세보기</a>
+                            <a href="<c:url value="http://localhost/prod/${product.prodId}"/>"
+                               class="product-spec-button">상세보기</a>
                         </div>
                     </div>
                 </c:forEach>

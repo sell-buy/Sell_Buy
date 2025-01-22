@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <%--
   Created by IntelliJ IDEA.
   User: USER
@@ -11,8 +10,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <%--jquery--%>
-    <script src="<c:url value="/webjars/jquery/3.7.1/dist/jquery.js"/>"></script>
+
     <%--jquery ui--%>
     <script src="<c:url value="/webjars/jquery-ui/1.14.1/jquery-ui.js"/>"></script>
     <link rel="stylesheet" href="<c:url value="/webjars/jquery-ui/1.14.1/jquery-ui.css"/>">
@@ -23,6 +21,17 @@
 
     <%--    <script src="<c:url value='/script/modalCache.js'/>"></script>--%>
     <script src="<c:url value='/script/modal.js'/>"></script>
+
+    <script>
+        function search(query) {
+            if (!query) {
+                alert('검색어를 입력하세요.');
+                return;
+            }
+            location.href = 'http://localhost/prod/list?searchType=title-desc&searchQuery=' + query;
+
+        }
+    </script>
 </head>
 <div id="modalContainer"></div>
 <body>
@@ -43,14 +52,17 @@
             </ul>
         </nav>
         <div class="header-logo">
-            <a href="/">Sell&Buy</a>
+            <a href="http://localhost">Sell&Buy</a>
         </div>
     </div>
     <div class="search-bar">
         <label>
-            <input type="text" placeholder="상품 검색"/>
+            <input id="search-query" type="text" placeholder="상품 검색"
+                   onkeydown="if (event.keyCode === 13) search(this.value)"/>
         </label>
-        <button type="button">🔍</button>
+        <button id="search-btn" type="button"
+                onclick="search($('#search-query').val())">🔍
+        </button>
     </div>
 </header>
 </body>

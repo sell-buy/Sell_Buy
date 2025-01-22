@@ -1,9 +1,10 @@
-package com.sell_buy.sell_buy.common.exception;
+package com.sell_buy.sell_buy.config;
 
+import com.sell_buy.sell_buy.common.exception.product.ProductAlreadyExistsException;
+import com.sell_buy.sell_buy.common.exception.product.ProductNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,6 +35,28 @@ public class GlobalExceptionHandler {
         log.error("AuthenticationException occurred: ", e);
         modelAndView.addObject("errorCode", HttpStatus.UNAUTHORIZED.value());
         modelAndView.addObject("errorMessage", "User not authenticated.");
+        return modelAndView;
+    }
+
+    @ExceptionHandler(ProductAlreadyExistsException.class)
+    public ModelAndView handleProductAlreadyExistsException(ProductAlreadyExistsException e, HttpServletResponse response) {
+        ModelAndView modelAndView = new ModelAndView("exception");
+        response.setStatus(HttpStatus.CONFLICT.value());
+
+        log.error("ProductAlreadyExistsException occurred: ", e);
+        modelAndView.addObject("errorCode", HttpStatus.CONFLICT.value());
+        modelAndView.addObject("errorMessage", e.getMessage());
+        return modelAndView;
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ModelAndView handleProductNotFoundException(ProductNotFoundException e, HttpServletResponse response) {
+        ModelAndView modelAndView = new ModelAndView("exception");
+        response.setStatus(HttpStatus.NOT_FOUND.value());
+
+        log.error("ProductNotFoundException occurred: ", e);
+        modelAndView.addObject("errorCode", HttpStatus.NOT_FOUND.value());
+        modelAndView.addObject("errorMessage", e.getMessage());
         return modelAndView;
     }
 
