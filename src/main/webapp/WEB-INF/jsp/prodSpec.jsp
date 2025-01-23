@@ -140,7 +140,6 @@
         window.open(`/payment/${product.prodId}?productId=${product.prodName}&price=${product.price}`,
             'PaymentPopup',
             'width=800,height=600,scrollbars=yes,resizable=no');
-
     })
 </script>
 

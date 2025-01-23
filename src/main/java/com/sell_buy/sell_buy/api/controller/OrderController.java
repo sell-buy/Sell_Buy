@@ -82,21 +82,11 @@ public class OrderController {
     @PutMapping("/put/{prodName}") // orderid
     public ResponseEntity<?> putProd(@PathVariable String prodName, @RequestBody Order order, HttpSession session) {
         Member member = authenticationService.getAuthenticatedMember();
+        // buyerid -> 정보 가져오기
         Member memAttrList = memberRepository.findByMemId(order.getBuyerId());
         Product prod = productRepository.findByProdName(prodName);
+        //order 로 들어오는거는 buyerId & prodId
         Order order1 = orderRepository.findByProdId(prod.getProdId());
-        String addr = memAttrList.getAddress();
-        String name = memAttrList.getName();
-        String phone = memAttrList.getPhoneNum();
-        order1.setProdId(prod.getProdId());
-        order1.setSellerId(prod.getSellerId());
-        order1.setBuyerId(order1.getBuyerId());
-        order1.setReceiverAddress(addr);
-        order1.setReceiverName(name);
-        order1.setReceiverPhone(phone);
-        order1.setOrderType(prod.getProdType());
-        order1.setCreatedDate(LocalDateTime.now());
-        order1.setOrderStatus("거래중");
         Long sellerId = member.getMemId();
         if (orderService.hasExistOrder(order1.getOrderId())) {
             return ResponseEntity.status(400).body("OrderId IS not EXIST");
