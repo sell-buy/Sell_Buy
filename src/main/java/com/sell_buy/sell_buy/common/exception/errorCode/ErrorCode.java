@@ -1,4 +1,4 @@
-package com.sell_buy.sell_buy.common.exception.code;
+package com.sell_buy.sell_buy.common.exception.errorCode;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -33,12 +33,14 @@ public class Order {
     @Column(name = "receiver_phone")
     private String receiverPhone;
     @Column(name = "ORDER_TYPE")
-    private int orderStatus;
+    private int orderType;
     @Column(name = "created_date")
     private LocalDateTime createdDate;
     @Column(name = "delivered_date")
     private LocalDateTime deliveredDate;
     @Column(name = "carrier_status")
     private String carrierStatus;
+    @Column(name = "order_status")
+    private String orderStatus;
 
 }

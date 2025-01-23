@@ -11,7 +11,7 @@ $(document).ready(function () {
             url: 'http://localhost/member/login',
             data: formData,
             success: function () {
-                window.location.href = '/';
+                window.location.href = window.location.href;
             },
             error: function (xhr) {
                 $('#login-failure').show();

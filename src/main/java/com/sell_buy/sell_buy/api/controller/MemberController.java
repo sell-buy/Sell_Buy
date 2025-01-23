@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/member")
@@ -17,9 +18,10 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/register")
-    public String registerMember() {
-        return "include/memberReg";
+    public ModelAndView registerMember() {
+        return new ModelAndView("include/memberReg");
     }
+
 
     @GetMapping("/login")
     public String login(@RequestParam(name = "error", required = false, defaultValue = "false") String error,
@@ -31,6 +33,7 @@ public class MemberController {
         return "include/login";
     }
 
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody Member member) {
         Long registeredMemberId;
@@ -41,7 +44,7 @@ public class MemberController {
         }
         return ResponseEntity.status(200).body(registeredMemberId);
     }
-/*
+/* Not needed for using Spring Security
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Member member, HttpSession session) {
         System.out.println("login called");

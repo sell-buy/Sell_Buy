@@ -1,4 +1,3 @@
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%--
   Created by IntelliJ IDEA.
   User: USER
@@ -6,6 +5,7 @@
   Time: 오후 12:40
   To change this template use File | Settings | File Templates.
 --%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -13,7 +13,7 @@
     <script src="<c:url value="/webjars/jquery/3.7.1/dist/jquery.js"/>"></script>
     <link rel="stylesheet" href="<c:url value="/style/common.css"/>">
 </head>
-<body>
+<body class="custom-scrollbar">
 <div id="wrap">
     <%@include file="include/header.jsp" %>
     <div class="content">

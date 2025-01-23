@@ -12,4 +12,8 @@ public interface CategoryService {
     Category getCategory(Long catId);
 
     boolean existsById(Long catId);
+
+    Category getSuperCategory(Long catId);
+
+    List<Long> findAllSuperCategory(Long catId);
 }

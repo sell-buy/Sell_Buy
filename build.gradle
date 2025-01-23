@@ -22,6 +22,10 @@ configurations {
     }
 }
 
+bootRun {
+    jvmArgs = ["-XX:ReservedCodeCacheSize=256m"]
+}
+
 ext {
     set('springCloudVersion', "2024.0.0")
     set('springCloudAwsVersion', "3.3.0-RC1")
@@ -57,6 +61,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.security:spring-security-taglibs'
     implementation 'org.springframework.session:spring-session-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
     testImplementation 'org.springframework.security:spring-security-test'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
@@ -82,6 +87,8 @@ dependencies {
     implementation 'org.webjars:bootstrap:5.3.3'
     implementation 'org.webjars:jquery-validation:1.20.0'
     implementation 'org.webjars:jquery-ui:1.14.1'
+// https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 
     compileOnly group: 'jakarta.servlet.jsp', name: 'jakarta.servlet.jsp-api', version: '4.0.0'
     compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
