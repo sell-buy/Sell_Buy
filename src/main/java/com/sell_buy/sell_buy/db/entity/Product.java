@@ -28,8 +28,6 @@ public class Product {
     private String prodName;
     @Column(name = "prod_disc")
     private String prodDesc;
-    @Column(name = "is_auction")
-    private Boolean isAuction;
     private Integer price;
     @Column(name = "is_available")
     private Boolean isAvailable;
@@ -52,5 +50,7 @@ public class Product {
         if (createDate == null)
             createDate = LocalDateTime.now();
         System.out.println("createDate: " + createDate);
+        if (isAvailable == null)
+            isAvailable = true;
     }
 }
