@@ -101,7 +101,7 @@ $(document).ready(function () {
             new Blob([JSON.stringify(product)], {type: 'application/json'})
         );
 
-        if (!isUpdate) {
+        if (isUpdate) {
 
             // 이미지 파일 처리
             const imageIds = ['img1', 'img2', 'img3', 'img4'];
@@ -131,17 +131,17 @@ $(document).ready(function () {
         return formData;
     }
 
-    function sendFormData(formData, isUpdate, method) {
+    function sendFormData(formData, method) {
         $.ajax({
             type: method,
             url: 'http://localhost/prod/register',
             data: formData,
             processData: false,
             contentType: false,
-            success: function () {
+            success: function (xhr) {
                 alert('상품이 성공적으로 등록되었습니다!');
-                sendFormData2();
-                window.location.href = 'http://localhost/prod/' + response;
+                // sendFormData2();
+                window.location.href = 'http://localhost/prod/' + xhr;
             },
             error: function (xhr) {
                 const errorMessage = xhr.responseJSON?.message || '상품 등록에 실패했습니다.';

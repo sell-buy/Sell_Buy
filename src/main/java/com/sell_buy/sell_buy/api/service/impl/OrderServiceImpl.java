@@ -9,6 +9,7 @@ import com.sell_buy.sell_buy.db.entity.Member;
 import com.sell_buy.sell_buy.db.entity.Order;
 import com.sell_buy.sell_buy.db.entity.Product;
 import com.sell_buy.sell_buy.db.repository.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,23 +21,13 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class OrderServiceimpl implements OrderService {
+@RequiredArgsConstructor
+public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final DeliveryRepository deliveryRepository;
     private final CarrierRepository carrierRepository;
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
-    private final OrderService orderService;
-    private Order order;
-
-    public OrderServiceimpl(OrderRepository orderRepository, DeliveryRepository deliveryRepository, CarrierRepository carrierRepository, MemberRepository memberRepository, ProductRepository productRepository, OrderService orderService) {
-        this.orderRepository = orderRepository;
-        this.deliveryRepository = deliveryRepository;
-        this.carrierRepository = carrierRepository;
-        this.memberRepository = memberRepository;
-        this.productRepository = productRepository;
-        this.orderService = orderService;
-    }
 
 
     @Override
