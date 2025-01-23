@@ -1,12 +1,13 @@
 $(function () {
     adjustCategoryHeight()
+    $(window).on('resize', adjustCategoryHeight);
 
     function adjustCategoryHeight() {
         // `.main-container` 의 외부 높이를 가져와서 `.category` 의 `max-height` 로 설정하는 함수 (기존 함수와 동일)
         const mainContainerHeight = $('.main-container').outerHeight();
         $('.category').css('max-height', mainContainerHeight + 'px');
     }
-    
+
     // MutationObserver 를 사용하여 `.main-container` 내용 변경 감지 및 높이 조정 (새로운 코드 추가!)
     const mainContainerObserver = new MutationObserver(adjustCategoryHeight);
     const mainContainer = document.querySelector('.main-container');

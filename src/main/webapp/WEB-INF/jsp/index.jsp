@@ -6,6 +6,7 @@
     <script src="<c:url value="/webjars/jquery/3.7.1/dist/jquery.js"/>"></script>
     <link rel="stylesheet" href="<c:url value="/style/common.css"/>">
     <style>
+        /* main-container 스타일 */
         .main-container {
             display: flex;
             flex-direction: column;
@@ -14,7 +15,7 @@
         }
 
         .product:hover {
-            transform: scale(1.03);
+            transform: scale(1.03); /* hover 시 살짝 확대 */
         }
 
         .product-list {
@@ -32,24 +33,25 @@
             flex-direction: column;
             justify-content: space-between;
             transition: transform 0.2s ease-in-out;
-            position: relative; /* 버튼 위치 고정을 위해 추가 */
         }
 
         .product-image-container {
             text-align: center;
             margin-bottom: 10px;
-            width: 100%;
-            height: 200px;
-            overflow: hidden;
+            /* Fixed size, cropping images precisely (NEW approach) */
+            width: 100%; /* Fixed width */
+            height: 200px; /* Fixed height */
+            overflow: hidden; /* Clip any overflowing image parts */
         }
 
         .product-image {
             max-width: 100%;
-            height: 100%;
+            height: 100%; /* Image fills container height */
             border-radius: 8px;
-            width: 100%;
-            object-fit: cover;
-            object-position: center;
+            /* Image fills container, cropping to fit (NEW approach) */
+            width: 100%; /* Image fills container width */
+            object-fit: cover; /* Cover container, cropping if needed */
+            object-position: center; /* Ensure center of image is always visible */
         }
 
         .product-details {
@@ -60,9 +62,6 @@
             font-size: 1.2em;
             font-weight: bold;
             margin-bottom: 5px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap; /* 한 줄로 표시 */
         }
 
         .product-price {
@@ -79,7 +78,7 @@
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
-            margin-bottom: 35px; /* 버튼 위치를 위해 여백 추가 */
+            margin-bottom: 10px;
         }
 
         .product-spec-button {
@@ -91,14 +90,23 @@
             border-radius: 5px;
             transition: background-color 0.3s ease;
             text-align: center;
-            position: absolute; /* 버튼 위치 고정을 위해 추가 */
-            bottom: 10px; /* 버튼 위치 고정을 위해 추가 */
-            left: 50%; /* 버튼 위치 고정을 위해 추가 */
-            transform: translateX(-50%); /* 버튼 위치 고정을 위해 추가 */
         }
 
         .product-spec-button:hover {
             background-color: #b07860;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+
+        .more-link {
+            color: #d79672;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -108,7 +116,10 @@
     <div class="content">
         <%@include file="include/category.jsp" %>
         <div class="main-container">
-            <h2>최신 상품</h2>
+            <div class="section-header">
+                <h2>최신 상품</h2>
+                <a href="<c:url value="/prod/list?page=1"/>" class="more-link">더보기</a>
+            </div>
             <div class="product-list">
                 <c:forEach var="product" items="${productList}">
                     <div class="product">
@@ -120,7 +131,8 @@
                                 </c:when>
                                 <c:otherwise>
                                     <img src="https://via.placeholder.com/250x200?text=No+Image" alt="No Image"
-                                         class="product-image"/> <%-- 대체 이미지 --%>
+                                         class="product-image"/>
+                                    <%-- 대체 이미지 --%>
                                 </c:otherwise>
                             </c:choose>
                         </div>
