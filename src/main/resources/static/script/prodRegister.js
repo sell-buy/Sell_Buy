@@ -101,7 +101,7 @@ $(document).ready(function () {
             new Blob([JSON.stringify(product)], {type: 'application/json'})
         );
 
-        if (isUpdate) {
+        if (!isUpdate) {
 
             // 이미지 파일 처리
             const imageIds = ['img1', 'img2', 'img3', 'img4'];
