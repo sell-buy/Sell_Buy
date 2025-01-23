@@ -28,7 +28,8 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: transform 0.2s ease-in-out; /* hover 효과 transition 추가 */
+            transition: transform 0.2s ease-in-out;
+            position: relative; /* 버튼 위치 고정을 위해 추가 */
         }
 
         .product:hover {
@@ -58,9 +59,12 @@
         }
 
         .product-title {
-            font-size: 1.1em;
+            font-size: 1.2em;
             font-weight: bold;
             margin-bottom: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap; /* 한 줄로 표시 */
         }
 
         .product-price {
@@ -77,7 +81,7 @@
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
-            margin-bottom: 10px;
+            margin-bottom: 35px; /* 버튼 위치를 위해 여백 추가 */
         }
 
         .product-spec-button {
@@ -89,6 +93,10 @@
             border-radius: 5px;
             transition: background-color 0.3s ease;
             text-align: center;
+            position: absolute; /* 버튼 위치 고정을 위해 추가 */
+            bottom: 10px; /* 버튼 위치 고정을 위해 추가 */
+            left: 50%; /* 버튼 위치 고정을 위해 추가 */
+            transform: translateX(-50%); /* 버튼 위치 고정을 위해 추가 */
         }
 
         .product-spec-button:hover {
