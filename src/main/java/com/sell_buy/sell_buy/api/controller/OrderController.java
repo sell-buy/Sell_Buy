@@ -47,7 +47,7 @@ public class OrderController {
     //상품등록했을때
     @PostMapping("/register")
     public ResponseEntity<?> orderRegister(@RequestBody Product product) {
-
+        System.out.println("상품 자동 등록");
         Member member = authenticationService.getAuthenticatedMember();
         String prodName = product.getProdName();
         System.out.println(prodName + "member "+member);
@@ -98,7 +98,7 @@ public class OrderController {
         if (orderService.hasExistOrderIdBySellerId(sellerId)) {
             return ResponseEntity.status(400).body("OrderId Seller is not matched");
         } else {
-            orderService.updatePaymentStatus(prodName,order);
+//            orderService.updatePaymentStatus(prodName,);
             return ResponseEntity.status(200).body(order1.getOrderId());
         }
 

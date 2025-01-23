@@ -138,8 +138,8 @@ $(document).ready(function () {
             contentType: false,
             success: function (xhr) {
                 alert('상품이 성공적으로 등록되었습니다!');
-                sendFormData2();
-                window.location.href = 'http://localhost/prod/' + xhr;
+                sendFormData2(xhr);
+
             },
             error: function (xhr) {
                 const errorMessage = xhr.responseJSON?.message || '상품 등록에 실패했습니다.';
