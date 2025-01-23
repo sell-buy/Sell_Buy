@@ -89,7 +89,7 @@
                     <p>판매자: <strong>${product.sellerId}</strong></p>
                 </div>
                 <div class="button-container">
-                    <button id="purchase-button">구매하기</button>
+<%--                    <button id="purchase-button">구매하기</button>--%>
                     <sec:authorize access="isAuthenticated()">
                         <c:if test="${product.sellerId == memId}">
                             <button class="product-control-button modify-button"
@@ -98,6 +98,7 @@
                             <button class="product-control-button delete-button" onclick="deleteProd()">삭제</button>
                         </c:if>
                         <c:if test="${product.sellerId != memId}">
+                            <button id="purchase-button">구매하기</button>
                             <button id="toggle-favorite" class="favorite-button">🤍 찜하기
                             </button>
                         </c:if>

@@ -46,10 +46,11 @@ public class OrderController {
 
     //상품등록했을때
     @PostMapping("/register")
-    public ResponseEntity<?> orderRegister(@RequestBody Product product, HttpSession session, HttpServletRequest request) {
+    public ResponseEntity<?> orderRegister(@RequestBody Product product) {
+
         Member member = authenticationService.getAuthenticatedMember();
         String prodName = product.getProdName();
-        String requestURI = request.getRequestURI();
+        System.out.println(prodName + "member "+member);
         if (member == null) {
             return ResponseEntity.status(400).body("Login First");
         } else {

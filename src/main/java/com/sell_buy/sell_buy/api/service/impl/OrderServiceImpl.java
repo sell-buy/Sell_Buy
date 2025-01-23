@@ -127,12 +127,14 @@ public class OrderServiceImpl implements OrderService {
         //  memid를 넘겨줌
         // memberid를 받아서 product의 sellerid값 확인 , prodname으로prodid를 찾고 prodid로 orderid찾음
         Product prodList = productRepository.findByProdNameAndSellerId(prodName, member.getMemId());
-        Order setOrder = orderRepository.findByProdId(prodList.getProdId());
+        Order setOrder = new Order();
         setOrder.setSellerId(prodList.getSellerId());
         setOrder.setProdId(prodList.getProdId());
         setOrder.setOrderType(prodList.getProdType());
         setOrder.setCreatedDate(LocalDateTime.now());
+        setOrder.setOrderStatus("거래전");
         orderRepository.save(setOrder);
+        System.out.println("저장 완료");
     }
 
     //오더 택배사 선택 및 송장번호 등록
