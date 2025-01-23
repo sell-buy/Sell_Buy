@@ -8,7 +8,7 @@ $(document).ready(function () {
         let formData = $(this).serialize();
         $.ajax({
             type: 'POST',
-            url: 'member/login',
+            url: 'http://localhost/member/login',
             data: formData,
             success: function () {
                 window.location.href = '/';
