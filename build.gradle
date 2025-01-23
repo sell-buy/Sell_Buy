@@ -64,6 +64,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
     testImplementation 'org.springframework.security:spring-security-test'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
 
 
     implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:${springCloudAwsVersion}")
@@ -88,13 +90,15 @@ dependencies {
 // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
     implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 
-
     compileOnly group: 'jakarta.servlet.jsp', name: 'jakarta.servlet.jsp-api', version: '4.0.0'
     compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
     implementation 'jakarta.el:jakarta.el-api:6.0.1'
     implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1'
     implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.1'
     implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:10.1.33'
+    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
 }
 
 
