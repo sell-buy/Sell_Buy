@@ -140,7 +140,7 @@ $(document).ready(function () {
             contentType: false,
             success: function (xhr) {
                 alert('상품이 성공적으로 등록되었습니다!');
-                // sendFormData2();
+                sendFormData2();
                 window.location.href = 'http://localhost/prod/' + xhr;
             },
             error: function (xhr) {
