@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <%--
   Created by IntelliJ IDEA.
   User: USER
@@ -11,8 +10,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <%--jquery--%>
-    <script src="<c:url value="/webjars/jquery/3.7.1/dist/jquery.js"/>"></script>
+
     <%--jquery ui--%>
     <script src="<c:url value="/webjars/jquery-ui/1.14.1/jquery-ui.js"/>"></script>
     <link rel="stylesheet" href="<c:url value="/webjars/jquery-ui/1.14.1/jquery-ui.css"/>">
@@ -23,6 +21,17 @@
 
     <%--    <script src="<c:url value='/script/modalCache.js'/>"></script>--%>
     <script src="<c:url value='/script/modal.js'/>"></script>
+
+    <script>
+        function search(query) {
+            if (!query) {
+                alert('검색어를 입력하세요.');
+                return;
+            }
+            location.href = 'http://localhost/prod/list?searchType=title-desc&searchQuery=' + query;
+
+        }
+    </script>
 </head>
 <div id="modalContainer"></div>
 <body>
@@ -30,12 +39,12 @@
     <div class="header-top">
         <nav class="header-menu">
             <ul class="list-menu">
-                <li><a href="/notifications">알림</a></li>
-                <li><a href="/customer-center">고객센터</a></li>
-                <li><a href="/my-page">내 정보</a></li>
+                <li><a href="<c:url value="/notifications"/>">알림</a></li>
+                <li><a href="<c:url value="/customer-center"/>">고객센터</a></li>
+                <li><a href="<c:url value="/my-page"/>">내 정보</a></li>
                 <sec:authorize access="isAuthenticated()">
-                    <li><a href="/prod/register">상품등록</a></li>
-                    <li><a href="/member/logout">로그아웃</a></li>
+                    <li><a href="<c:url value="/prod/register"/>">상품등록</a></li>
+                    <li><a href="<c:url value="/member/logout"/>">로그아웃</a></li>
                 </sec:authorize>
                 <sec:authorize access="!isAuthenticated()">
                     <li><a href="#" id="href-open-login-header">로그인</a></li>
@@ -43,14 +52,17 @@
             </ul>
         </nav>
         <div class="header-logo">
-            <a href="/">Sell&Buy</a>
+            <a href="http://localhost">Sell&Buy</a>
         </div>
     </div>
     <div class="search-bar">
         <label>
-            <input type="text" placeholder="상품 검색"/>
+            <input id="search-query" type="text" placeholder="상품 검색"
+                   onkeydown="if (event.keyCode === 13) search(this.value)"/>
         </label>
-        <button type="button">🔍</button>
+        <button id="search-btn" type="button"
+                onclick="search($('#search-query').val())">🔍
+        </button>
     </div>
 </header>
 </body>

@@ -6,6 +6,8 @@ import com.sell_buy.sell_buy.db.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -31,5 +33,28 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public boolean existsById(Long catId) {
         return categoryRepository.existsById(catId);
+    }
+
+    @Override
+    public Category getSuperCategory(Long catId) {
+        return categoryRepository.findByCatId(catId);
+    }
+
+    @Override
+    public List<Long> findAllSuperCategory(Long catId) {
+        List<Long> superCategoryIds = new ArrayList<>();
+        Long catIdTemp = catId;
+        while (catIdTemp != null) {
+            Category cat = categoryRepository.findByCatId(catIdTemp);
+            if (cat == null) {
+                break;
+            }
+            catIdTemp = cat.getSuperId();
+            if (catIdTemp != null) {
+                superCategoryIds.add(catIdTemp);
+            }
+        }
+        Collections.sort(superCategoryIds);
+        return superCategoryIds;
     }
 }

@@ -37,7 +37,7 @@ public class MemberServiceImpl implements MemberService {
         if (!validator.isValid()) {
             throw new Exception("Invalid input");
         }
-        if (memberRepository.findByLoginId(member.getLoginId()) != null) {
+        if (memberRepository.findByLoginId(member.getLoginId()).isPresent()) {
             throw new Exception("Login ID already exists");
         }
         member.setPassword(passwordEncoder.encode(member.getPassword()));
@@ -48,28 +48,11 @@ public class MemberServiceImpl implements MemberService {
         return registeredMember.getMemId();
     }
 
-/*    public Long login(Member member) throws Exception {
-        String loginId = member.getLoginId();
-        String password = member.getPassword();
-        return login(loginId, password);
-    }*/
+    @Override
+    public Member getMemberByLoginId(String loginId) {
+        return memberRepository.getMemberByLoginId(loginId);
+    }
 
-    /*private Long login(String loginId, String password) throws Exception {
-        Optional<Member> member = memberRepository.findByLoginId(loginId);
-        try {
-            Validator<StringValidation> validator = new Validator<>(new IdValidation(loginId), new PasswordValidation(password));
-            if (!validator.isValid()) {
-                throw new Exception("Invalid input");
-            }
-        } catch (Exception e) {
-            throw new Exception(e);
-        }
-        if (passwordEncoder.matches(password, member.getPassword())) {
-            return member.getMemId();
-        }
-
-        throw new Exception("Login failed");
-    }*/
 
     @Override
     public Member updateMember() {
@@ -95,9 +78,31 @@ public class MemberServiceImpl implements MemberService {
     public List<Member> getAllMembers() {
         return List.of();
     }
+
 }
 
+/*    public Long login(Member member) throws Exception {
+        String loginId = member.getLoginId();
+        String password = member.getPassword();
+        return login(loginId, password);
+    }*/
 
+    /*private Long login(String loginId, String password) throws Exception {
+        Optional<Member> member = memberRepository.findByLoginId(loginId);
+        try {
+            Validator<StringValidation> validator = new Validator<>(new IdValidation(loginId), new PasswordValidation(password));
+            if (!validator.isValid()) {
+                throw new Exception("Invalid input");
+            }
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+        if (passwordEncoder.matches(password, member.getPassword())) {
+            return member.getMemId();
+        }
+
+        throw new Exception("Login failed");
+    }*/
 
 
 

@@ -14,15 +14,21 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Slice<Product> findAllByOrderByCreateDateDesc(Pageable pageable);
 
-    Slice<Product> findByCategoryOrderByCreateDateDesc(Pageable pageable, Long category_id);
-
-    Slice<Product> findByProdNameContainingOrProdDiscContainingOrderByCreateDateDesc(Pageable pageable, String searchQuery, String searchQuery1);
-
-    Slice<Product> findByCategoryAndProdNameContainingOrProdDiscContainingOrderByCreateDateDesc(Pageable pageable, Long category, String searchQuery, String searchQuery1);
+    Slice<Product> findByProdNameContainingOrProdDescContainingOrderByCreateDateDesc(Pageable pageable, String searchQuery, String searchQuery1);
 
     Slice<Product> findBySellerIdOrderByCreateDateDesc(Pageable pageable, Long seller_id);
 
-    Slice<Product> findByCategoryAndSellerIdOrderByCreateDateDesc(Pageable pageable, Long category, Long seller_id);
-
     Page<Product> findByProdIdInOrderByCreateDateDesc(Pageable pageable, List<Long> prodIdList);
+
+    Slice<Product> findByCategoryInOrderByCreateDateDesc(Pageable pageable, List<Long> categoryIds);
+
+    Slice<Product> findByCategoryInAndProdNameContainingOrProdDescContainingOrderByCreateDateDesc(Pageable pageable, List<Long> categoryIds, String searchQuery, String searchQuery1);
+
+    Slice<Product> findByCategoryInAndSellerIdOrderByCreateDateDesc(Pageable pageable, List<Long> categoryIds, Long sellerId);
+
+    Product findByProdId(Long prodId);
+
+    Product findByProdName(String prodName);
+
+    Product findByProdNameAndSellerId(String prodName, Long sellerId);
 }

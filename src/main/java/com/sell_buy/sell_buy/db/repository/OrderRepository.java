@@ -6,4 +6,17 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
+
+
+    Order findByOrderId(long orderId);
+
+    void findByBuyerId(long BuyerId);  //구매한 상품
+
+    void findBySellerId(long sellerId);
+
+    boolean existsOrderIdBySellerId(long sellerId);
+
+    Order findByProdId(long prodId);
+
+//    List<Order> orderId(long orderId);
 }
