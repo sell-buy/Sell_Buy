@@ -51,5 +51,7 @@ public class Product {
         if (createDate == null)
             createDate = LocalDateTime.now();
         System.out.println("createDate: " + createDate);
+        if (isAvailable == null)
+            isAvailable = true;
     }
 }
