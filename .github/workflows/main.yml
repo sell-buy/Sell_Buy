@@ -34,6 +34,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Jib으로 빌드하고 ECR에 이미지 푸시
+        id: jib-build
         run: ./gradlew clean jib -x test
 
       - name: Task Definition 파일 업데이트
@@ -42,7 +43,7 @@ jobs:
         with:
           task-definition: task-definition.json 
           container-name: globalin 
-          image: ${{ steps.jib.outputs.image }} 
+          image: ${{ steps.jib-build.outputs.image }}
 
       - name: AWS ECS 배포
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
