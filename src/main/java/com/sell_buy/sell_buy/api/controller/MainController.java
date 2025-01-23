@@ -28,7 +28,7 @@ public class MainController {
     public ModelAndView test() throws JsonProcessingException { // JsonProcessingException 예외 처리 추가
         System.out.println("Hello World"); // TODO: Remove this line
 
-        Slice<Product> productListSlice = productService.getProductList(1, null, null, null);
+        Slice<Product> productListSlice = productService.getProductList(1, 18, null, null, null);
         List<Product> productList = productListSlice.getContent();
 
         // 이미지 URL 처리 로직 추가
@@ -67,7 +67,7 @@ public class MainController {
             @RequestParam(name = "searchQuery", required = false) String searchQuery,
             @RequestParam(name = "searchType", required = false) String searchType) throws JsonProcessingException { // JsonProcessingException 예외 처리 유지
 
-        Slice<Product> productListSlice = productService.getProductList(page, catId, searchQuery, searchType);
+        Slice<Product> productListSlice = productService.getProductList(page, 18, catId, searchQuery, searchType);
         List<Product> productList = productListSlice.getContent();
 
         // 이미지 URL 처리 로직 (수정됨: listImageUrls 에 전체 목록 설정)

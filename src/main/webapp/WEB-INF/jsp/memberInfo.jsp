@@ -240,7 +240,7 @@
                     </c:forEach>
                 </script>
             </div>
-            <a href="<c:url value="/prod/list/another?page=1&size=99999&searchType=seller&searchQuery=${member.nickname}"/>"
+            <a href="<c:url value="/prod/list?page=1&size=99999&searchType=seller&searchQuery=${member.nickname}"/>"
                class="more-link">판매 상품 더보기</a>
 
 

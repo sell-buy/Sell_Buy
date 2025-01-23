@@ -53,7 +53,7 @@ public class MemberController {
         modelAndView.addObject("favoriteProductList", favoriteProductList);
 
         // 판매 상품 목록 조회 (최대 6개)
-        Slice<Product> sellProductSlice = productService.getProductList(1, null, member.getNickname(), "seller"); // 페이지 번호 1 사용
+        Slice<Product> sellProductSlice = productService.getProductList(1, 6, null, member.getNickname(), "seller"); // 페이지 번호 1 사용
         List<Product> sellProductList = sellProductSlice.getContent();
         List<Product> sellProductListWithImage = processProductList(sellProductList);
         modelAndView.addObject("sellProductList", sellProductList);
