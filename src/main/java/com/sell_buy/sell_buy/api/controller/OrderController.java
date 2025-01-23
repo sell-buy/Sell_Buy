@@ -12,6 +12,7 @@ import com.sell_buy.sell_buy.db.repository.ProductRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Controller
 @RequestMapping("/order")
 @RequiredArgsConstructor
@@ -34,7 +36,7 @@ public class OrderController {
 //    public void updateState() {
 //        orderService.updateOrderStatus();
 //    }
-
+    //주문 수정
     @GetMapping("modify/{orderId}")
     public String modifyOrder(@PathVariable Long orderId, ModelAndView modelAndView) {
         modelAndView.setViewName("orderRegister");
@@ -82,6 +84,7 @@ public class OrderController {
     @PutMapping("/put/{prodName}") // orderid
     public ResponseEntity<?> putProd(@PathVariable String prodName, @RequestBody Order order, HttpSession session) {
         Member member = authenticationService.getAuthenticatedMember();
+        System.out.println("결제 했을 때 오는 페이지");
         // buyerid -> 정보 가져오기
         Member memAttrList = memberRepository.findByMemId(order.getBuyerId());
         Product prod = productRepository.findByProdName(prodName);
@@ -94,7 +97,7 @@ public class OrderController {
         if (orderService.hasExistOrderIdBySellerId(sellerId)) {
             return ResponseEntity.status(400).body("OrderId Seller is not matched");
         } else {
-            orderService.registerOrder(order1);
+            orderService.updatePaymentStatus(prodName,order);
             return ResponseEntity.status(200).body(order1.getOrderId());
         }
 

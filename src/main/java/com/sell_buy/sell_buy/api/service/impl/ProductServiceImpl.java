@@ -55,7 +55,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(Long prodId) {
-        if (orderRepository.existsByProdId(prodId)) {
+        if (productRepository.existsById(prodId)) {
             throw new IllegalStateException("Product with id " + prodId + " is already ordered.");
         }
         favoriteRepository.deleteByProductProdId(prodId);
