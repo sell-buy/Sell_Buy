@@ -25,6 +25,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Slice<Product> findByCategoryInAndProdNameContainingOrProdDescContainingOrderByCreateDateDesc(Pageable pageable, List<Long> categoryIds, String searchQuery, String searchQuery1);
 
     Slice<Product> findByCategoryInAndSellerIdOrderByCreateDateDesc(Pageable pageable, List<Long> categoryIds, Long sellerId);
+
     Product findByProdId(Long prodId);
-    
+
+    Product findByProdName(String prodName);
 }

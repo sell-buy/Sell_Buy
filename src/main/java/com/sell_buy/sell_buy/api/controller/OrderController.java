@@ -38,7 +38,7 @@ public class OrderController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> orderRegister(@RequestBody Order order, HttpSession session, HttpServletRequest request) {
+    public ResponseEntity<?> orderRegister(@RequestBody Product product, HttpSession session, HttpServletRequest request) {
         Member member = authenticationService.getAuthenticatedMember();
         String requestURI = request.getRequestURI();
         if (member == null) {
@@ -46,23 +46,16 @@ public class OrderController {
         } else {
             //        Long sellerId = member.getMemId();
             //prod_id / buyer_id
-            long prodId = order.getProdId();
-            Product prod = productRepository.findByProdId(prodId);
-            Member memAttrList = memberRepository.findByMemId(order.getBuyerId());
-            String addr = memAttrList.getAddress();
-            String name = memAttrList.getName();
-            String phone = memAttrList.getPhoneNum();
-            order.setProdId(prodId);
-            order.setSellerId(prod.getSellerId());
-            order.setBuyerId(order.getBuyerId());
-            order.setReceiverAddress(addr);
-            order.setReceiverName(name);
-            order.setReceiverPhone(phone);
-            order.setOrderType(prod.getProdType());
-            order.setCreatedDate(LocalDateTime.now());
+            String prodName = product.getProdName();
+            Product product1 = productRepository.findByProdName(prodName);
+            Order order = new Order();
+            order.setSellerId(product1.getSellerId());
+            order.setProdId(product1.getProdId());
+            order.setOrderType(product1.getProdType());
+            order.setCreatedDate(product1.getCreateDate());
             orderService.registerOrder(order);
-            order.setOrderStatus("거래중");
             return ResponseEntity.status(200).body(order.getOrderId());
+
         }
     }
 
@@ -86,20 +79,43 @@ public class OrderController {
     }
 
     //    택배사 등록   업데이트
-    @PutMapping("/{orderId}/put")
-    public ResponseEntity<?> putOrder(@PathVariable Long orderId, @RequestBody Delivery delivery, @RequestBody Order order, @RequestBody Carrier carrier, HttpSession session) {
+    @PutMapping("/put/{prodName}") // orderid
+    public ResponseEntity<?> putOrder(@PathVariable String prodName, @RequestBody Delivery delivery, @RequestBody Order order, @RequestBody Carrier carrier, HttpSession session,
+                                      @RequestHeader(value = "Referer", required = false) String referer) {
         Member member = authenticationService.getAuthenticatedMember();
+        if (referer != null && referer.contains("payment")) {
+
+        }
+        if (referer != null && referer.contains("order")) {
+
+        }
+        Member memAttrList = memberRepository.findByMemId(order.getBuyerId());
+        Product prod = productRepository.findByProdName(prodName);
+        Order order1 = orderRepository.findByOrderId(order.getOrderId());
+        String addr = memAttrList.getAddress();
+        String name = memAttrList.getName();
+        String phone = memAttrList.getPhoneNum();
+        order1.setProdId(prod.getProdId());
+        order1.setSellerId(prod.getSellerId());
+        order1.setBuyerId(order1.getBuyerId());
+        order1.setReceiverAddress(addr);
+        order1.setReceiverName(name);
+        order1.setReceiverPhone(phone);
+        order1.setOrderType(prod.getProdType());
+        order1.setCreatedDate(LocalDateTime.now());
+        orderService.registerOrder(order1);
+        order1.setOrderStatus("거래중");
         Long sellerId = member.getMemId();
-        int orderType = order.getOrderType();
+        int orderType = order1.getOrderType();
         String carrierName = carrier.getCarrierName();
         String trackingNo = delivery.getTrackingNo();
-        if (orderService.hasExistOrder(orderId)) {
+        if (orderService.hasExistOrder(order1.getOrderId())) {
             return ResponseEntity.status(400).body("OrderId IS not EXIST");
         }
         if (orderService.hasExistOrderIdBySellerId(sellerId)) {
             return ResponseEntity.status(400).body("OrderId Seller is not matched");
         } else {
-            orderService.updateProdOrder(orderId, orderType, carrierName, trackingNo);
+            orderService.updateProdOrder(order1.getOrderId(), orderType, carrierName, trackingNo);
             return ResponseEntity.status(200).body("updateOrder Success");
         }
     }

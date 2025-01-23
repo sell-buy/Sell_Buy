@@ -124,15 +124,15 @@
 
                 });
                 // orderregister에 상품번호 넘겨서 sellerid넣어주기/ buyer컬럼에 memid넣어주기
-                await fetch("order/register")({
-                    method: "POST",
+                await fetch(`http://localhost/order/put/${prodName}`, {
+                    method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
                         buyer_id: memId,
-                        prod_id: prodId
-                    })
+                        prod_id: prodId,
+                    }),
                 })
             } catch (e) {
 
