@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,8 +55,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public void deleteProduct(Long prodId) {
-        if (productRepository.existsById(prodId)) {
+        if (orderRepository.existsByProdId(prodId)) {
             throw new IllegalStateException("Product with id " + prodId + " is already ordered.");
         }
         favoriteRepository.deleteByProductProdId(prodId);
