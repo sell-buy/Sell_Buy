@@ -6,34 +6,63 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <script async src="<c:url value="/webjars/jquery/3.7.1/dist/jquery.js"/>"></script>
-    <script async src="<c:url value="/webjars/bootstrap/5.3.3/js/bootstrap.js"/>"></script>
-    <script async src="<c:url value="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.js"/>"></script>
-    <script async src="<c:url value="/webjars/bootstrap/5.3.3/js/bootstrap.esm.js"/>"></script>
+
+    <%--jquery ui--%>
+    <script src="<c:url value="/webjars/jquery-ui/1.14.1/jquery-ui.js"/>"></script>
+    <link rel="stylesheet" href="<c:url value="/webjars/jquery-ui/1.14.1/jquery-ui.css"/>">
+
+
     <link rel="stylesheet" href="<c:url value='/style/common.css'/>">
     <link rel="stylesheet" href="<c:url value='/style/header.css'/>">
+
+    <%--    <script src="<c:url value='/script/modalCache.js'/>"></script>--%>
+    <script src="<c:url value='/script/modal.js'/>"></script>
+
+    <script>
+        function search(query) {
+            if (!query) {
+                alert('검색어를 입력하세요.');
+                return;
+            }
+            location.href = 'http://localhost/prod/list?searchType=title-desc&searchQuery=' + query;
+
+        }
+    </script>
 </head>
+<div id="modalContainer"></div>
 <body>
 <header class="header">
     <div class="header-top">
         <nav class="header-menu">
-            <ul>
-                <li><a href="/notifications">알림</a></li>
-                <li><a href="/customer-center">고객센터</a></li>
-                <li><a href="/my-page">내 정보</a></li>
-                <li><a href="/login">로그인</a></li>
+            <ul class="list-menu">
+                <li><a href="<c:url value="/notifications"/>">알림</a></li>
+                <li><a href="<c:url value="/board"/>">게시판</a></li>
+                <sec:authorize access="isAuthenticated()">
+                    <li><a href="<c:url value="/member"/>">내 정보</a></li>
+                    <li><a href="<c:url value="/prod/register"/>">상품등록</a></li>
+                    <li><a href="<c:url value="/member/logout"/>">로그아웃</a></li>
+                </sec:authorize>
+                <sec:authorize access="!isAuthenticated()">
+                    <li><a href="#" id="href-open-login-header">로그인</a></li>
+                </sec:authorize>
             </ul>
         </nav>
+        <div class="header-logo">
+            <a href="http://localhost">Sell&Buy</a>
+        </div>
     </div>
-    <div class="header-logo">
-        <a href="/">Sell&Buy</a>
-    </div>
-    <div class="header-search">
-        <input type="text" placeholder="상품 검색"/>
-        <button type="button">🔍</button>
+    <div class="search-bar">
+        <label>
+            <input id="search-query" type="text" placeholder="상품 검색"
+                   onkeydown="if (event.keyCode === 13) search(this.value)"/>
+        </label>
+        <button id="search-btn" type="button"
+                onclick="search($('#search-query').val())">🔍
+        </button>
     </div>
 </header>
 </body>
