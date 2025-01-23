@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 
 @Configuration
-class JacksonConfig {
-
+public class JacksonConfig {
     @Bean
     @Primary // 기본 ObjectMapper로 지정
     public ObjectMapper defaultObjectMapper() {

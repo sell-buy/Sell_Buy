@@ -18,10 +18,12 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mem_seq")
     @SequenceGenerator(name = "mem_seq", sequenceName = "mem_seq", allocationSize = 1)
     private Long favId;
-    @Column(name = "mem_id")
-    private Long memId;
-    @Column(name = "prod_id")
-    private Long prodId;
+    @JoinColumn(name = "mem_id")
+    @ManyToOne
+    private Member member;
+    @JoinColumn(name = "prod_id")
+    @ManyToOne
+    private Product product;
     @Column(name = "is_activated")
     private boolean isActivated;
 }

@@ -16,4 +16,6 @@ public interface FavoriteService {
     Page<Product> getFavoriteProductList(Long memId, int page, int size);
 
     boolean wasFavorite(Long memId, Long prodId);
+
+    void deleteFavorite(Long memId, Long prodId);
 }

@@ -11,6 +11,8 @@ public interface MemberService {
 
 //    Long login(Member member) throws Exception;
 
+    Member updateMember(Member member);
+
     Member updateMember();
 
     Member deleteMember();
@@ -22,4 +24,6 @@ public interface MemberService {
     List<Member> getAllMembers();
 
     Member getMemberByLoginId(String loginId);
+
+    Member getMember(Long memId);
 }

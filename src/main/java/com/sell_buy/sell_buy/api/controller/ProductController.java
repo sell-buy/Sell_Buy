@@ -26,6 +26,7 @@ import javax.naming.AuthenticationException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/prod")
@@ -46,22 +47,16 @@ public class ProductController {
     }
 
     @GetMapping("/update/{id}")
-    public ModelAndView updateProduct(@PathVariable("id") Long prodId) throws JsonProcessingException {
+    public ModelAndView updateProduct(@PathVariable("id") Long prodId) throws JsonProcessingException, AuthenticateNotMatchException, ProductNotFoundException {
         ModelAndView modelAndView = new ModelAndView();
         Member member = authenticationService.getAuthenticatedMember();
         if (!productService.existsById(prodId)) {
-            modelAndView.setViewName("exception");
-            modelAndView.addObject("errorCode", 410);
-            modelAndView.addObject("errorMessage", "상품이 존재하지 않습니다.");
-            return modelAndView;
+            throw new ProductNotFoundException("Product with id " + prodId + " not found.");
         }
         Product product = productService.getProductById(prodId);
 
-        if (member.getMemId() != product.getSellerId()) {
-            modelAndView.setViewName("exception");
-            modelAndView.addObject("errorCode", 412);
-            modelAndView.addObject("errorMessage", "허가되지 않은 접근입니다.");
-            return modelAndView;
+        if (!Objects.equals(member.getMemId(), product.getSellerId())) {
+            throw new AuthenticateNotMatchException("Seller ID does not match.");
         }
 
         List<String> imageUrls = JsonUtils.convertJsonToList(product.getImageUrls());
@@ -188,6 +183,21 @@ public class ProductController {
         modelAndView.setViewName("prodList");
         modelAndView.addObject("productList", productList.getContent());
         return modelAndView;
+    }
+
+
+    @GetMapping("/list/another")
+    public ResponseEntity<?> getProductList2(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                             @RequestParam(name = "catId", required = false) Long catId,
+                                             @RequestParam(name = "searchQuery", required = false) String searchQuery,
+                                             @RequestParam(name = "searchType", required = false) String searchType) {
+        if (page < 1) {
+            throw new IllegalArgumentException("Page number must be greater than 1.");
+        }
+
+        Slice<Product> productList = productService.getProductList(page, catId, searchQuery, searchType);
+
+        return ResponseEntity.status(200).body(productList);
     }
 
 }

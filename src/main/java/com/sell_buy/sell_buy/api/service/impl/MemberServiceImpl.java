@@ -49,8 +49,18 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public Member updateMember(Member member) {
+        return null;
+    }
+
+    @Override
     public Member getMemberByLoginId(String loginId) {
         return memberRepository.getMemberByLoginId(loginId);
+    }
+
+    @Override
+    public Member getMember(Long memId) {
+        return memberRepository.findById(memId).orElse(null);
     }
 
 

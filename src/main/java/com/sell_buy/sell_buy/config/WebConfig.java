@@ -21,6 +21,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
         registry.addResourceHandler("/favicon.ico")
                 .addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations("classpath:/static/images/");
 
     }
 

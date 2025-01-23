@@ -50,6 +50,22 @@ public class Member implements UserDetails {
         role = "ROLE_USER";
     }
 
+    public String printAll() {
+        return "Member{" +
+                "memId=" + memId +
+                ", imgId=" + imgId +
+                ", loginId='" + loginId + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", address='" + address + '\'' +
+                ", email='" + email + '\'' +
+                ", createDate=" + createDate +
+                ", phoneNum='" + phoneNum + '\'' +
+                ", role='" + role + '\'' +
+                '}';
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
