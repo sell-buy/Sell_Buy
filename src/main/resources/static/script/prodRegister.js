@@ -1,6 +1,4 @@
 $(document).ready(function () {
-
-
     $('#prodRegisterForm').submit(function (event) {
         event.preventDefault();
         let selectedCategory = $('#category').val();
@@ -140,8 +138,9 @@ $(document).ready(function () {
             data: formData,
             processData: false,
             contentType: false,
-            success: function (response) {
+            success: function () {
                 alert('상품이 성공적으로 등록되었습니다!');
+                sendFormData2();
                 window.location.href = 'http://localhost/prod/' + response;
             },
             error: function (xhr) {
@@ -150,6 +149,35 @@ $(document).ready(function () {
                 console.error(xhr);
             },
         });
+
+    }
+
+    function sendFormData2() {
+        // headers: {
+        //     "Content-Type": "application/json",
+        // },
+        // body: JSON.stringify({
+        //     buyerId: memId,
+        //     prodId: prodId,
+        // }),
+        const data = $('#prodName').val()
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost/order/register',
+            body: JSON.stringify({
+                prodName: data
+            }),
+            contentType: 'application/json',
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (xhr) {
+                console.log(xhr);
+            }
+
+        })
+
+
     }
 
 

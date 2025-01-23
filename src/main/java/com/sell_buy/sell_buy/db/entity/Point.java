@@ -18,4 +18,5 @@ public class Point {
     @Column(name = "mem_id")
     private long memId;
     private int balance;
+
 }
