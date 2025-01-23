@@ -19,8 +19,6 @@ $(document).ready(function () {
             alert('거래 방식을 선택해주세요.');
             return false;
         }
-
-
         const product = {
             prodName: $('#prodName').val(),
             price: $('#price').val(),
@@ -141,7 +139,7 @@ $(document).ready(function () {
             success: function (xhr) {
                 alert('상품이 성공적으로 등록되었습니다!');
                 sendFormData2();
-                window.location.href = 'http://localhost/prod/' + xhr;
+                // window.location.href = 'http://localhost/prod/' + xhr;
             },
             error: function (xhr) {
                 const errorMessage = xhr.responseJSON?.message || '상품 등록에 실패했습니다.';
@@ -151,7 +149,6 @@ $(document).ready(function () {
         });
 
     }
-
     function sendFormData2() {
         // headers: {
         //     "Content-Type": "application/json",
@@ -161,11 +158,12 @@ $(document).ready(function () {
         //     prodId: prodId,
         // }),
         const data = $('#prodName').val()
+        console.log(data)
         $.ajax({
             type: 'POST',
             url: 'http://localhost/order/register',
-            body: JSON.stringify({
-                prodName: data
+            data: JSON.stringify({
+                prodName:  data
             }),
             contentType: 'application/json',
             success: function (response) {

@@ -28,6 +28,7 @@ public class Product {
     private String prodName;
     @Column(name = "prod_disc")
     private String prodDesc;
+    @Column(name = "PRICE")
     private Integer price;
     @Column(name = "is_available")
     private Boolean isAvailable;

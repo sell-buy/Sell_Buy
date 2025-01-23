@@ -66,6 +66,7 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAll();
     }
 
+    // 배송상태 확인 후 업데이트
     @Scheduled(fixedRate = 3600000)
     @Override
     public void updateOrderStatus() {
@@ -119,19 +120,21 @@ public class OrderServiceImpl implements OrderService {
             }
         }
     }
-
-    @Override
     //상품 등록될때 자동으로 되는
-    public void updateProdOrder(Member member, String prodName) {
+    public
+    @Override
+     void updateProdOrder(Member member, String prodName) {
         //  memid를 넘겨줌
         // memberid를 받아서 product의 sellerid값 확인 , prodname으로prodid를 찾고 prodid로 orderid찾음
         Product prodList = productRepository.findByProdNameAndSellerId(prodName, member.getMemId());
-        Order setOrder = orderRepository.findByProdId(prodList.getProdId());
+        Order setOrder = new Order();
         setOrder.setSellerId(prodList.getSellerId());
         setOrder.setProdId(prodList.getProdId());
         setOrder.setOrderType(prodList.getProdType());
         setOrder.setCreatedDate(LocalDateTime.now());
+        setOrder.setOrderStatus("거래전");
         orderRepository.save(setOrder);
+        System.out.println("저장 완료");
     }
 
     //오더 택배사 선택 및 송장번호 등록
@@ -144,4 +147,22 @@ public class OrderServiceImpl implements OrderService {
         deliveryRepository.save(delivery);
 
     }
+
+    @Override
+    public void updatePaymentStatus(String prodName, Order order) {
+        Product prod   = productRepository.findByProdName(prodName);
+        Member buyer = memberRepository.findByMemId(order.getBuyerId());
+        Order order1 = orderRepository.findByProdId(prod.getProdId());
+        String addr = buyer.getAddress();
+        String name = buyer.getName();
+        String phone = buyer.getPhoneNum();
+        order1.setBuyerId(buyer.getMemId());
+        order1.setReceiverName(name);
+        order1.setReceiverPhone(phone);
+        order1.setReceiverAddress(addr);
+        order1.setCreatedDate(LocalDateTime.now());
+        order1.setOrderStatus("거래중");
+        orderRepository.save(order1);
+    }
+
 }
