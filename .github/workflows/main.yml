@@ -37,6 +37,9 @@ jobs:
         id: jib-build
         run: ./gradlew clean jib -x test
 
+      - name: Jib Output 확인 (디버깅용)
+        run: echo "Jib Image Output: ${{ steps.jib-build.outputs.image }}"
+
       - name: Task Definition 파일 업데이트
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1  
