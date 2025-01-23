@@ -59,7 +59,7 @@ public class WidgetController {
         return "payment_success";
     }
 
-    @PostMapping("/payment/confirm")
+    @RequestMapping(value = )
     public ResponseEntity<JSONObject> confirmPayment(@RequestBody String jsonBody) throws Exception {
         JSONParser parser = new JSONParser();
         String orderId; //난수

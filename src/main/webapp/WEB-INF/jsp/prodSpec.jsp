@@ -115,7 +115,7 @@
 <script>
     const button = document.getElementById('purchase-button')
     button.addEventListener('click', () => {
-        window.open(`/payment/${product.prodId}?productId=${product.prodName}&price=${product.price}`, 'PaymentPopup', 'width=800,height=600,scrollbars=yes,resizable=no');
+        window.open(`/payment/${product.prodId}?prodName=${product.prodName}&price=${product.price}`, 'PaymentPopup', 'width=800,height=600,scrollbars=yes,resizable=no');
     })
 </script>
 </body>
