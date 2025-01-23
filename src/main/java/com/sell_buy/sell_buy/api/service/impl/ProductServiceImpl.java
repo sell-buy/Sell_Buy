@@ -58,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
         if (orderRepository.existsByProdId(prodId)) {
             throw new IllegalStateException("Product with id " + prodId + " is already ordered.");
         }
-        favoriteRepository.deleteByProd(prodId);
+        favoriteRepository.deleteByProductProdId(prodId);
         productRepository.deleteById(prodId);
     }
 

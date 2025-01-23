@@ -81,6 +81,7 @@
 
                 </c:if>
                 <c:if test="${!product.sellerId.equals(memId)}">
+                    ${memId}
                     <script>
                         $.get(`http://localhost/fav?prodId=${product.prodId}`, function (data) {
                             if (data) {

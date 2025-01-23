@@ -189,8 +189,7 @@ public class ProductController {
     public ResponseEntity<?> getProductList2(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                                              @RequestParam(name = "catId", required = false) Long catId,
                                              @RequestParam(name = "searchQuery", required = false) String searchQuery,
-                                             @RequestParam(name = "searchType", required = false) String searchType,
-                                             HttpServletResponse response) {
+                                             @RequestParam(name = "searchType", required = false) String searchType) {
         if (page < 1) {
             throw new IllegalArgumentException("Page number must be greater than 1.");
         }

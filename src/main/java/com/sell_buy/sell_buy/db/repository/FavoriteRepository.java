@@ -1,6 +1,7 @@
 package com.sell_buy.sell_buy.db.repository;
 
 import com.sell_buy.sell_buy.db.entity.Favorite;
+import com.sell_buy.sell_buy.db.entity.Product;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,28 +15,29 @@ import java.util.List;
 
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
-    void deleteByMemIdOrProd(Long memId, Long prodId);
 
-    boolean existsByMemIdAndProd(Long memId, Long prodId);
+    void deleteByMemberMemIdOrProductProdId(Long memId, Long prodId);
+
+    boolean existsByMemberMemIdAndProductProdId(Long memId, Long prodId);
 
     @Transactional
     @Modifying
-    @Query("update Favorite f set f.isActivated = :isActivated where f.memId = :memId and f.prod = :prodId")
+    @Query("update Favorite f set f.isActivated = :isActivated where f.member.memId = :memId and f.product.prodId = :prodId")
     void updateIsActivatedByMemIdAndProdId(@Param("memId") Long memId, @Param("prodId") Long prodId, @Param("isActivated") boolean b);
 
-    @Query("SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END FROM Favorite f WHERE f.memId = :memId AND f.prod = :prodId AND f.isActivated = :isActivated")
+    @Query("SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END FROM Favorite f WHERE f.member.memId = :memId AND f.product.prodId = :prodId AND f.isActivated = :isActivated")
     boolean existsByMemIdAndProdIdAndIsActivated(@Param("memId") Long memId, @Param("prodId") Long prodId, @Param("isActivated") boolean isActivated);
 
-    @Query("select f from Favorite  f where f.memId = :memId and f.isActivated = true")
+    @Query("select f from Favorite  f where f.member.memId = :memId and f.isActivated = true")
     Page<Favorite> findFavoriteList(@Param("memId") Long memId, Pageable pageable);
 
-    @Query("select f.prod from Favorite f where f.memId = :memId")
+    @Query("select f.product.prodId from Favorite f where f.member.memId = :memId")
     List<Long> findProdIdListByMemId(@Param("memId") Long memId);
 
-    void deleteByProd(Long prodId);
+    void deleteByProductProdId(Long prodId);
 
-    void deleteByMemId(Long memId);
+    void deleteByMemberMemId(Long memId);
 
-    @Query("select f.prod from Favorite f where f.memId = :memId and f.isActivated = :activated")
-    List<Long> findProdIdListByMemIdAndIsActivated(Long memId, boolean activated);
+    @Query("SELECT f.product FROM Favorite f WHERE f.member.memId = :memId AND f.isActivated = true ORDER BY f.product.createDate DESC")
+    Page<Product> findActivatedProduct(Long memId, boolean isActivated, Pageable pageable);
 }
