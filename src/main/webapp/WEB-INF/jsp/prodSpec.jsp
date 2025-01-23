@@ -27,6 +27,23 @@
             });
         }
 
+        function deleteProd() {
+            if (confirm('정말 삭제하시겠습니까?')) {
+                $.ajax({
+                    url: `http://localhost/prod/${product.prodId}`,
+                    type: 'DELETE',
+                    success: function () {
+                        alert('상품이 삭제되었습니다.');
+                        window.location.href = 'http://localhost/';
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('상품 삭제 실패', error);
+                        alert('상품 삭제에 실패했습니다.');
+                    }
+                });
+            }
+        }
+
         $(function () {
             const prodId = ${product.prodId}; // JSTL 로부터 상품 ID를 JavaScript 변수로 전달
 
@@ -89,7 +106,7 @@
                     <p>판매자: <strong>${product.sellerId}</strong></p>
                 </div>
                 <div class="button-container">
-<%--                    <button id="purchase-button">구매하기</button>--%>
+                    <%--                    <button id="purchase-button">구매하기</button>--%>
                     <sec:authorize access="isAuthenticated()">
                         <c:if test="${product.sellerId == memId}">
                             <button class="product-control-button modify-button"
