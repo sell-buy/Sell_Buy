@@ -149,9 +149,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void updatePaymentStatus(String prodName, Order order) {
+    public void updatePaymentStatus(String prodName, Member member) {
         Product prod   = productRepository.findByProdName(prodName);
-        Member buyer = memberRepository.findByMemId(order.getBuyerId());
+        Member buyer = memberRepository.findByMemId(member.getMemId());
         Order order1 = orderRepository.findByProdId(prod.getProdId());
         String addr = buyer.getAddress();
         String name = buyer.getName();

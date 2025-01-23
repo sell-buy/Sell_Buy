@@ -2,7 +2,10 @@ package com.sell_buy.sell_buy.api.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sell_buy.sell_buy.api.service.AuthenticationService;
+import com.sell_buy.sell_buy.api.service.OrderService;
 import com.sell_buy.sell_buy.api.service.ProductService;
+import com.sell_buy.sell_buy.db.entity.Member;
 import com.sell_buy.sell_buy.db.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
@@ -34,10 +37,10 @@ import static com.sell_buy.sell_buy.common.utills.CommonUtils.processProductList
 @RequiredArgsConstructor
 public class MainController {
 
-
     private final ProductService productService;
     private final ObjectMapper objectMapper;// ObjectMapper 주입
-
+    private final OrderService orderService;
+    private final AuthenticationService authenticationService;
     @GetMapping("/")
     public ModelAndView test() throws JsonProcessingException { // JsonProcessingException 예외 처리 추가
         System.out.println("Hello World"); // TODO: Remove this line
@@ -144,6 +147,10 @@ public class MainController {
         if (code == 200) {
             System.out.println("결제 성공했습니다!");
             //결제 성공시
+
+            Member member = authenticationService.getAuthenticatedMember();
+            prodName = (String) jsonObject.get("orderName");
+            orderService.updatePaymentStatus(prodName,member);
             return ResponseEntity.status(code).body(jsonObject);
         } else {
             return ResponseEntity.status(code).body(jsonObject);

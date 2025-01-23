@@ -150,7 +150,7 @@ $(document).ready(function () {
 
     }
 
-    function sendFormData2() {
+    function sendFormData2(xhr) {
         // headers: {
         //     "Content-Type": "application/json",
         // },
@@ -168,6 +168,7 @@ $(document).ready(function () {
             }),
             contentType: 'application/json',
             success: function (response) {
+                window.location.href = 'http://localhost/prod/' + xhr;
                 console.log(response);
             },
             error: function (xhr) {

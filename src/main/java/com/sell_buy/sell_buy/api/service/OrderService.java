@@ -32,5 +32,5 @@ public interface OrderService {
     // modify
     void updateOrder(long orderId, int orderStatus, String carrier, String trackingNo);
     // 결제했을때 상품 order에 상태 업데이트
-    void updatePaymentStatus(String prodName, Order order);
+    void updatePaymentStatus(String prodName, Member member);
 }
