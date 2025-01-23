@@ -52,6 +52,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            transition: transform 0.2s ease-in-out;
         }
 
         .product-image-container {
@@ -69,12 +70,14 @@
             width: 100%;
             object-fit: cover;
             object-position: center;
+
         }
 
         .product-card .product-title {
             font-size: 1.1em;
             font-weight: bold;
             margin-bottom: 5px;
+
         }
 
         .product-card .product-price {
@@ -122,37 +125,29 @@
             color: #d79672;
             text-decoration: none;
         }
+
+        .product-spec-button {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #d79672;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            text-align: center;
+        }
+
+        .product-spec-button:hover {
+            background-color: #b07860;
+        }
+
+        .product-card:hover {
+            transform: scale(1.03);
+            /* hover 시 살짝 확대 */
+        }
     </style>
     <script>
-        $(document).ready(function () {
-            // 찜 목록 AJAX 요청 및 표시 (기존 코드 유지)
-            fetch("http://localhost/fav/list?page=1&size=6", {
-                method: "GET",
-                credentials: "include"
-            })
-                .then(response => response.text())
-                .then(data => {
-                    $('#fav-list').html(data);
-                    if ($('#fav-list .product-card').length === 0) {
-                        $('#fav-list').html('<p class="product-list-empty">찜한 상품이 없습니다.</p>');
-                    }
-                })
-                .catch(error => console.error("찜 목록 요청 실패:", error));
 
-            // 판매 상품 목록 AJAX 요청 및 표시 (기존 코드 유지)
-            fetch("http://localhost/prod/list/another?page=1&size=6&searchType=seller&searchQuery=${member.nickname}", {
-                method: "GET",
-                credentials: "include"
-            })
-                .then(response => response.text())
-                .then(data => {
-                    $('#sell-list').html(data);
-                    if ($('#sell-list .product-card').length === 0) {
-                        $('#sell-list').html('<p class="product-list-empty">판매 중인 상품이 없습니다.</p>');
-                    }
-                })
-                .catch(error => console.error("판매 상품 목록 요청 실패:", error));
-        });
     </script>
 </head>
 <body class="custom-scrollbar">
@@ -192,13 +187,47 @@
 
             <h3 class="section-title">찜한 상품</h3>
             <div id="fav-list" class="product-list">
-                <!-- 찜 목록이 여기에 표시됩니다 (JavaScript) -->
+                <script>
+                    // 받아온 찜 목록 리스트 표시
+                    <c:forEach var="product" items="${favoriteProductList}">
+                    $('#fav-list').append(`
+                        <div class="product-card">
+                            <div class="product-image-container">
+                                <img src="${product.listImageUrls[0]}" alt="Product Image" class="product-image"/>
+                            </div>
+                            <div class="product-details">
+                                <div class="product-title">${product.prodName}</div>
+                                <div class="product-price">$${product.price}</div>
+                                <div class="product-description">${product.prodDesc}</div>
+                                <a href="http://localhost/prod/${product.prodId}" class="product-spec-button">상세보기</a>
+                            </div>
+                        </div>
+                        `);
+                    </c:forEach>
+                </script>
             </div>
             <a href="<c:url value="/fav/list?page=1&size=99999"/>" class="more-link">찜 목록 더보기</a>
 
             <h3 class="section-title">판매 상품</h3>
             <div id="sell-list" class="product-list">
-                <!-- 판매 상품 목록이 여기에 표시됩니다 (JavaScript) -->
+                <script>
+                    // 받아온 판매 상품 리스트 표시
+                    <c:forEach var="product" items="${sellProductList}">
+                    $('#sell-list').append(`
+                        <div class="product-card">
+                            <div class="product-image-container">
+                                <img src="${product.listImageUrls[0]}" alt="Product Image" class="product-image"/>
+                            </div>
+                            <div class="product-details">
+                                <div class="product-title">${product.prodName}</div>
+                                <div class="product-price">$${product.price}</div>
+                                <div class="product-description">${product.prodDesc}</div>
+                                <a href="http://localhost/prod/${product.prodId}" class="product-spec-button">상세보기</a>
+                            </div>
+                        </div>
+                        `);
+                    </c:forEach>
+                </script>
             </div>
             <a href="<c:url value="/prod/list/another?page=1&size=99999&searchType=seller&searchQuery=${member.nickname}"/>"
                class="more-link">판매 상품 더보기</a>

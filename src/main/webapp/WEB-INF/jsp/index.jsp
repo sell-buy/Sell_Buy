@@ -14,6 +14,10 @@
             color: white;
         }
 
+        .product:hover {
+            transform: scale(1.03); /* hover 시 살짝 확대 */
+        }
+
         .product-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -28,6 +32,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            transition: transform 0.2s ease-in-out;
         }
 
         .product-image-container {
@@ -92,9 +97,6 @@
             background-color: #b07860;
         }
     </style>
-    <script>
-        // JavaScript 코드 없음 - 컨트롤러에서 이미지 URL 처리
-    </script>
 </head>
 <body class="custom-scrollbar">
 <div id="wrap">

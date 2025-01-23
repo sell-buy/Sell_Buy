@@ -8,7 +8,6 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -16,19 +15,28 @@
     <script src="<c:url value='/webjars/jquery/3.7.1/dist/jquery.js'/>"></script>
     <link rel="stylesheet" href="<c:url value='/style/common.css'/>">
     <link rel="stylesheet" href="<c:url value='/style/prodSpec.css'/>">
+    <link rel="stylesheet" href="<c:url value='/style/slider.css'/>">
+    <%-- 이미지 슬라이더 스타일 --%>
+    <script src="<c:url value='/script/slider.js'/>"></script>
+    <%-- 이미지 슬라이더 스크립트 --%>
     <script>
+        let product = ${product}; // JSTL 로부터 상품 정보를 JavaScript 객체로 전달
+
         function deleteProd() {
-            $.ajax({
-                url: `http://localhost/prod/${product.prodId}`,  // 요청을 보낼 URL
-                type: 'DELETE',  // HTTP 메소드
-                success: function () {
-                    console.log('삭제 성공');
-                    window.location.href = 'http://localhost/prod/list';
-                },
-                error: function (xhr, status, error) {
-                    console.log('삭제 실패', error);
-                }
-            });
+            if (confirm("상품을 삭제하시겠습니까?")) {
+                $.ajax({
+                    url: `http://localhost/prod/${product.prodId}`,
+                    type: 'DELETE',
+                    success: function () {
+                        alert('상품이 삭제되었습니다.');
+                        window.location.href = 'http://localhost/prod/list';
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('상품 삭제 실패', error);
+                        alert('상품 삭제에 실패했습니다.');
+                    }
+                });
+            }
         }
 
         function toggleFavorite(prodId) {
@@ -36,13 +44,24 @@
                 url: `http://localhost/fav?prodId=` + prodId,
                 type: 'POST',
                 success: function () {
-                    window.location.reload();
+                    window.location.reload(); // 찜 상태 변경 후 페이지 새로고침
                 },
                 error: function (xhr, status, error) {
-                    console.log('찜하기 실패', error);
+                    console.error('찜하기 실패', error);
+                    alert('찜하기에 실패했습니다.');
                 }
             });
         }
+
+        $(function () {
+            $.get(`http://localhost/fav?prodId=${product.prodId}`, function (data) {
+                if (data) {
+                    $('#toggle-favorite').text('❤️ 찜 취소'); // 찜 O: 하트 아이콘 + "찜 취소"
+                } else {
+                    $('#toggle-favorite').text('🤍 찜하기'); // 찜 X: 빈 하트 아이콘 + "찜하기"
+                }
+            });
+        });
     </script>
 </head>
 <body class="custom-scrollbar">
@@ -50,51 +69,67 @@
     <%@include file="include/header.jsp" %>
     <div class="content">
         <%@include file="include/category.jsp" %>
-        <div class="main-container">
+        <div class="main-container prod-spec-container"> <%-- prod-spec-container 클래스 추가 --%>
             <div class="product-image-container">
-                <c:forEach var="imageUrl" items="${imageUrls}">
-                    <img src="${imageUrl}" alt="Product Image" class="product-image"/>
-                </c:forEach>
+                <div class="slider-container"> <%-- 이미지 슬라이더 컨테이너 --%>
+                    <div class="slider-wrapper">
+                        <ul class="slides">
+                            <c:forEach var="imageUrl" items="${imageUrls}" varStatus="status">
+                                <li class="slide">
+                                    <img src="${imageUrl}" alt="Product Image ${status.index + 1}"
+                                         class="product-image"/>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </div>
+                    <div class="slider-controls"> <%-- 슬라이더 컨트롤 --%>
+                        <button class="prev-slide"><</button>
+                        <button class="next-slide">></button>
+                    </div>
+                    <ul class="slide-indicators"> <%-- 슬라이드 인디케이터 --%>
+                        <c:forEach var="imageUrl" items="${imageUrls}" varStatus="status">
+                            <li class="slide-indicator" data-slide="${status.index}"></li>
+                        </c:forEach>
+                    </ul>
+                </div>
             </div>
             <div class="product-details">
-                <div class="product-title">
+                <h2 class="product-title">
                     <c:out value="${product.prodName}"/>
-                </div>
+                </h2>
                 <div class="product-price">
-                    $<c:out value="${product.price}"/>
+                    $ <c:out value="${product.price}"/>
                 </div>
-                <div class="product-description">
+                <p class="product-description">
                     <c:out value="${product.prodDesc}"/>
-                </div>
-                <button class="purchase-button">구매</button>
-            </div>
-            <sec:authorize access="isAuthenticated()">
-                <c:if test="${product.sellerId.equals(memId)}"> <%--memId 하면 왠지 몰라도 세션에 memId가 불러와짐 ㅋㅋ--%>
-                    <div class="product-control">
-                    <button class="product-control-button" id="btn-modify"
-                            onclick="window.location.href = `http://localhost/prod/update/${product.prodId}`">
-                        수정
-                    </button>
-                    <button class="product-control-button" id="btn-delete" onclick="">
-                        삭제
-                    </button>
+                </p>
 
-                </c:if>
-                <c:if test="${!product.sellerId.equals(memId)}">
-                    ${memId}
-                    <script>
-                        $.get(`http://localhost/fav?prodId=${product.prodId}`, function (data) {
-                            if (data) {
-                                $('#toggle-favorite').text('찜하기 취소');
-                            } else {
-                                $('#toggle-favorite').text('찜하기');
-                            }
-                        })
-                    </script>
-                    <button id="toggle-favorite" onclick="toggleFavorite(${product.prodId})">찜하기</button>
-                </c:if>
+                <div class="seller-info"> <%-- 판매자 정보 영역 --%>
+                    <p>판매자: <strong>${product.sellerId}</strong></p> <%-- TODO: 판매자 닉네임으로 변경 --%>
+                    <%-- TODO: 판매자 평점 또는 다른 정보 추가 --%>
                 </div>
-            </sec:authorize>
+
+                <div class="button-container"> <%-- 버튼 컨테이너 --%>
+                    <button class="purchase-button">구매하기</button>
+                    <%-- TODO: 구매 기능 연결 --%>
+                    <sec:authorize access="isAuthenticated()">
+                        <c:if test="${product.sellerId == memId}"> <%-- 판매자인 경우 --%>
+                            <button class="product-control-button modify-button"
+                                    onclick="window.location.href = `http://localhost/prod/update/${product.prodId}`">수정
+                            </button>
+                            <button class="product-control-button delete-button" onclick="deleteProd()">삭제</button>
+                        </c:if>
+                        <c:if test="${product.sellerId != memId}"> <%-- 구매자인 경우 --%>
+                            <button id="toggle-favorite" class="favorite-button"
+                                    onclick="toggleFavorite(${product.prodId})">🤍 찜하기
+                            </button>
+                        </c:if>
+                    </sec:authorize>
+                    <sec:authorize access="!isAuthenticated()"> <%-- 비회원인 경우 --%>
+                        <button class="favorite-button" onclick="alert('로그인 후 찜하기 기능을 이용할 수 있습니다.')">🤍 찜하기</button>
+                    </sec:authorize>
+                </div>
+            </div>
         </div>
     </div>
     <%@include file="include/footer.jsp" %>

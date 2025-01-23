@@ -1,17 +1,29 @@
 package com.sell_buy.sell_buy.api.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sell_buy.sell_buy.api.service.AuthenticationService;
 import com.sell_buy.sell_buy.api.service.MemberService;
+import com.sell_buy.sell_buy.api.service.impl.FavoriteServiceImpl;
+import com.sell_buy.sell_buy.api.service.impl.ProductServiceImpl;
 import com.sell_buy.sell_buy.common.exception.auth.AuthenticateNotMatchException;
 import com.sell_buy.sell_buy.db.entity.Member;
+import com.sell_buy.sell_buy.db.entity.Product;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
+
+import static com.sell_buy.sell_buy.common.utills.CommonUtils.processProductList;
 
 @Controller
 @RequestMapping("/member")
@@ -21,13 +33,31 @@ public class MemberController {
     private final MemberService memberService;
     private final AuthenticationService authenticationService;
     private final PasswordEncoder passwordEncoder;
+    private final FavoriteServiceImpl favoriteService;
+    private final ProductServiceImpl productService;
 
     @GetMapping()
-    public ModelAndView memberInfo() {
+    public ModelAndView memberInfo() throws JsonProcessingException {
         Member member = authenticationService.getAuthenticatedMember();
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("memberInfo");
         modelAndView.addObject("member", member);
+
+        Long memId = member.getMemId();
+        Pageable pageable = PageRequest.of(0, 6); // 페이지 1, 사이즈 6으로 Pageable 객체 생성
+
+        // 찜한 상품 목록 조회 (최대 6개)
+        Page<Product> favoriteProductPage = favoriteService.getFavoriteProductList(memId, 1, 6); // 페이지 번호 1 사용
+        List<Product> favoriteProductList = favoriteProductPage.getContent();
+        List<Product> favoriteProductListWithImage = processProductList(favoriteProductList);
+        modelAndView.addObject("favoriteProductList", favoriteProductList);
+
+        // 판매 상품 목록 조회 (최대 6개)
+        Slice<Product> sellProductSlice = productService.getProductList(1, null, member.getNickname(), "seller"); // 페이지 번호 1 사용
+        List<Product> sellProductList = sellProductSlice.getContent();
+        List<Product> sellProductListWithImage = processProductList(sellProductList);
+        modelAndView.addObject("sellProductList", sellProductList);
+
         return modelAndView;
     }
 
@@ -64,15 +94,6 @@ public class MemberController {
         return ResponseEntity.status(200).body(registeredMemberId);
     }
 
-    @GetMapping("/")
-    public ModelAndView getMember() {
-        Member member = authenticationService.getAuthenticatedMember();
-
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("memberInfo");
-        modelAndView.addObject("member", member);
-        return modelAndView;
-    }
 
     @PutMapping("/")
     public ResponseEntity<?> updateMember(@RequestBody Member member) throws AuthenticateNotMatchException {

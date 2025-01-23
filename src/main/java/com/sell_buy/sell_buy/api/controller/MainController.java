@@ -14,12 +14,15 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sell_buy.sell_buy.common.utills.CommonUtils.processProductList;
+
 @Controller
 @RequiredArgsConstructor
 public class MainController {
 
+
     private final ProductService productService;
-    private final ObjectMapper objectMapper; // ObjectMapper 주입
+    private final ObjectMapper objectMapper;// ObjectMapper 주입
 
     @GetMapping("/")
     public ModelAndView test() throws JsonProcessingException { // JsonProcessingException 예외 처리 추가
@@ -75,33 +78,5 @@ public class MainController {
         return modelAndView;
     }
 
-    private List<Product> processProductList(List<Product> productList) throws JsonProcessingException {
-        List<Product> processedProductList = new ArrayList<>();
-        for (Product product : productList) {
-            String imageUrlsJson = product.getImageUrls();
-            List<String> imageUrls = new ArrayList<>();
-            if (imageUrlsJson != null && !imageUrlsJson.isEmpty()) {
-                try {
-                    imageUrls = objectMapper.readValue(imageUrlsJson, objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
-                    if (!imageUrls.isEmpty()) {
-                        product.setImageUrls(imageUrls.get(0)); // 기존 코드: 첫 번째 이미지 URL 만 imageUrls 에 설정 (썸네일 용도)
-                        product.setListImageUrls(imageUrls); // **새로운 코드: listImageUrls 에 전체 이미지 URL 목록 설정**
-                    } else {
-                        product.setImageUrls(null);
-                        product.setListImageUrls(null); // listImageUrls 도 null 설정 (일관성 유지)
-                    }
-                } catch (JsonProcessingException e) {
-                    System.err.println("JSON 파싱 오류: " + e.getMessage() + " - 상품 ID: " + product.getProdId());
-                    product.setImageUrls(null);
-                    product.setListImageUrls(null); // listImageUrls 도 null 설정 (일관성 유지)
-                }
-            } else {
-                product.setImageUrls(null);
-                product.setListImageUrls(null); // listImageUrls 도 null 설정 (일관성 유지)
-            }
-            processedProductList.add(product);
-        }
-        return processedProductList;
-    }
 
 }
