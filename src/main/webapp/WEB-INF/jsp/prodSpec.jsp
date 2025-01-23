@@ -111,7 +111,7 @@
                 </div>
 
                 <div class="button-container"> <%-- 버튼 컨테이너 --%>
-                    <button class="purchase-button">구매하기</button>
+                    <button class="purchase-button" id="purchase-button">구매하기</button>
                     <sec:authorize access="isAuthenticated()">
                         <c:if test="${product.sellerId == memId}"> <%-- 판매자인 경우 --%>
                             <button class="product-control-button modify-button"
@@ -137,9 +137,10 @@
 <script>
     const button = document.getElementById('purchase-button')
     button.addEventListener('click', () => {
-        window.open(`/payment/${product.prodId}?productId=${product.prodName}&price=${product.price}`,
+        window.open(`/payment/${product.prodId}?prodName=${product.prodName}&price=${product.price}`,
             'PaymentPopup',
             'width=800,height=600,scrollbars=yes,resizable=no');
+
     })
 </script>
 

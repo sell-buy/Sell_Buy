@@ -11,10 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.InputStream;
@@ -34,19 +31,21 @@ public class WidgetController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final OrderService orderService;
 
-    @GetMapping("/{id}")
-    public ModelAndView processPayment(@RequestParam("productId") String productId,
+    @GetMapping("/{prodId}")
+    public ModelAndView processPayment(@PathVariable("prodId") long prodId,
+                                       @RequestParam("prodName") String prodName,
                                        @RequestParam("price") String price) {
         Member member = authenticationService.getAuthenticatedMember();
         // 받은 값 처리
-        System.out.println("Product ID: " + productId);
+        System.out.println(prodId);
+        System.out.println("Product name: " + prodName);
         System.out.println("Price: " + price);
         // 결제 페이지로 이동
         ModelAndView modelAndView = new ModelAndView("payment_checkout");
         modelAndView.setViewName("payment_checkout");
-        modelAndView.addObject("prodId", productId);
+        modelAndView.addObject("prodId", prodId);
         modelAndView.addObject("memId", member.getMemId());
-        modelAndView.addObject("prodName", productId);
+        modelAndView.addObject("prodName", prodName);
         modelAndView.addObject("price", price);
         modelAndView.addObject("email", member.getEmail());
         modelAndView.addObject("phone", member.getPhoneNum());
@@ -60,7 +59,7 @@ public class WidgetController {
         return "payment_success";
     }
 
-    @RequestMapping(value = "/confirm")
+    @PostMapping("/payment/confirm")
     public ResponseEntity<JSONObject> confirmPayment(@RequestBody String jsonBody) throws Exception {
         JSONParser parser = new JSONParser();
         String orderId; //난수
@@ -110,6 +109,7 @@ public class WidgetController {
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
         responseStream.close();
         if (code == 200) {
+            System.out.println("결제 성공했습니다!");
             //결제 성공시
             return ResponseEntity.status(code).body(jsonObject);
         } else {

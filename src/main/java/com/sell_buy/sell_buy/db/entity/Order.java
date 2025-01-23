@@ -2,6 +2,7 @@ package com.sell_buy.sell_buy.db.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
@@ -19,10 +20,12 @@ public class Order {
     @Column(name = "order_id")
     private long orderId;
     @Column(name = "transfer_id")
+    @ColumnDefault("0")
     private long transferId;
     @Column(name = "prod_id")
     private long prodId;
     @Column(name = "BUYER_ID")
+    @ColumnDefault("0")
     private long buyerId;
     @Column(name = "seller_id")
     private long sellerId;
