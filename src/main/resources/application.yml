@@ -34,7 +34,7 @@ server:
     session:
       cookie:
         name: JSESSIONID
-      timeout: 30s
+      timeout: 60m
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   config-location: classpath:mybatis-config.xml

@@ -18,7 +18,7 @@
         <div>
             <h4 class="footer-logo">Sell&Buy</h4>
             <ul>
-                <li>- 대표자 : 유현태, 전정배, 이종하</li>
+                <li>- 대표자 : 유현태, 임승민, 전정배, 이종하, 배재훈</li>
             </ul>
         </div>
     </div>
