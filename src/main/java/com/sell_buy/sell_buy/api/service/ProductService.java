@@ -15,6 +15,6 @@ public interface ProductService {
 
     Product getProductById(Long prodId);
 
-    Slice<Product> getProductList(int page, Long category, String searchQuery, String searchType);
 
+    Slice<Product> getProductList(int page, int size, Long catId, String searchQuery, String searchType);
 }

@@ -33,25 +33,29 @@
             flex-direction: column;
             justify-content: space-between;
             transition: transform 0.2s ease-in-out;
+            position: relative; /* 버튼 위치 고정을 위해 추가 */
         }
+
+        .product:hover {
+            transform: scale(1.03); /* hover 시 살짝 확대 */
+        }
+
 
         .product-image-container {
             text-align: center;
             margin-bottom: 10px;
-            /* Fixed size, cropping images precisely (NEW approach) */
-            width: 100%; /* Fixed width */
-            height: 200px; /* Fixed height */
-            overflow: hidden; /* Clip any overflowing image parts */
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
         }
 
         .product-image {
             max-width: 100%;
-            height: 100%; /* Image fills container height */
+            height: 100%;
             border-radius: 8px;
-            /* Image fills container, cropping to fit (NEW approach) */
-            width: 100%; /* Image fills container width */
-            object-fit: cover; /* Cover container, cropping if needed */
-            object-position: center; /* Ensure center of image is always visible */
+            width: 100%;
+            object-fit: cover;
+            object-position: center;
         }
 
         .product-details {
@@ -62,6 +66,9 @@
             font-size: 1.2em;
             font-weight: bold;
             margin-bottom: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap; /* 한 줄로 표시 */
         }
 
         .product-price {
@@ -78,7 +85,7 @@
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
-            margin-bottom: 10px;
+            margin-bottom: 35px; /* 버튼 위치를 위해 여백 추가 */
         }
 
         .product-spec-button {
@@ -90,6 +97,10 @@
             border-radius: 5px;
             transition: background-color 0.3s ease;
             text-align: center;
+            position: absolute; /* 버튼 위치 고정을 위해 추가 */
+            bottom: 10px; /* 버튼 위치 고정을 위해 추가 */
+            left: 50%; /* 버튼 위치 고정을 위해 추가 */
+            transform: translateX(-50%); /* 버튼 위치 고정을 위해 추가 */
         }
 
         .product-spec-button:hover {

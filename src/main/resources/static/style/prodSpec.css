@@ -15,6 +15,7 @@
 }
 
 .product-details {
+    color: white;
     width: 50%;
     padding: 20px;
     border: 1px solid #ccc; /* Added border as seen in the image */
