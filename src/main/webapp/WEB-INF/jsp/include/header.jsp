@@ -30,12 +30,12 @@
     <div class="header-top">
         <nav class="header-menu">
             <ul class="list-menu">
-                <li><a href="/api/points/payment">결제</a></li> <!-- 포인트 결제 API 페이지로 이동 -->
+                <li><a href="/board/getBoardList.do">개시판</a></li> <!-- 포인트 결제 API 페이지로 이동 -->
                 <li><a href="/customer-center">고객센터</a></li>
                 <li><a href="/my-page">내 정보</a></li>
                 <sec:authorize access="isAuthenticated()">
-                    <li><a href="/prod/register">상품등록</a></li>
-                    <li><a href="/member/logout">로그아웃</a></li>
+                    <li><a href="http://localhost/prod/register">상품등록</a></li>
+                    <li><a href="http://localhost/member/logout">로그아웃</a></li>
                 </sec:authorize>
                 <sec:authorize access="!isAuthenticated()">
                     <li><a href="#" id="href-open-login-header">로그인</a></li>
