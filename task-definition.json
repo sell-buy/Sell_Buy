@@ -3,7 +3,7 @@
   "containerDefinitions": [
     {
       "name": "globalin",
-      "image": "${IMAGE_URI}",
+      "image": "985539778210.dkr.ecr.ap-northeast-1.amazonaws.com/globalin",
       "cpu": 0,
       "portMappings": [
         {
