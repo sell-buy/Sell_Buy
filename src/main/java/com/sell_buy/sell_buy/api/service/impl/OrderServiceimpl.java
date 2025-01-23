@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sell_buy.sell_buy.api.service.OrderService;
 import com.sell_buy.sell_buy.db.entity.Delivery;
+import com.sell_buy.sell_buy.db.entity.Member;
 import com.sell_buy.sell_buy.db.entity.Order;
-import com.sell_buy.sell_buy.db.repository.CarrierRepository;
-import com.sell_buy.sell_buy.db.repository.DeliveryRepository;
-import com.sell_buy.sell_buy.db.repository.OrderRepository;
+import com.sell_buy.sell_buy.db.entity.Product;
+import com.sell_buy.sell_buy.db.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,12 +24,18 @@ public class OrderServiceimpl implements OrderService {
     private final OrderRepository orderRepository;
     private final DeliveryRepository deliveryRepository;
     private final CarrierRepository carrierRepository;
+    private final MemberRepository memberRepository;
+    private final ProductRepository productRepository;
+    private final OrderService orderService;
     private Order order;
 
-    public OrderServiceimpl(OrderRepository orderRepository, DeliveryRepository deliveryRepository, CarrierRepository carrierRepository) {
+    public OrderServiceimpl(OrderRepository orderRepository, DeliveryRepository deliveryRepository, CarrierRepository carrierRepository, MemberRepository memberRepository, ProductRepository productRepository, OrderService orderService) {
         this.orderRepository = orderRepository;
         this.deliveryRepository = deliveryRepository;
         this.carrierRepository = carrierRepository;
+        this.memberRepository = memberRepository;
+        this.productRepository = productRepository;
+        this.orderService = orderService;
     }
 
 
@@ -38,7 +44,7 @@ public class OrderServiceimpl implements OrderService {
         orderRepository.findBySellerId(seller_id);
         return null;
     }
-    
+
     @Override
     public void setOrderId(long order_id) {
 
@@ -77,60 +83,74 @@ public class OrderServiceimpl implements OrderService {
         ObjectMapper objectMapper = new ObjectMapper();
         for (Order order : orderIds) {
             long orderId = order.getOrderId();
-            Delivery delivery = deliveryRepository.findByOrderId(orderId);
-            if (delivery != null) {
-                String carrierId = deliveryRepository.findByOrderId(orderId).getCarrierId();
-                String trackingNo = deliveryRepository.findByOrderId(orderId).getTrackingNo();
-                // Example https://apis.tracker.delivery/carriers/kr.epost/tracks/1111111111111
-                String url = String.format("https://apis.tracker.delivery/carriers/%s/tracks/%s", carrierId, trackingNo);
-                try {
-                    ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-                    String trackingInfo = response.getBody();
-                    JsonNode rootNode = objectMapper.readTree(trackingInfo);
-                    // 어디서
-                    JsonNode fromNode = rootNode.get("from");
-                    // 누가
-                    String fromName = fromNode.get("name").asText();
-                    // 보낸 시간
-                    String fromTime = fromNode.get("time").asText();
-                    // last of progresses
-                    JsonNode progressesNode = rootNode.get("progresses");
-                    // 가장 최신 배송상태로 업데이트
-                    JsonNode lastProgressNode = progressesNode.get(progressesNode.size() - 1);
-                    // 배송상태
-                    String lastStatus = lastProgressNode.get("status").path("text").asText();
-                    // 배송 시간
-                    LocalDateTime lastTime = LocalDateTime.parse(lastProgressNode.get("time").asText());
-                    // 지역 위치
-                    String lastLocation = lastProgressNode.get("location").path("name").asText();
-                    if (order.getCarrierStatus().equals(lastStatus)) {
-                        log.debug(order.toString());
-                    } else {
-                        order.setCarrierStatus(lastStatus);
+            String orderStatus = order.getOrderStatus();
+            if (!orderStatus.equals("거래완료")) {
+                Delivery delivery = deliveryRepository.findByOrderId(orderId);
+                if (delivery != null) {
+                    String carrierId = deliveryRepository.findByOrderId(orderId).getCarrierId();
+                    String trackingNo = deliveryRepository.findByOrderId(orderId).getTrackingNo();
+                    // Example https://apis.tracker.delivery/carriers/kr.epost/tracks/1111111111111
+                    String url = String.format("https://apis.tracker.delivery/carriers/%s/tracks/%s", carrierId, trackingNo);
+                    try {
+                        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+                        String trackingInfo = response.getBody();
+                        JsonNode rootNode = objectMapper.readTree(trackingInfo);
+                        // 어디서
+                        JsonNode fromNode = rootNode.get("from");
+                        // 누가
+                        String fromName = fromNode.get("name").asText();
+                        // 보낸 시간
+                        String fromTime = fromNode.get("time").asText();
+                        // last of progresses
+                        JsonNode progressesNode = rootNode.get("progresses");
+                        // 가장 최신 배송상태로 업데이트
+                        JsonNode lastProgressNode = progressesNode.get(progressesNode.size() - 1);
+                        // 배송상태
+                        String lastStatus = lastProgressNode.get("status").path("text").asText();
+                        // 배송 시간
+                        LocalDateTime lastTime = LocalDateTime.parse(lastProgressNode.get("time").asText());
+                        // 지역 위치
+                        String lastLocation = lastProgressNode.get("location").path("name").asText();
+                        if (order.getCarrierStatus().equals(lastStatus)) {
+                            log.debug(order.toString());
+                        } else {
+                            order.setCarrierStatus(lastStatus);
+                        }
+                        if (lastStatus.equals("배달완료")) {
+                            order.setOrderStatus("거래완료");
+                            //
+                        }
+                        orderRepository.save(order);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
                     }
-                    if (lastStatus.equals("배달완료")) {
-
-                        //
-                    }
-                    orderRepository.save(order);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
                 }
             }
         }
     }
 
     @Override
-    public void updateProdOrder(long orderId, int OrderType, String carrierName, String trackingNo) {
-        Order order = orderRepository.findByOrderId(orderId);
-        String carrierId = (carrierRepository.findCarrierNameByCarrierId(carrierName)).getCarrierId();
-        Delivery delivery = deliveryRepository.findByOrderId(orderId);
-        // 저장인지 판매완료인지
-        order.setOrderType(OrderType);
-        delivery.setCarrierId(carrierId);
-        delivery.setCarrier(carrierName);
+    //상품 등록될때 자동으로 되는
+    public void updateProdOrder(Member member, String prodName) {
+        //  memid를 넘겨줌
+        // memberid를 받아서 product의 sellerid값 확인 , prodname으로prodid를 찾고 prodid로 orderid찾음
+        Product prodList = productRepository.findByProdNameAndSellerId(prodName, member.getMemId());
+        Order setOrder = orderRepository.findByProdId(prodList.getProdId());
+        setOrder.setSellerId(prodList.getSellerId());
+        setOrder.setProdId(prodList.getProdId());
+        setOrder.setOrderType(prodList.getProdType());
+        setOrder.setCreatedDate(LocalDateTime.now());
+        orderRepository.save(setOrder);
+    }
+
+    //오더 택배사 선택 및 송장번호 등록
+    @Override
+    public void updateOrder(long orderId, int orderStatus, String carrier, String trackingNo) {
+        Delivery delivery = new Delivery();
+        delivery.setOrderId(orderId);
+        delivery.setCarrier(carrier);
         delivery.setTrackingNo(trackingNo);
-        orderRepository.save(order);
+        deliveryRepository.save(delivery);
 
     }
 }

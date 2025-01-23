@@ -130,8 +130,8 @@
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        buyer_id: memId,
-                        prod_id: prodId,
+                        buyerId: memId,
+                        prodId: prodId,
                     }),
                 })
             } catch (e) {

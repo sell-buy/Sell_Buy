@@ -1,12 +1,13 @@
 package com.sell_buy.sell_buy.api.service;
 
+import com.sell_buy.sell_buy.db.entity.Member;
 import com.sell_buy.sell_buy.db.entity.Order;
 
 import java.util.List;
 
 public interface OrderService {
     Long getSellOrder(long sellerId);
-    
+
     void setOrderId(long orderId);
 
     // 오더 등록
@@ -27,5 +28,7 @@ public interface OrderService {
     //모든 오더아이디값의 베송상태 확인
     void updateOrderStatus();
 
-    void updateProdOrder(long orderId, int orderType, String carrierName, String trackingNo);
+    void updateProdOrder(Member order, String prodName);
+
+    void updateOrder(long orderId, int orderStatus, String carrier, String trackingNo);
 }

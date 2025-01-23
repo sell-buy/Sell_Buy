@@ -16,7 +16,7 @@ import lombok.*;
 public class Delivery {
     @Id
     @Column(name = "ORDER_ID")
-    private int orderId;
+    private long orderId;
     @Column(name = "TRACKING_NO")
     private String trackingNo;
     @Column(name = "CARRIER_ID")
