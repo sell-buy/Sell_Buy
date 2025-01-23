@@ -68,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Slice<Product> getProductList(int page, Long catId, String searchQuery, String searchType) {
+    public Slice<Product> getProductList(int page, int size, Long catId, String searchQuery, String searchType) {
         Pageable pageable = PageRequest.of(page - 1, 18);
 
         List<Long> categoryIds = new ArrayList<>();
