@@ -185,7 +185,7 @@ public class ProductController {
         return modelAndView;
     }
 
-<<<<<<< HEAD
+
     @GetMapping("/list/another")
     public ResponseEntity<?> getProductList2(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                                              @RequestParam(name = "catId", required = false) Long catId,
@@ -200,6 +200,4 @@ public class ProductController {
         return ResponseEntity.status(200).body(productList);
     }
 
-=======
->>>>>>> origin/develop
 }

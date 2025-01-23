@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -42,6 +43,9 @@ public class Product {
     private LocalDateTime createDate;
     @Column(name = "img_urls")
     private String imageUrls;
+    @Transient // **@Transient 어노테이션 추가 (DB 컬럼 매핑 제외)**
+    private List<String> listImageUrls; // **프론트엔드 전송용 List<String> 필드 추가**
+
 
     @PrePersist
     protected void onCreate() {
