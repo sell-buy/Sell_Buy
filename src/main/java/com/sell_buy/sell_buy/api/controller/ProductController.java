@@ -130,7 +130,7 @@ public class ProductController {
         if (!productService.existsById(prodId)) {
             throw new ProductNotFoundException("Product with id " + prodId + " not found.");
         }
-        if (sellerId != productService.getProductById(prodId).getSellerId()) {
+        if (!Objects.equals(sellerId, productService.getProductById(prodId).getSellerId())) {
             throw new AuthenticateNotMatchException("Seller ID does not match.");
         }
 
