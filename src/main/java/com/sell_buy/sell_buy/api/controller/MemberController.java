@@ -50,21 +50,21 @@ public class MemberController {
         Pageable pageable = PageRequest.of(0, 6); // 페이지 1, 사이즈 6으로 Pageable 객체 생성
 
         // 찜한 상품 목록 조회 (최대 6개)
-        Page<Product> favoriteProductPage = favoriteService.getFavoriteProductList(memId, 1, 7); // 페이지 번호 1 사용
+        Page<Product> favoriteProductPage = favoriteService.getFavoriteProductList(memId, 1, 6); // 페이지 번호 1 사용
         List<Product> favoriteProductList = favoriteProductPage.getContent();
         List<Product> favoriteProductListWithImage = processProductList(favoriteProductList);
         System.out.println(favoriteProductListWithImage.get(0).toString());
         modelAndView.addObject("favoriteProductList", favoriteProductListWithImage);
 
         // 판매 상품 목록 조회 (최대 6개)
-        Slice<Product> sellProductSlice = productService.getProductList(1, 7, null, member.getNickname(), "seller"); // 페이지 번호 1 사용
+        Slice<Product> sellProductSlice = productService.getProductList(1, 6, null, member.getNickname(), "seller"); // 페이지 번호 1 사용
         List<Product> sellProductList = sellProductSlice.getContent();
         List<Product> sellProductListWithImage = processProductList(sellProductList);
         System.out.println(sellProductListWithImage.get(0).toString());
         modelAndView.addObject("sellProductList", sellProductListWithImage);
 
         // 구매 상품 목록 조회 (최대 6개)
-        Slice<Order> orderListSlice = orderService.getOrderList(1, 7, member.getNickname(), "buyer", "거래중");
+        Slice<Order> orderListSlice = orderService.getOrderList(1, 6, member.getNickname(), "buyer", "거래중");
         List<Order> orderList = orderListSlice.getContent();
         List<Product> boughtProdList = productService.getProductListByOrderList(orderList);
         List<Product> boughtProdListWithImage = processProductList(boughtProdList);
