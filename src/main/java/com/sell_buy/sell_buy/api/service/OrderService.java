@@ -23,14 +23,17 @@ public interface OrderService {
     boolean hasExistOrderIdBySellerId(long sellerId);
 
     // 모든 오더아이디값 가져오기
-    List<Order> getAllOrderId();
+    List<Long> getAllOrderId();
 
     //모든 오더아이디값의 베송상태 확인
     void updateOrderStatus();
+
     //상품 등록시 오더아이디 생성
     void updateProdOrder(Member order, String prodName);
+
     // modify
     void updateOrder(long orderId, int orderStatus, String carrier, String trackingNo);
+
     // 결제했을때 상품 order에 상태 업데이트
     void updatePaymentStatus(String prodName, Member member);
 }
