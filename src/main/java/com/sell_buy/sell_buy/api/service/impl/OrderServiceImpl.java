@@ -11,6 +11,9 @@ import com.sell_buy.sell_buy.db.entity.Product;
 import com.sell_buy.sell_buy.db.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -120,10 +123,11 @@ public class OrderServiceImpl implements OrderService {
             }
         }
     }
+
     //상품 등록될때 자동으로 되는
     public
     @Override
-     void updateProdOrder(Member member, String prodName) {
+    void updateProdOrder(Member member, String prodName) {
         //  memid를 넘겨줌
         // memberid를 받아서 product의 sellerid값 확인 , prodname으로prodid를 찾고 prodid로 orderid찾음
         Product prodList = productRepository.findByProdNameAndSellerId(prodName, member.getMemId());
@@ -150,7 +154,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void updatePaymentStatus(String prodName, Member member) {
-        Product prod   = productRepository.findByProdName(prodName);
+        Product prod = productRepository.findByProdName(prodName);
         Member buyer = memberRepository.findByMemId(member.getMemId());
         Order order1 = orderRepository.findByProdId(prod.getProdId());
         String addr = buyer.getAddress();
@@ -163,6 +167,29 @@ public class OrderServiceImpl implements OrderService {
         order1.setCreatedDate(LocalDateTime.now());
         order1.setOrderStatus("거래중");
         orderRepository.save(order1);
+    }
+
+    @Override
+    public Slice<Order> getOrderList(int page, int size, String searchQuery, String searchType, String orderStatus) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        if (searchType == null) {
+            return orderRepository.findByOrderStatusOrderByCreatedDate(pageable, orderStatus);
+        }
+
+        return switch (searchType) {
+            case "seller" -> {
+                Long sellerId = memberRepository.findByNickname(searchQuery).getMemId();
+
+                yield orderRepository.findBySellerIdAndOrderStatusOrderByCreatedDate(pageable, sellerId, orderStatus);
+            }
+            case "buyer" -> {
+                Long buyerId = memberRepository.findByNickname(searchQuery).getMemId();
+
+                yield orderRepository.findByBuyerIdAndOrderStatusOrderByCreatedDate(pageable, buyerId, orderStatus);
+            }
+            default -> orderRepository.findByOrderStatusOrderByCreatedDate(pageable, orderStatus);
+        };
     }
 
 }

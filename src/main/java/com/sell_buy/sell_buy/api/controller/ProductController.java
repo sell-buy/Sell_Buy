@@ -178,7 +178,7 @@ public class ProductController {
             return modelAndView;
         }
 
-        Slice<Product> productList = productService.getProductList(page, 18, catId, searchQuery, searchType);
+        Slice<Product> productList = productService.getProductList(page, 21, catId, searchQuery, searchType);
 
         modelAndView.setViewName("prodList");
         modelAndView.addObject("productList", productList.getContent());
@@ -195,7 +195,7 @@ public class ProductController {
             throw new IllegalArgumentException("Page number must be greater than 1.");
         }
 
-        Slice<Product> productList = productService.getProductList(page, 18, catId, searchQuery, searchType);
+        Slice<Product> productList = productService.getProductList(page, 21, catId, searchQuery, searchType);
 
         return ResponseEntity.status(200).body(productList);
     }

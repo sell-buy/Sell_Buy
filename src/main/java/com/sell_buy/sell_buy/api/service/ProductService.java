@@ -1,8 +1,11 @@
 package com.sell_buy.sell_buy.api.service;
 
 
+import com.sell_buy.sell_buy.db.entity.Order;
 import com.sell_buy.sell_buy.db.entity.Product;
 import org.springframework.data.domain.Slice;
+
+import java.util.List;
 
 public interface ProductService {
     Product registerProduct(Product product);
@@ -17,4 +20,6 @@ public interface ProductService {
 
 
     Slice<Product> getProductList(int page, int size, Long catId, String searchQuery, String searchType);
+
+    List<Product> getProductListByOrderList(List<Order> orderList);
 }

@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter //setter 이용시 인스턴스값이 어디서 꼬일지 모름
 @Builder // 객체만들어서 생성  OPEN -> BUILDER() , CLOSE -> BUILD()
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "prod_order")

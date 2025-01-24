@@ -1,6 +1,8 @@
 package com.sell_buy.sell_buy.api.service.impl;
 
 import com.sell_buy.sell_buy.api.service.ProductService;
+import com.sell_buy.sell_buy.common.exception.product.ProductNotFoundException;
+import com.sell_buy.sell_buy.db.entity.Order;
 import com.sell_buy.sell_buy.db.entity.Product;
 import com.sell_buy.sell_buy.db.repository.*;
 import jakarta.persistence.EntityNotFoundException;
@@ -71,7 +73,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Slice<Product> getProductList(int page, int size, Long catId, String searchQuery, String searchType) {
-        Pageable pageable = PageRequest.of(page - 1, 18);
+        Pageable pageable = PageRequest.of(page - 1, size);
 
         List<Long> categoryIds = new ArrayList<>();
         if (catId != null) {
@@ -105,6 +107,16 @@ public class ProductServiceImpl implements ProductService {
                 }
                 return productRepository.findByCategoryInOrderByCreateDateDesc(pageable, categoryIds);
         }
+    }
+
+    @Override
+    public List<Product> getProductListByOrderList(List<Order> orderList) {
+        List<Product> productList = new ArrayList<>();
+        orderList.forEach(data -> {
+            Long prodId = data.getProdId();
+            productList.add(productRepository.findById(prodId).orElseThrow(() -> new ProductNotFoundException(prodId + "번 상품이 존재하지 않습니다.")));
+        });
+        return productList;
     }
 
     public Page<Product> favoriteProductList(List<Long> prodIdList, int page) {

@@ -1,5 +1,6 @@
 package com.sell_buy.sell_buy.api.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sell_buy.sell_buy.api.service.AuthenticationService;
 import com.sell_buy.sell_buy.api.service.OrderService;
 import com.sell_buy.sell_buy.api.service.ProductService;
@@ -9,16 +10,18 @@ import com.sell_buy.sell_buy.db.entity.Product;
 import com.sell_buy.sell_buy.db.repository.MemberRepository;
 import com.sell_buy.sell_buy.db.repository.OrderRepository;
 import com.sell_buy.sell_buy.db.repository.ProductRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.time.LocalDateTime;
+import java.util.List;
+
+import static com.sell_buy.sell_buy.common.utills.CommonUtils.processProductList;
 
 @Slf4j
 @Controller
@@ -32,7 +35,7 @@ public class OrderController {
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
 
-//    @GetMapping("/")
+    //    @GetMapping("/")
 //    public void updateState() {
 //        orderService.updateOrderStatus();
 //    }
@@ -50,7 +53,7 @@ public class OrderController {
 
         Member member = authenticationService.getAuthenticatedMember();
         String prodName = product.getProdName();
-        System.out.println(prodName + "member "+member);
+        System.out.println(prodName + "member " + member);
         if (member == null) {
             return ResponseEntity.status(400).body("Login First");
         } else {
@@ -116,5 +119,25 @@ public class OrderController {
             return ResponseEntity.status(200).body("putOrder Success");
         }
 
+    }
+
+    @GetMapping("/list-partial") // prodListPartial.jsp 에서 AJAX 요청을 보낼 URL 매핑 (유지)
+    public ModelAndView getOrderListPartial(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "searchQuery", required = false) String searchQuery,
+            @RequestParam(name = "searchType", required = false) String searchType,
+            @RequestParam(name = "orderStatus", required = false) String orderStatus) throws JsonProcessingException { // JsonProcessingException 예외 처리 유지
+
+        Slice<Order> orderListSlice = orderService.getOrderList(page, 6, searchQuery, searchType, orderStatus);
+        List<Order> orderList = orderListSlice.getContent();
+
+        List<Product> prodList = productService.getProductListByOrderList(orderList);
+
+        // 이미지 URL 처리 로직 (수정됨: listImageUrls 에 전체 목록 설정)
+        List<Product> processedProductList = processProductList(prodList);
+
+        ModelAndView modelAndView = new ModelAndView("include/prodListPartial");
+        modelAndView.addObject("productList", processedProductList); // 가공된 상품 목록 전달
+        return modelAndView;
     }
 }

@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -169,7 +170,7 @@
         <div class="main-container">
             <h2>내 정보</h2>
 
-            <table class="member-info-table">
+            <table class="member-info-table" style="color: white">
                 <tr>
                     <th>아이디</th>
                     <td><c:out value="${member.loginId}"/></td>
@@ -191,8 +192,17 @@
                     <td><c:out value="${member.phoneNum}"/></td>
                 </tr>
                 <tr>
+                    <%
+                        com.sell_buy.sell_buy.db.entity.Member object = (com.sell_buy.sell_buy.db.entity.Member) request.getAttribute("member");
+                        String isoDateTime = object.getCreateDate().toString();
+                        java.time.LocalDateTime dateTime = java.time.LocalDateTime.parse(isoDateTime);
+                        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm:ss");
+                        String formattedDate = dateTime.format(formatter);
+                    %>
                     <th>가입일시</th>
-                    <td><c:out value="${member.createDate}"/></td>
+                    <td><%= formattedDate %>
+                    </td>
+
                 </tr>
             </table>
 
@@ -242,6 +252,30 @@
             </div>
             <a href="<c:url value="/prod/list?page=1&size=99999&searchType=seller&searchQuery=${member.nickname}"/>"
                class="more-link">판매 상품 더보기</a>
+
+            <h3 class="section-title">구매 상품</h3>
+            <div id="buy-list" class="product-list">
+                <script>
+                    // 받아온 판매 상품 리스트 표시
+                    <c:forEach var="product" items="${boughtProductList}">
+                    $('#buy-list').append(`
+                        <div class="product-card">
+                            <div class="product-image-container">
+                                <img src="${product.listImageUrls[0]}" alt="Product Image" class="product-image"/>
+                            </div>
+                            <div class="product-details">
+                                <div class="product-title">${product.prodName}</div>
+                                <div class="product-price">$${product.price}</div>
+                                <div class="product-description">${product.prodDesc}</div>
+                                <a href="http://localhost/prod/${product.prodId}" class="product-spec-button">상세보기</a>
+                            </div>
+                        </div>
+                        `);
+                    </c:forEach>
+                </script>
+            </div>
+            <a href="<c:url value="/prod/list?page=1&size=99999&searchType=seller&searchQuery=${member.nickname}"/>"
+               class="more-link">구매 상품 더보기</a>
 
 
             <div class="button-container">
