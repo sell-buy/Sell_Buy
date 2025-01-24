@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -62,31 +64,42 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getAllOrderId() {
-        return orderRepository.findAll();
+    public List<Long> getAllOrderId() {
+        return orderRepository.findAllIds();
     }
 
     // 배송상태 확인 후 업데이트
     @Scheduled(fixedRate = 3600000)
     @Override
     public void updateOrderStatus() {
-        List<Order> orderIds = getAllOrderId();
+        System.out.println("진입");
+        List<Long> orderIds = getAllOrderId();
         RestTemplate restTemplate = new RestTemplate();
         ObjectMapper objectMapper = new ObjectMapper();
-        for (Order order : orderIds) {
-            long orderId = order.getOrderId();
-            String orderStatus = order.getOrderStatus();
+        System.out.println(orderIds.get(0).toString());
+        for (Long order : orderIds) {
+            long orderId = order;
+            System.out.println("order : " + orderId);
+            Order orderAttr = orderRepository.findByOrderId(orderId);
+            String orderStatus = orderRepository.findOrderStatusByOrderId(orderId);
+            String carrierStatus = orderRepository.findCarrierStatusByOrderId(orderId);
+            System.out.println("상태 : " + orderStatus);
+            System.out.println("속성 : " + carrierStatus);
             if (!orderStatus.equals("거래완료")) {
+                System.out.println("거래완료가 아니면");
                 Delivery delivery = deliveryRepository.findByOrderId(orderId);
                 if (delivery != null) {
                     String carrierId = deliveryRepository.findByOrderId(orderId).getCarrierId();
                     String trackingNo = deliveryRepository.findByOrderId(orderId).getTrackingNo();
+                    System.out.println(carrierId + "ddd" + trackingNo);
                     // Example https://apis.tracker.delivery/carriers/kr.epost/tracks/1111111111111
                     String url = String.format("https://apis.tracker.delivery/carriers/%s/tracks/%s", carrierId, trackingNo);
                     try {
+                        System.out.println("여기는 들어옴??");
                         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
                         String trackingInfo = response.getBody();
                         JsonNode rootNode = objectMapper.readTree(trackingInfo);
+                        System.out.println(rootNode.toString());
                         // 어디서
                         JsonNode fromNode = rootNode.get("from");
                         // 누가
@@ -99,31 +112,47 @@ public class OrderServiceImpl implements OrderService {
                         JsonNode lastProgressNode = progressesNode.get(progressesNode.size() - 1);
                         // 배송상태
                         String lastStatus = lastProgressNode.get("status").path("text").asText();
+                        System.out.println("마지막상태");
                         // 배송 시간
-                        LocalDateTime lastTime = LocalDateTime.parse(lastProgressNode.get("time").asText());
+                        String rawTime = lastProgressNode.get("time").asText(); // "2024-06-04T15:50:00+09:00"
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+                        ZonedDateTime zonedDateTime = ZonedDateTime.parse(rawTime, formatter);
+                        LocalDateTime lastTime = zonedDateTime.toLocalDateTime();
+                        System.out.println(lastTime);
                         // 지역 위치
                         String lastLocation = lastProgressNode.get("location").path("name").asText();
-                        if (order.getCarrierStatus().equals(lastStatus)) {
-                            log.debug(order.toString());
+                        System.out.println("오더의 배송 상태" + carrierStatus);
+                        if (carrierStatus == null) {
+                            orderAttr.setCarrierStatus(lastStatus);
+                            System.out.println("배송값 저장 ");
                         } else {
-                            order.setCarrierStatus(lastStatus);
+                            if (carrierStatus.equals(lastStatus)) {
+                                System.out.println(123);
+                                log.debug(order.toString());
+                            } else {
+                                System.out.println(456);
+                                orderAttr.setCarrierStatus(lastStatus);
+                            }
+                            System.out.println(lastStatus);
+                            if (lastStatus.equals("배달완료")) {
+                                orderAttr.setOrderStatus("거래완료");
+                            }
                         }
-                        if (lastStatus.equals("배달완료")) {
-                            order.setOrderStatus("거래완료");
-                            //
-                        }
-                        orderRepository.save(order);
+                        orderRepository.save(orderAttr);
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
                     }
+                } else {
+                    System.out.println("배송이 없습니다");
                 }
             }
         }
     }
+
     //상품 등록될때 자동으로 되는
     public
     @Override
-     void updateProdOrder(Member member, String prodName) {
+    void updateProdOrder(Member member, String prodName) {
         //  memid를 넘겨줌
         // memberid를 받아서 product의 sellerid값 확인 , prodname으로prodid를 찾고 prodid로 orderid찾음
         Product prodList = productRepository.findByProdNameAndSellerId(prodName, member.getMemId());
@@ -149,9 +178,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void updatePaymentStatus(String prodName, Order order) {
-        Product prod   = productRepository.findByProdName(prodName);
-        Member buyer = memberRepository.findByMemId(order.getBuyerId());
+    public void updatePaymentStatus(String prodName, Member member) {
+        Product prod = productRepository.findByProdName(prodName);
+        Member buyer = memberRepository.findByMemId(member.getMemId());
         Order order1 = orderRepository.findByProdId(prod.getProdId());
         String addr = buyer.getAddress();
         String name = buyer.getName();

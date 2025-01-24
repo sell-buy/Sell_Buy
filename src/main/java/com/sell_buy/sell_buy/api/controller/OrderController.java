@@ -98,7 +98,6 @@ public class OrderController {
         if (orderService.hasExistOrderIdBySellerId(sellerId)) {
             return ResponseEntity.status(400).body("OrderId Seller is not matched");
         } else {
-            orderService.updatePaymentStatus(prodName,order);
             return ResponseEntity.status(200).body(order1.getOrderId());
         }
 

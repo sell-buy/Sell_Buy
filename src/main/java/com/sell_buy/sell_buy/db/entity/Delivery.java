@@ -6,12 +6,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter //setter 이용시 인스턴스값이 어디서 꼬일지 모름
 @Builder // 객체만들어서 생성  OPEN -> BUILDER() , CLOSE -> BUILD()
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Table(name = "DELIVERY")
 public class Delivery {
     @Id
@@ -23,4 +26,6 @@ public class Delivery {
     private String carrierId;
     @Column(name = "CARRIER")
     private String carrier;
+    @Column(name = "DELIVERY_TIME")
+    private LocalDateTime DeliveryTime;
 }
