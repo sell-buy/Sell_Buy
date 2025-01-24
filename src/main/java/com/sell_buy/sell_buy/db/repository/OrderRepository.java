@@ -28,6 +28,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Slice<Order> findByBuyerIdAndOrderStatusOrderByCreatedDate(Pageable pageable, long buyerId, String orderStatus);
 
+    void deleteByProdId(long prodId);
+
 
 //    List<Order> orderId(long orderId);
 }

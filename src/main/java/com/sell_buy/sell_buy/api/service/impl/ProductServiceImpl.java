@@ -59,9 +59,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void deleteProduct(Long prodId) {
-        if (orderRepository.findByProdId(prodId).getOrderStatus().equals("거래전")) {
+        if (!orderRepository.findByProdId(prodId).getOrderStatus().equals("거래전")) {
             throw new IllegalStateException("Product with id " + prodId + " is already ordered.");
         }
+        orderRepository.deleteByProdId(prodId);
         favoriteRepository.deleteByProductProdId(prodId);
         productRepository.deleteById(prodId);
     }
