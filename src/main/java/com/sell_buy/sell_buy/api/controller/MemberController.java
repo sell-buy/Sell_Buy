@@ -4,10 +4,12 @@ package com.sell_buy.sell_buy.api.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sell_buy.sell_buy.api.service.AuthenticationService;
 import com.sell_buy.sell_buy.api.service.MemberService;
+import com.sell_buy.sell_buy.api.service.OrderService;
 import com.sell_buy.sell_buy.api.service.impl.FavoriteServiceImpl;
 import com.sell_buy.sell_buy.api.service.impl.ProductServiceImpl;
 import com.sell_buy.sell_buy.common.exception.auth.AuthenticateNotMatchException;
 import com.sell_buy.sell_buy.db.entity.Member;
+import com.sell_buy.sell_buy.db.entity.Order;
 import com.sell_buy.sell_buy.db.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,6 +37,7 @@ public class MemberController {
     private final PasswordEncoder passwordEncoder;
     private final FavoriteServiceImpl favoriteService;
     private final ProductServiceImpl productService;
+    private final OrderService orderService;
 
     @GetMapping()
     public ModelAndView memberInfo() throws JsonProcessingException {
@@ -47,16 +50,25 @@ public class MemberController {
         Pageable pageable = PageRequest.of(0, 6); // 페이지 1, 사이즈 6으로 Pageable 객체 생성
 
         // 찜한 상품 목록 조회 (최대 6개)
-        Page<Product> favoriteProductPage = favoriteService.getFavoriteProductList(memId, 1, 6); // 페이지 번호 1 사용
+        Page<Product> favoriteProductPage = favoriteService.getFavoriteProductList(memId, 1, 7); // 페이지 번호 1 사용
         List<Product> favoriteProductList = favoriteProductPage.getContent();
         List<Product> favoriteProductListWithImage = processProductList(favoriteProductList);
-        modelAndView.addObject("favoriteProductList", favoriteProductList);
+        System.out.println(favoriteProductListWithImage.get(0).toString());
+        modelAndView.addObject("favoriteProductList", favoriteProductListWithImage);
 
         // 판매 상품 목록 조회 (최대 6개)
-        Slice<Product> sellProductSlice = productService.getProductList(1, 6, null, member.getNickname(), "seller"); // 페이지 번호 1 사용
+        Slice<Product> sellProductSlice = productService.getProductList(1, 7, null, member.getNickname(), "seller"); // 페이지 번호 1 사용
         List<Product> sellProductList = sellProductSlice.getContent();
         List<Product> sellProductListWithImage = processProductList(sellProductList);
-        modelAndView.addObject("sellProductList", sellProductList);
+        System.out.println(sellProductListWithImage.get(0).toString());
+        modelAndView.addObject("sellProductList", sellProductListWithImage);
+
+        // 구매 상품 목록 조회 (최대 6개)
+        Slice<Order> orderListSlice = orderService.getOrderList(1, 7, member.getNickname(), "buyer", "거래중");
+        List<Order> orderList = orderListSlice.getContent();
+        List<Product> boughtProdList = productService.getProductListByOrderList(orderList);
+        List<Product> boughtProdListWithImage = processProductList(boughtProdList);
+        modelAndView.addObject("boughtProductList", boughtProdListWithImage);
 
         return modelAndView;
     }

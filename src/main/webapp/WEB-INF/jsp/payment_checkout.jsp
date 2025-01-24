@@ -117,7 +117,7 @@
                 await widgets.requestPayment({
                     orderId: generateRandomString(),
                     orderName: prodName, // 상품 이름
-                    successUrl: "http://localhost/",
+                    successUrl: "http://localhost/payment/success",
                     failUrl: "http://localhost/payment/fail",
                     customerEmail: email, // 고객 이메일
                     customerName: memName, // 고객 이름

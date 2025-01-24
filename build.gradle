@@ -3,8 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.4.1'
     id 'io.spring.dependency-management' version '1.1.7'
 
-    // Jib
-//    id 'com.google.cloud.tools.jib' version '3.4.4'
+    id 'com.google.cloud.tools.jib' version '3.4.4'
 }
 
 group = 'com.sell_buy'
@@ -67,7 +66,6 @@ dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
 
-
     implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:${springCloudAwsVersion}")
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
@@ -106,7 +104,6 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-/*
 jib {
     from {
         image = 'openjdk:17-oracle'
@@ -122,4 +119,4 @@ jib {
         jvmFlags = ['-Dfile.encoding=UTF-8', '-Dserver.port=80', '-Dspring.profiles.active=prod', '-XX:+UseContainerSupport']
         ports = ['80']
     }
-}*/
+}
