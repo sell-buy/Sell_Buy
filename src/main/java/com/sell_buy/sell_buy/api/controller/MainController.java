@@ -41,6 +41,7 @@ public class MainController {
     private final ObjectMapper objectMapper;// ObjectMapper 주입
     private final OrderService orderService;
     private final AuthenticationService authenticationService;
+
     @GetMapping("/")
     public ModelAndView test() throws JsonProcessingException { // JsonProcessingException 예외 처리 추가
         System.out.println("Hello World"); // TODO: Remove this line
@@ -150,7 +151,7 @@ public class MainController {
 
             Member member = authenticationService.getAuthenticatedMember();
             prodName = (String) jsonObject.get("orderName");
-            orderService.updatePaymentStatus(prodName,member);
+            orderService.updatePaymentStatus(prodName, member);
             return ResponseEntity.status(code).body(jsonObject);
         } else {
             return ResponseEntity.status(code).body(jsonObject);
